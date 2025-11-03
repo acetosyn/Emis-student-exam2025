@@ -1,0 +1,183 @@
+/* ===== Result Page Styles ===== */
+.result-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f9fafb;
+  padding: 2rem;
+}
+
+.result-card {
+  background: #fff;
+  padding: 2rem 2.2rem;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+  max-width: 800px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Confetti */
+#confetti-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.result-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
+}
+.result-header p {
+  color: #374151;
+  margin-top: 0.3rem;
+  font-size: 0.95rem;
+}
+
+.icon-success {
+  width: 4.5rem;
+  height: 4.5rem;
+  border-radius: 50%;
+  background: #dcfce7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+}
+
+/* Score Circle */
+.score-wrapper {
+  position: relative;
+  width: 300px;   /* larger circle */
+  height: 300px;
+  margin: 1.5rem auto;
+}
+.score-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
+.score-bg { stroke: #e5e7eb; stroke-width: 12; fill: none; }
+.score-progress {
+  stroke: #38bdf8;
+  stroke-width: 12;
+  fill: none;
+  stroke-linecap: round;
+  stroke-dasharray: 565; /* circumference for r=90 */
+  stroke-dashoffset: 565;
+  transition: stroke-dashoffset 1.6s ease-out, stroke 0.4s ease-out;
+}
+.score-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.score-text #scoreDisplay {
+  font-size: 3.2rem;
+  font-weight: 800;
+  color: #111827;
+}
+.score-text .fraction {
+  margin-top: 0.35rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #374151;
+  display: flex;
+  align-items: center;
+}
+.score-text .fraction .line { margin: 0 0.25rem; }
+#passFail {
+  margin-top: 0.8rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+/* Stats */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(140px,1fr));
+  gap: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+.stat {
+  padding: 0.8rem;
+  border-radius: 12px;
+  font-weight: 600;
+}
+.stat span {
+  font-size: 1.3rem;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+.stat.green { background:#ecfdf5; color:#16a34a; }
+.stat.blue { background:#eff6ff; color:#2563eb; }
+.stat.purple { background:#f5f3ff; color:#7c3aed; }
+
+/* Performance */
+.performance-box {
+  padding: 0.9rem;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* Breakdown */
+.breakdown { margin-bottom: 1.5rem; text-align: left; }
+.breakdown h3 {
+  text-align: center;
+  margin-bottom: 0.75rem;
+  font-weight: 700;
+  font-size: 1rem;
+}
+.breakdown-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem 1rem;
+  background:#f9fafb;
+  padding:0.8rem 1rem;
+  border-radius:12px;
+}
+.breakdown-grid p {
+  font-size:0.9rem;
+  margin:0.25rem 0;
+  color:#374151;
+}
+
+/* Actions */
+.actions {
+  display:flex;
+  justify-content:center;
+  gap:1rem;
+  margin: 0.8rem 0;
+}
+.btn-primary, .btn-secondary {
+  padding:0.65rem 1.4rem;
+  border-radius:10px;
+  font-weight:600;
+  cursor:pointer;
+  transition: all .2s ease;
+}
+.btn-primary { background:#2563eb; color:#fff; }
+.btn-primary:hover { background:#1e40af; }
+.btn-secondary { background:#f3f4f6; color:#374151; }
+.btn-secondary:hover { background:#e5e7eb; }
+
+/* Footer */
+.footer-note {
+  font-size:0.8rem;
+  color:#6b7280;
+  margin-top:0.8rem;
+}
+
+/* Animations */
+@keyframes fadeIn { from {opacity:0} to {opacity:1} }
+@keyframes confetti-fall {
+  0% { transform: translateY(-100vh) rotate(0deg); opacity:1; }
+  100% { transform: translateY(100vh) rotate(360deg); opacity:0; }
+}

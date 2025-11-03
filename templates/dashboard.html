@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}Student Dashboard - EMIS Exam Portal{% endblock %}
+
+{% block header_actions %}
+<div class="flex items-center space-x-4">
+    <span class="text-sm text-gray-600 font-medium">Welcome, {{ session.username or 'Student' }}</span>
+    <a href="{{ url_for('logout') }}" class="text-primary hover:text-primary-dark font-medium text-sm transition-colors">
+        Logout
+    </a>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-light py-8">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Modern welcome section -->
+        <div class="mb-8">
+            <h1 class="text-4xl font-bold text-navy mb-2 font-poppins">Student Dashboard</h1>
+            <p class="text-gray-600 text-lg">Welcome back! Ready to take your examination?</p>
+        </div>
+
+        <!-- Dashboard grid with modern cards -->
+        <div class="dashboard-grid">
+            <!-- Exam Status Card -->
+            <div class="modern-card zoom-effect">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-semibold text-navy">Exam Status</h3>
+                    <div class="status-indicator status-active"></div>
+                </div>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Subject:</span>
+                        <span class="font-semibold text-navy">Mathematics</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Duration:</span>
+                        <span class="font-semibold text-navy">30 minutes</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Questions:</span>
+                        <span class="font-semibold text-navy">15 questions</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Status:</span>
+                        <span class="font-semibold text-green-600">Ready to Start</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Card -->
+            <div class="modern-card zoom-effect">
+                <h3 class="text-xl font-semibold text-navy mb-4">Quick Actions</h3>
+                <div class="space-y-3">
+                    <a href="{{ url_for('exam') }}" class="block w-full modern-btn modern-btn-primary text-center">
+                        Start Examination
+                    </a>
+                    <button class="w-full modern-btn modern-btn-secondary" onclick="showInstructions()">
+                        View Instructions
+                    </button>
+                    <button class="w-full modern-btn modern-btn-secondary" onclick="checkSystem()">
+                        System Check
+                    </button>
+                </div>
+            </div>
+
+            <!-- Student Info Card -->
+            <div class="modern-card zoom-effect">
+                <h3 class="text-xl font-semibold text-navy mb-4">Student Information</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Student ID:</span>
+                        <span class="font-semibold text-navy">{{ session.username or 'STU001' }}</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Class:</span>
+                        <span class="font-semibold text-navy">Grade 10</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Session:</span>
+                        <span class="font-semibold text-navy">2024-2025</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600">Login Time:</span>
+                        <span class="font-semibold text-navy" id="loginTime"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity Card -->
+            <div class="modern-card zoom-effect">
+                <h3 class="text-xl font-semibold text-navy mb-4">Recent Activity</h3>
+                <div class="space-y-3">
+                    <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">System Login</p>
+                            <p class="text-xs text-gray-500">Just now</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Last Exam: Physics</p>
+                            <p class="text-xs text-gray-500">2 days ago - Score: 85%</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
+                        <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Profile Updated</p>
+                            <p class="text-xs text-gray-500">1 week ago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Important notices section -->
+        <div class="mt-8">
+            <div class="modern-card">
+                <h3 class="text-xl font-semibold text-navy mb-4">Important Notices</h3>
+                <div class="space-y-4">
+                    <div class="notification notification-info">
+                        <strong>Exam Guidelines:</strong> Please ensure you have a stable internet connection before starting the exam.
+                    </div>
+                    <div class="notification notification-success">
+                        <strong>System Status:</strong> All systems are operational and ready for examinations.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Instructions Modal -->
+<div id="instructionsModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 scale-in">
+        <h3 class="text-2xl font-bold text-navy mb-6">Exam Instructions</h3>
+        <div class="space-y-4 text-gray-700">
+            <ul class="list-disc list-inside space-y-2">
+                <li>Read each question carefully before answering</li>
+                <li>You can flag questions to review later</li>
+                <li>Keep an eye on the timer displayed at the top</li>
+                <li>Once submitted, answers cannot be changed</li>
+                <li>Ensure stable internet connection throughout</li>
+                <li>Do not refresh the page during the exam</li>
+            </ul>
+        </div>
+        <div class="flex justify-end space-x-4 mt-8">
+            <button onclick="closeInstructions()" class="modern-btn modern-btn-secondary">
+                Close
+            </button>
+            <a href="{{ url_for('exam') }}" class="modern-btn modern-btn-primary">
+                Start Exam Now
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- System Check Modal -->
+<div id="systemCheckModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+    <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 scale-in">
+        <h3 class="text-2xl font-bold text-navy mb-6">System Check</h3>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <span>Internet Connection</span>
+                <span class="text-green-600 font-semibold">✓ Good</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>Browser Compatibility</span>
+                <span class="text-green-600 font-semibold">✓ Compatible</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>JavaScript Enabled</span>
+                <span class="text-green-600 font-semibold">✓ Enabled</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span>Screen Resolution</span>
+                <span class="text-green-600 font-semibold" id="screenRes">✓ Optimal</span>
+            </div>
+        </div>
+        <button onclick="closeSystemCheck()" class="w-full modern-btn modern-btn-primary mt-6">
+            All Systems Ready
+        </button>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Display current time
+    document.getElementById('loginTime').textContent = new Date().toLocaleTimeString();
+    
+    // Update screen resolution
+    document.getElementById('screenRes').textContent = `✓ ${screen.width}x${screen.height}`;
+});
+
+function showInstructions() {
+    document.getElementById('instructionsModal').classList.remove('hidden');
+}
+
+function closeInstructions() {
+    document.getElementById('instructionsModal').classList.add('hidden');
+}
+
+function checkSystem() {
+    document.getElementById('systemCheckModal').classList.remove('hidden');
+}
+
+function closeSystemCheck() {
+    document.getElementById('systemCheckModal').classList.add('hidden');
+}
+</script>
+{% endblock %}

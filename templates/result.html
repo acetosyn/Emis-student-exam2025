@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block title %}Exam Results - EMIS Exam Portal{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/result.css') }}">
+<style>
+  /* Goodbye Modal Styling */
+  #goodbyeModal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(3px);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+  }
+  #goodbyeModal .modal-content {
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+    animation: scaleIn 0.4s ease-out;
+  }
+  #goodbyeModal h2 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: #0f2b46;
+  }
+  #goodbyeModal p {
+    color: #374151;
+    margin-bottom: 1.5rem;
+  }
+  #goodbyeModal button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+  }
+  @keyframes scaleIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="result-container">
+  <div class="result-card">
+    <!-- Confetti -->
+    <div id="confetti-container"></div>
+
+    <!-- Header -->
+<div class="result-header">
+  <div class="icon-success">
+    <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg>
+  </div>
+  <h1>Examination Results</h1>
+  <!-- Dynamic message -->
+  <p id="resultHeaderMessage" class="text-gray-700"></p>
+</div>
+
+
+    <!-- Score Circle -->
+    <div class="score-wrapper">
+      <svg class="score-ring" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="40" class="score-bg"/>
+        <circle id="progressCircle" cx="50" cy="50" r="40" class="score-progress"/>
+      </svg>
+      <div class="score-text">
+        <div id="scoreDisplay">0%</div>
+        <div class="fraction">
+          <span id="correctAnswers" class="numerator">0</span>
+          <span class="line">/</span>
+          <span id="totalQuestions" class="denominator">0</span>
+        </div>
+        <span>Score</span>
+        <div id="passFail" class="mt-2 font-bold"></div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat blue">
+        <span id="timeTaken">--:--</span>
+        <small>Time Taken</small>
+      </div>
+    </div>
+
+    <!-- Performance Message -->
+    <div id="performanceMessage" class="performance-box"></div>
+
+    <!-- Breakdown -->
+    <div class="breakdown">
+      <h3>Detailed Breakdown</h3>
+      <div class="breakdown-grid">
+        <div>
+          <p>Answered: <span id="answeredQuestions">0</span></p>
+          <p>Skipped: <span id="skippedQuestions">0</span></p>
+          <p>Flagged: <span id="flaggedQuestions">0</span></p>
+        </div>
+        <div>
+          <p>Accuracy: <span id="accuracyRate">0%</span></p>
+          <p>Avg Time/Q: <span id="avgTimePerQuestion">0s</span></p>
+          <p>Tab Switches: <span id="tabSwitches">0</span></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button onclick="endExam()" class="btn-primary">End</button>
+      <button onclick="viewResult()" class="btn-secondary">View Result</button>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-note">
+      <p>Exam completed on <span id="completionDate"></span></p>
+      <p>Results have been securely saved and forwarded to administration.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Goodbye Modal -->
+<div id="goodbyeModal">
+  <div class="modal-content">
+    <h2>Thank You</h2>
+    <p>✅ Thank you for taking the exam. We wish you the best in your next steps.</p>
+    <button class="bg-primary text-white" onclick="closeGoodbye()">Close</button>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.resultData = {{ result|tojson }};
+</script>
+<script src="{{ url_for('static', filename='js/result.js') }}"></script>
+{% endblock %}

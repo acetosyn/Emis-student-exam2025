@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}EMIS Exam Portal{% endblock %}</title>
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.jpg') }}" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#0f2b46',
+            'primary-dark': '#081a2b',
+            accent: '#e11d48',
+            orange: '#f97316',
+            'bg-soft': '#f8fafc',
+            'text-dark': '#0f172a',
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+            poppins: ['Poppins', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <!-- Base CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin1.css') }}">
+  {% block styles %}{% endblock %}
+</head>
+
+<body class="font-inter bg-bg-soft text-text-dark min-h-screen">
+
+  <!-- ================= HEADER ================= -->
+  <header class="top-header fixed top-0 left-0 right-0 z-50 bg-primary text-white shadow-md flex items-center justify-between px-8 py-3">
+    <!-- Left Branding -->
+    <div class="flex items-center gap-3">
+      <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="EMIS Logo" class="h-10 w-10 rounded-md shadow-md">
+      <h1 class="text-xl font-poppins font-bold tracking-wide">EMIS CBT SERVER</h1>
+    </div>
+
+<!-- ================= NAVIGATION ================= -->
+<nav class="hidden md:flex items-center space-x-8 text-sm font-semibold">
+  <!-- Home -->
+  <a href="{{ url_for('home') }}" class="hover:text-accent transition">Home</a>
+
+  <!-- Modules Dropdown -->
+  <div class="relative">
+    <button id="modulesBtn" class="flex items-center gap-1 hover:text-accent transition">
+      Modules <i class="fa-solid fa-chevron-down text-xs ml-1"></i>
+    </button>
+    <div id="modulesMenu" class="dropdown-menu absolute hidden left-0 mt-2 min-w-[200px]">
+      <a href="{{ url_for('admin_dashboard') }}" class="flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+        <i class="fa-solid fa-shield-halved text-accent"></i> Admin
+      </a>
+      <a href="#" class="flex items-center gap-2 px-4 py-2 text-gray-400 cursor-not-allowed">
+        <i class="fa-solid fa-chalkboard-user"></i> Teacher
+      </a>
+      <a href="#" class="flex items-center gap-2 px-4 py-2 text-gray-400 cursor-not-allowed">
+        <i class="fa-solid fa-user-graduate"></i> Student
+      </a>
+    </div>
+  </div>
+
+  <!-- Support -->
+  <a href="#" class="hover:text-accent transition">Support</a>
+</nav>
+
+<!-- ================= RIGHT ACTIONS ================= -->
+<div class="flex items-center gap-5">
+  <!-- Notifications Dropdown -->
+  <div class="relative">
+    <button id="notifBtn" class="relative hover:text-accent transition">
+      <i class="fa-solid fa-bell text-lg"></i>
+      <span class="absolute -top-1 -right-2 bg-accent text-white text-xs rounded-full px-1.5 py-0.5">3</span>
+    </button>
+
+    <div class="dropdown-menu absolute hidden right-0 mt-3 w-64">
+      <h3 class="font-semibold px-4 py-2 border-b text-primary-dark">Notifications</h3>
+      <ul class="text-sm divide-y divide-gray-100">
+        <li class="px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
+          <i class="fa-solid fa-upload text-accent"></i>
+          <span>New question set uploaded</span>
+        </li>
+        <li class="px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
+          <i class="fa-solid fa-user-graduate text-green-600"></i>
+          <span>Student login detected</span>
+        </li>
+        <li class="px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
+          <i class="fa-solid fa-check text-orange"></i>
+          <span>Exam server active</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+      <!-- Theme Toggle -->
+      <button id="themeToggle" title="Toggle Theme" class="hover:text-accent transition text-lg">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+
+      <!-- User Icon -->
+      <img src="{{ url_for('static', filename='images/user.png') }}" alt="User" class="h-9 w-9 rounded-full border border-white/30 bg-white/10 p-1">
+    </div>
+  </header>
+
+  <!-- ================= SIDEBAR ================= -->
+  <aside id="sidebar" class="sidebar fixed top-[72px] left-0 h-[calc(100vh-72px)] w-52 bg-[#344a61] text-white transition-all duration-300 shadow-lg">
+    <div class="sidebar-header flex items-center justify-between px-3 py-3 border-b border-white/10">
+      <span class="sidebar-title">Dashboard</span>
+      <button id="sidebarToggle" class="text-white hover:text-accent transition text-lg">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+    </div>
+
+    <ul class="sidebar-menu text-sm font-medium">
+      <li data-label="Uploads"><a href="#"><i class="fa-solid fa-upload"></i><span>Uploads</span></a></li>
+      <li data-label="Students"><a href="#"><i class="fa-solid fa-users"></i><span>Students</span></a></li>
+      <li data-label="Past Questions"><a href="#"><i class="fa-solid fa-clock-rotate-left"></i><span>Past Questions</span></a></li>
+      <li data-label="Third Party"><a href="#"><i class="fa-solid fa-network-wired"></i><span>Third Party</span></a></li>
+      <li data-label="Settings"><a href="#"><i class="fa-solid fa-gear"></i><span>Settings</span></a></li>
+    </ul>
+
+    <div class="border-t border-white/20 pt-4 px-3">
+      <a href="{{ url_for('logout') }}" class="btn-logout flex items-center justify-center gap-2">
+        <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ================= MAIN CONTENT ================= -->
+  <main class="main-content md:ml-52 p-6 transition-all duration-300">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="text-center text-sm text-gray-500 py-6 border-t mt-12">
+    &copy; 2025 EMIS — Developed by Epiconsult Tech Division.
+  </footer>
+
+  <!-- ================= SCRIPTS ================= -->
+  <script src="{{ url_for('static', filename='js/toggle.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>
