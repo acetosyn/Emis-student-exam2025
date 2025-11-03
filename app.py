@@ -11,6 +11,8 @@ from threading import Thread
 # Load environment variables
 from pathlib import Path
 import csv
+from uploads import upload_bp
+
 
 
 # Define logs directory
@@ -22,6 +24,7 @@ load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", "fallback_secret_key")
+app.register_blueprint(upload_bp)
 
 ADMIN_USERNAME = os.getenv("ADMIN_USERNAME")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
@@ -96,7 +99,76 @@ def user_login():
 def admin_dashboard():
     if session.get('user_type') != 'admin':
         return redirect(url_for('admin_login'))
-    return render_template('admin.html')
+    return render_template('dashboard.html')
+
+
+# -------------------- ADMIN SUB-PAGES --------------------
+@app.route('/admin/dashboard')
+def admin_dashboard_page():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('dashboard.html')
+
+@app.route('/admin/teachers')
+def admin_teachers():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('teachers.html')
+
+@app.route('/admin/students')
+def admin_students():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('students.html')
+
+@app.route('/admin/ids')
+def admin_ids():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('ids.html')
+
+@app.route('/admin/past_questions')
+def admin_past_questions():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('past_questions.html')
+
+@app.route('/admin/mock_exam')
+def admin_mock_exam():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('mock_exam.html')
+
+@app.route('/admin/results')
+def admin_results():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('result.html')
+
+@app.route('/admin/third_party')
+def admin_third_party():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('third_party.html')
+
+@app.route('/admin/activities')
+def admin_activities():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('activities.html')
+
+@app.route('/admin/settings')
+def admin_settings():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('settings.html')
+
+@app.route('/admin/support')
+def admin_support():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('support.html')
+
 
 
 # -------------------- USER PORTAL (Dashboard-first) --------------------
@@ -487,13 +559,11 @@ def view_results():
 
 
 
-
 @app.route("/debug/email_test")
 def debug_email_test():
     from email_server import send_test_email
     ok = send_test_email()
     return {"sent": ok}
-
 
 
 if __name__ == '__main__':

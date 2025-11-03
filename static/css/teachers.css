@@ -1,0 +1,286 @@
+/* ==========================================================
+   EMIS TEACHER DASHBOARD — teachers.css (v2.0)
+   ----------------------------------------------------------
+   Clean optimized version for teachers.html
+   Focused on Dashboard metrics + Quick Teacher Tools
+   Inspired by admin1.css & admin2.css styles
+========================================================== */
+
+:root {
+  --primary: #0f2b46;
+  --accent: #e11d48;
+  --accent-light: #f43f5e;
+  --bg-soft: #f8fafc;
+  --bg-white: #ffffff;
+  --border: #e5e7eb;
+  --radius: 14px;
+  --shadow-sm: 0 2px 10px rgba(0,0,0,0.05);
+  --shadow-md: 0 6px 18px rgba(0,0,0,0.12);
+  --shadow-lg: 0 10px 32px rgba(0,0,0,0.18);
+  --transition: all .3s ease;
+}
+
+/* ----------------------------------------------------------
+   CORE LAYOUT
+---------------------------------------------------------- */
+.admin-dashboard {
+  padding: 2rem;
+  background: linear-gradient(135deg, #f9fafc, #eef2f7);
+  animation: fadeIn .6s ease both;
+}
+
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.dash-header h2 {
+  font-weight: 800;
+  color: var(--primary);
+  margin: 0;
+}
+.dash-header p {
+  color: #64748b;
+  margin: 0.3rem 0 0;
+  font-size: 0.9rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+/* ----------------------------------------------------------
+   BUTTONS
+---------------------------------------------------------- */
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border: none;
+  border-radius: 10px;
+  padding: 0.55rem 0.9rem;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1e3a8a);
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(37,99,235,0.25);
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1e40af, #1e3a8a);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: #f1f5f9;
+  color: var(--primary-dark);
+  border: 1px solid #cbd5e1;
+}
+.btn-secondary:hover {
+  background: #e2e8f0;
+  transform: translateY(-2px);
+}
+
+/* ----------------------------------------------------------
+   STATS GRID
+---------------------------------------------------------- */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  background: var(--bg-white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+.stat-card::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -60%;
+  width: 50%; height: 100%;
+  background: linear-gradient(
+    120deg,
+    rgba(255,255,255,0.2) 0%,
+    rgba(255,255,255,0.45) 50%,
+    rgba(255,255,255,0.2) 100%
+  );
+  transform: skewX(-25deg);
+  animation: shineMove 4s infinite;
+}
+@keyframes shineMove {
+  0% { left: -60%; }
+  60%,100% { left: 130%; }
+}
+.stat-card .icon {
+  font-size: 1.6rem;
+  color: var(--accent);
+}
+.stat-card p {
+  font-weight: 600;
+  color: var(--primary);
+  margin: 0;
+  font-size: 0.85rem;
+}
+.stat-card h2 {
+  font-size: 1.3rem;
+  color: var(--accent);
+  margin: 0.1rem 0 0;
+}
+
+/* ----------------------------------------------------------
+   QUICK TEACHER TOOLS
+---------------------------------------------------------- */
+.quick-modules {
+  background: var(--bg-white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  animation: fadeIn .5s ease both;
+}
+.quick-modules h3 {
+  font-weight: 700;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.4rem;
+}
+.quick-modules .sub-text {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 1.2rem;
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 1rem;
+}
+
+.module-item {
+  text-align: center;
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 0.7rem 0.4rem;
+  font-weight: 700;
+  font-size: 0.8rem;
+  transition: var(--transition);
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+.module-item:hover {
+  transform: translateY(-4px) scale(1.05);
+  box-shadow: var(--shadow-md);
+}
+
+/* Color variants */
+.blue { background: #3b82f6; }
+.green { background: #10b981; }
+.purple { background: #6366f1; }
+.orange { background: #f59e0b; }
+.red { background: #e11d48; }
+.teal { background: #0d9488; }
+.dark { background: #1e293b; }
+.yellow { background: #facc15; color: #111; }
+
+/* ----------------------------------------------------------
+   DYNAMIC CONTENT AREA (for uploads.html, results.html)
+---------------------------------------------------------- */
+#teacherDynamicContent {
+  margin-top: 1.8rem;
+  animation: fadeSlideIn .6s ease both;
+}
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ----------------------------------------------------------
+   ANIMATIONS
+---------------------------------------------------------- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ----------------------------------------------------------
+   RESPONSIVE
+---------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .admin-dashboard { padding: 1.5rem; }
+  .stat-grid { gap: 0.9rem; }
+  .modules-grid { grid-template-columns: repeat(auto-fit, minmax(95px, 1fr)); }
+}
+@media (max-width: 640px) {
+  .dash-header { flex-direction: column; align-items: flex-start; gap: 0.8rem; }
+  .header-actions { width: 100%; justify-content: flex-start; flex-wrap: wrap; gap: 0.4rem; }
+  .module-item { font-size: 0.75rem; padding: 0.6rem; }
+}
+
+
+/* Loader and animations for dynamic routing */
+
+.route-loader {
+  text-align: center;
+  padding: 2rem 0;
+}
+.loader-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e2e8f0;
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  margin: 0 auto 0.8rem;
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.fade-slide-in {
+  animation: fadeSlideIn 0.5s ease both;
+}
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.error-panel {
+  background: #fff1f2;
+  border: 1px solid #fecaca;
+  border-radius: 10px;
+  padding: 1.5rem;
+  text-align: center;
+  color: #991b1b;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.error-panel p { margin-top: 0.5rem; }
+
+.module-item.active {
+  outline: 3px solid var(--accent-light);
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
+}

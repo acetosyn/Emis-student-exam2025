@@ -1,216 +1,143 @@
 {% extends "base.html" %}
+{% block title %}EMIS Admin Dashboard — Control Center{% endblock %}
 
-{% block title %}Student Dashboard - EMIS Exam Portal{% endblock %}
-
-{% block header_actions %}
-<div class="flex items-center space-x-4">
-    <span class="text-sm text-gray-600 font-medium">Welcome, {{ session.username or 'Student' }}</span>
-    <a href="{{ url_for('logout') }}" class="text-primary hover:text-primary-dark font-medium text-sm transition-colors">
-        Logout
-    </a>
-</div>
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
 {% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-light py-8">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Modern welcome section -->
-        <div class="mb-8">
-            <h1 class="text-4xl font-bold text-navy mb-2 font-poppins">Student Dashboard</h1>
-            <p class="text-gray-600 text-lg">Welcome back! Ready to take your examination?</p>
-        </div>
+<div class="admin-dashboard">
 
-        <!-- Dashboard grid with modern cards -->
-        <div class="dashboard-grid">
-            <!-- Exam Status Card -->
-            <div class="modern-card zoom-effect">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xl font-semibold text-navy">Exam Status</h3>
-                    <div class="status-indicator status-active"></div>
-                </div>
-                <div class="space-y-3">
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Subject:</span>
-                        <span class="font-semibold text-navy">Mathematics</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Duration:</span>
-                        <span class="font-semibold text-navy">30 minutes</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Questions:</span>
-                        <span class="font-semibold text-navy">15 questions</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Status:</span>
-                        <span class="font-semibold text-green-600">Ready to Start</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Actions Card -->
-            <div class="modern-card zoom-effect">
-                <h3 class="text-xl font-semibold text-navy mb-4">Quick Actions</h3>
-                <div class="space-y-3">
-                    <a href="{{ url_for('exam') }}" class="block w-full modern-btn modern-btn-primary text-center">
-                        Start Examination
-                    </a>
-                    <button class="w-full modern-btn modern-btn-secondary" onclick="showInstructions()">
-                        View Instructions
-                    </button>
-                    <button class="w-full modern-btn modern-btn-secondary" onclick="checkSystem()">
-                        System Check
-                    </button>
-                </div>
-            </div>
-
-            <!-- Student Info Card -->
-            <div class="modern-card zoom-effect">
-                <h3 class="text-xl font-semibold text-navy mb-4">Student Information</h3>
-                <div class="space-y-3">
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Student ID:</span>
-                        <span class="font-semibold text-navy">{{ session.username or 'STU001' }}</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Class:</span>
-                        <span class="font-semibold text-navy">Grade 10</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Session:</span>
-                        <span class="font-semibold text-navy">2024-2025</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600">Login Time:</span>
-                        <span class="font-semibold text-navy" id="loginTime"></span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Recent Activity Card -->
-            <div class="modern-card zoom-effect">
-                <h3 class="text-xl font-semibold text-navy mb-4">Recent Activity</h3>
-                <div class="space-y-3">
-                    <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-900">System Login</p>
-                            <p class="text-xs text-gray-500">Just now</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                        <div class="w-2 h-2 bg-blue-500 rounded-full"></div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-900">Last Exam: Physics</p>
-                            <p class="text-xs text-gray-500">2 days ago - Score: 85%</p>
-                        </div>
-                    </div>
-                    <div class="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-                        <div class="w-2 h-2 bg-yellow-500 rounded-full"></div>
-                        <div class="flex-1">
-                            <p class="text-sm font-medium text-gray-900">Profile Updated</p>
-                            <p class="text-xs text-gray-500">1 week ago</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Important notices section -->
-        <div class="mt-8">
-            <div class="modern-card">
-                <h3 class="text-xl font-semibold text-navy mb-4">Important Notices</h3>
-                <div class="space-y-4">
-                    <div class="notification notification-info">
-                        <strong>Exam Guidelines:</strong> Please ensure you have a stable internet connection before starting the exam.
-                    </div>
-                    <div class="notification notification-success">
-                        <strong>System Status:</strong> All systems are operational and ready for examinations.
-                    </div>
-                </div>
-            </div>
-        </div>
+  <!-- ================= HEADER ================= -->
+  <div class="dash-header">
+    <div class="title-block">
+      <h2>Admin Dashboard</h2>
+      <p>Real-time analytics • Performance tracking • Exam control</p>
     </div>
-</div>
-
-<!-- Instructions Modal -->
-<div id="instructionsModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4 scale-in">
-        <h3 class="text-2xl font-bold text-navy mb-6">Exam Instructions</h3>
-        <div class="space-y-4 text-gray-700">
-            <ul class="list-disc list-inside space-y-2">
-                <li>Read each question carefully before answering</li>
-                <li>You can flag questions to review later</li>
-                <li>Keep an eye on the timer displayed at the top</li>
-                <li>Once submitted, answers cannot be changed</li>
-                <li>Ensure stable internet connection throughout</li>
-                <li>Do not refresh the page during the exam</li>
-            </ul>
-        </div>
-        <div class="flex justify-end space-x-4 mt-8">
-            <button onclick="closeInstructions()" class="modern-btn modern-btn-secondary">
-                Close
-            </button>
-            <a href="{{ url_for('exam') }}" class="modern-btn modern-btn-primary">
-                Start Exam Now
-            </a>
-        </div>
+    <div class="header-actions">
+      <button id="manageSystem" class="btn-secondary">
+        <i class="fa-solid fa-gear"></i> Manage System
+      </button>
+      <button id="refreshDashboard" class="btn-primary">
+        <i class="fa-solid fa-rotate"></i> Refresh
+      </button>
     </div>
-</div>
+  </div>
 
-<!-- System Check Modal -->
-<div id="systemCheckModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
-    <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 scale-in">
-        <h3 class="text-2xl font-bold text-navy mb-6">System Check</h3>
-        <div class="space-y-4">
-            <div class="flex items-center justify-between">
-                <span>Internet Connection</span>
-                <span class="text-green-600 font-semibold">✓ Good</span>
-            </div>
-            <div class="flex items-center justify-between">
-                <span>Browser Compatibility</span>
-                <span class="text-green-600 font-semibold">✓ Compatible</span>
-            </div>
-            <div class="flex items-center justify-between">
-                <span>JavaScript Enabled</span>
-                <span class="text-green-600 font-semibold">✓ Enabled</span>
-            </div>
-            <div class="flex items-center justify-between">
-                <span>Screen Resolution</span>
-                <span class="text-green-600 font-semibold" id="screenRes">✓ Optimal</span>
-            </div>
-        </div>
-        <button onclick="closeSystemCheck()" class="w-full modern-btn modern-btn-primary mt-6">
-            All Systems Ready
-        </button>
+  <!-- ================= STATS OVERVIEW ================= -->
+  <section class="stat-grid fade-in">
+    <div class="stat-card glass">
+      <div class="icon"><i class="fa-solid fa-users"></i></div>
+      <div class="details">
+        <p>Total Candidates</p>
+        <h2 id="statTotalStudents">--</h2>
+      </div>
     </div>
+
+    <div class="stat-card glass">
+      <div class="icon"><i class="fa-solid fa-pen-to-square"></i></div>
+      <div class="details">
+        <p>Active Exams</p>
+        <h2 id="statActiveExams">--</h2>
+      </div>
+    </div>
+
+    <div class="stat-card glass">
+      <div class="icon"><i class="fa-solid fa-hourglass-half"></i></div>
+      <div class="details">
+        <p>Pending Results</p>
+        <h2 id="statPending">--</h2>
+      </div>
+    </div>
+
+    <div class="stat-card glass">
+      <div class="icon"><i class="fa-solid fa-chart-line"></i></div>
+      <div class="details">
+        <p>Average Score</p>
+        <h2 id="statAvg">--</h2>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= QUICK MODULES ================= -->
+  <section class="quick-modules card">
+    <h3><i class="fa-solid fa-bolt text-accent"></i> Quick Access Modules</h3>
+    <p class="sub-text">Instant navigation to primary operations</p>
+
+    <div class="modules-grid">
+      <button class="module-item blue"><i class="fa-solid fa-user-graduate"></i><span>Student Portal</span></button>
+      <button class="module-item green"><i class="fa-solid fa-chalkboard-user"></i><span>Teachers Dashboard</span></button>
+      <button class="module-item purple"><i class="fa-solid fa-file-arrow-up"></i><span>Upload Exam</span></button>
+      <button class="module-item orange"><i class="fa-solid fa-chart-column"></i><span>Results</span></button>
+      <button class="module-item pink"><i class="fa-solid fa-id-card"></i><span>Credentials</span></button>
+      <button class="module-item gray"><i class="fa-solid fa-book"></i><span>Past Questions</span></button>
+      <button class="module-item teal"><i class="fa-solid fa-briefcase"></i><span>Third-Party</span></button>
+      <button class="module-item red"><i class="fa-solid fa-list-check"></i><span>Activities</span></button>
+      <button class="module-item dark"><i class="fa-solid fa-sliders"></i><span>Settings</span></button>
+      <button class="module-item yellow"><i class="fa-solid fa-headset"></i><span>Support</span></button>
+    </div>
+  </section>
+
+  <!-- ================= INFORMATION PANELS ================= -->
+  <section class="info-panels-grid fade-in">
+    <!-- Live Notifications -->
+    <div class="panel notifications">
+      <h4><i class="fa-solid fa-bell text-accent"></i> Live Notifications</h4>
+      <div id="notificationsPanel" class="panel-body">
+        <p>No notifications yet</p>
+      </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="panel activity">
+      <h4><i class="fa-solid fa-clock text-green-600"></i> Recent Activity</h4>
+      <div id="recentActivity" class="panel-body">
+        <p>No activity logged</p>
+      </div>
+    </div>
+
+    <!-- System Status -->
+    <div class="panel system-status">
+      <h4><i class="fa-solid fa-server text-gray-600"></i> System Status</h4>
+      <ul class="status-list">
+        <li>Database — <span class="status success">Online</span></li>
+        <li>Exam Server — <span class="status success">Running</span></li>
+        <li>Storage — <span class="status warn">80% Used</span></li>
+      </ul>
+      <div class="progress-bar-wrapper">
+        <div class="progress-bar" style="width:80%"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= TEACHER & STUDENT ACTIVITY ================= -->
+  <section class="dual-panel fade-in">
+    <!-- Teacher Uploads -->
+    <div class="panel teacher">
+      <h4><i class="fa-solid fa-chalkboard-user text-accent"></i> Teacher Uploads</h4>
+      <p class="sub-text">Latest exam uploads and drafts</p>
+      <div id="teacherUploadsList" class="panel-body scrollable">
+        <ul>
+          <li>No uploads yet</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Student Activity -->
+    <div class="panel student">
+      <h4><i class="fa-solid fa-user-graduate text-green-600"></i> Student Activity</h4>
+      <p class="sub-text">Ongoing exams and automatic marking</p>
+      <div id="studentActivityList" class="panel-body scrollable">
+        <ul>
+          <li>No activity yet</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
 </div>
 {% endblock %}
 
-{% block extra_js %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Display current time
-    document.getElementById('loginTime').textContent = new Date().toLocaleTimeString();
-    
-    // Update screen resolution
-    document.getElementById('screenRes').textContent = `✓ ${screen.width}x${screen.height}`;
-});
-
-function showInstructions() {
-    document.getElementById('instructionsModal').classList.remove('hidden');
-}
-
-function closeInstructions() {
-    document.getElementById('instructionsModal').classList.add('hidden');
-}
-
-function checkSystem() {
-    document.getElementById('systemCheckModal').classList.remove('hidden');
-}
-
-function closeSystemCheck() {
-    document.getElementById('systemCheckModal').classList.add('hidden');
-}
-</script>
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 {% endblock %}

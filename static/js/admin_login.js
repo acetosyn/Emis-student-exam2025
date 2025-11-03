@@ -1,5 +1,5 @@
 // =============================================================
-// EMIS Admin Login Script — Optimized v4
+// EMIS Admin Login Script — v7 (Dynamic Circle Loader + Message + Redirect)
 // Handles: Password toggle, Validation, Overlay, Toast, Typewriter
 // =============================================================
 document.addEventListener("DOMContentLoaded", () => {
@@ -28,6 +28,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // =========================================================
   if (form) {
     form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
       const inputs = form.querySelectorAll("input[required]");
       let valid = true;
 
@@ -36,13 +38,33 @@ document.addEventListener("DOMContentLoaded", () => {
       });
 
       if (!valid) {
-        e.preventDefault();
         showToast("⚠️ Please fill in all fields", "error");
         return;
       }
 
-      // Show loading overlay after successful validation
-      if (overlay) overlay.classList.remove("hidden");
+      // Show dynamic circular overlay
+      if (overlay) {
+        overlay.classList.remove("hidden");
+        overlay.innerHTML = `
+          <div class="loading-box glassy">
+            <div class="dynamic-loader">
+              <div class="outer-circle"></div>
+              <div class="inner-circle"></div>
+            </div>
+            <p class="loading-text">Authenticating... please wait</p>
+          </div>
+        `;
+      }
+
+      // Simulate short delay before redirect
+      setTimeout(() => {
+        showToast("✅ Login successful! Redirecting...", "success");
+
+        // Redirect to admin.html
+        setTimeout(() => {
+          window.location.href = "admin.html";
+        }, 1200);
+      }, 2000);
     });
   }
 
@@ -54,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const messages = [
       "Welcome to EMIS Exam Portal",
       "Login below to access your dashboard",
-      "Powered by Epiconsult Tech Division"
+      "Empowering academic excellence with technology"
     ];
 
     let msgIndex = 0;
@@ -109,7 +131,6 @@ function showToast(message, type = "info") {
 
   container.appendChild(toast);
 
-  // Animate toast fade out
   setTimeout(() => {
     toast.style.opacity = "0";
     setTimeout(() => toast.remove(), 400);
