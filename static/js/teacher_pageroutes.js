@@ -41,7 +41,8 @@ document.addEventListener("DOMContentLoaded", () => {
       dynamicContainer.innerHTML = loaderHTML;
 
       try {
-        const response = await fetch(page);
+        const response = await fetch(`/admin/${page.replace('.html', '')}`);
+
         if (!response.ok) throw new Error(`Page not found (${response.status})`);
 
         const html = await response.text();

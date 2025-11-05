@@ -103,11 +103,13 @@ def admin_dashboard():
 
 
 # -------------------- ADMIN SUB-PAGES --------------------
+
 @app.route('/admin/dashboard')
 def admin_dashboard_page():
     if session.get('user_type') != 'admin':
         return redirect(url_for('admin_login'))
     return render_template('dashboard.html')
+
 
 @app.route('/admin/teachers')
 def admin_teachers():
@@ -115,11 +117,13 @@ def admin_teachers():
         return redirect(url_for('admin_login'))
     return render_template('teachers.html')
 
+
 @app.route('/admin/students')
 def admin_students():
     if session.get('user_type') != 'admin':
         return redirect(url_for('admin_login'))
     return render_template('students.html')
+
 
 @app.route('/admin/ids')
 def admin_ids():
@@ -127,11 +131,13 @@ def admin_ids():
         return redirect(url_for('admin_login'))
     return render_template('ids.html')
 
+
 @app.route('/admin/past_questions')
 def admin_past_questions():
     if session.get('user_type') != 'admin':
         return redirect(url_for('admin_login'))
     return render_template('past_questions.html')
+
 
 @app.route('/admin/mock_exam')
 def admin_mock_exam():
@@ -139,11 +145,13 @@ def admin_mock_exam():
         return redirect(url_for('admin_login'))
     return render_template('mock_exam.html')
 
+
 @app.route('/admin/results')
 def admin_results():
     if session.get('user_type') != 'admin':
         return redirect(url_for('admin_login'))
     return render_template('result.html')
+
 
 @app.route('/admin/third_party')
 def admin_third_party():
@@ -151,11 +159,13 @@ def admin_third_party():
         return redirect(url_for('admin_login'))
     return render_template('third_party.html')
 
+
 @app.route('/admin/activities')
 def admin_activities():
     if session.get('user_type') != 'admin':
         return redirect(url_for('admin_login'))
     return render_template('activities.html')
+
 
 @app.route('/admin/settings')
 def admin_settings():
@@ -163,11 +173,56 @@ def admin_settings():
         return redirect(url_for('admin_login'))
     return render_template('settings.html')
 
+
 @app.route('/admin/support')
 def admin_support():
     if session.get('user_type') != 'admin':
         return redirect(url_for('admin_login'))
     return render_template('support.html')
+
+# -------------------- TEACHER TOOL SUB-PAGES (Dynamic Loading) --------------------
+
+@app.route('/admin/uploads')
+def admin_uploads():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('uploads.html')
+
+
+@app.route('/admin/exam_dashboard')
+def admin_exam_dashboard():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('dashboard.html')
+
+
+@app.route('/admin/dash_results')
+def admin_dash_results():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('dash_results.html')
+
+
+@app.route('/admin/reports')
+def admin_reports():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('reports.html')
+
+
+@app.route('/admin/analytics')
+def admin_analytics():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('analytics.html')
+
+
+@app.route('/admin/resources')
+def admin_resources():
+    if session.get('user_type') != 'admin':
+        return redirect(url_for('admin_login'))
+    return render_template('resources.html')
+
 
 
 
@@ -419,8 +474,6 @@ def api_exam_submit():
 # ✅ Unified Results & Credentials APIs (Dynamic + Delete + Filters)
 # ============================================================
 
-from datetime import datetime
-
 # -------------------- API: Get All Exam Results (for Admin Dashboard) --------------------
 @app.route('/api/exam/results')
 def api_exam_results():
@@ -556,7 +609,6 @@ def view_results():
     # Sort by submission time (latest first)
     results.sort(key=lambda r: r.get("submitted_at", ""), reverse=True)
     return jsonify({"results": results})
-
 
 
 @app.route("/debug/email_test")
