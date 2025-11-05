@@ -1,35 +1,45 @@
-<!-- uploads.html (dynamically loaded inside teachers.html) -->
+<!-- uploads.html -->
 <link rel="stylesheet" href="{{ url_for('static', filename='css/uploads.css') }}">
 
 <div class="uploads-wrapper fade-in">
-
   <!-- HEADER -->
   <div class="uploads-header">
     <h3><i class="fa-solid fa-cloud-arrow-up text-accent"></i> Exam & Past Questions Uploads</h3>
-    <p class="sub-text">Manage your teaching materials, upload exams, past questions, and push to student portal.</p>
+    <p class="sub-text">Manage your teaching materials, upload exams (DOCX), and auto-convert to JSON for the student portal.</p>
   </div>
 
   <div class="uploads-grid">
-
-    <!-- LEFT PANEL: Upload Section -->
+    <!-- ========== LEFT: UPLOAD ========== -->
     <section class="upload-panel">
       <h4><i class="fa-solid fa-upload"></i> Upload Files</h4>
-      <p>Select or drag files to upload (CSV, XLSX, DOCX, JSON, PDF).</p>
+      <p>Select or drag files to upload. DOCX will be auto-converted to JSON. (Also supports JSON/CSV/XLSX.)</p>
 
       <div class="drop-box" id="uploadDropZone">
-        <input type="file" id="uploadInput" multiple hidden accept=".csv,.xlsx,.docx,.json,.pdf" />
+        <!-- Hidden file inputs -->
+        <input type="file" id="uploadInputSingle" accept=".docx,.json,.csv,.xlsx" hidden />
+        <input type="file" id="uploadInputMulti" accept=".docx,.json,.csv,.xlsx" multiple hidden />
+
         <div class="drop-content">
           <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
-          <p><strong>Drag & Drop</strong> or click below to choose files</p>
-          <button id="chooseFiles" class="btn-primary small">Choose Files</button>
+          <p><strong>Drag & Drop</strong> or use the buttons below</p>
+          <div class="flex gap-2 justify-center">
+            <button id="chooseSingle" class="btn-primary small">Choose File</button>
+            <button id="chooseMulti" class="btn-secondary small">Choose Multiple</button>
+          </div>
         </div>
       </div>
 
+      <!-- Selected list + tiny previews -->
       <ul id="fileList" class="file-list"></ul>
+      <div id="filePreview" class="file-preview"></div>
 
       <div class="upload-actions">
-        <button id="startUpload" class="btn-primary small"><i class="fa-solid fa-upload"></i> Start Upload</button>
-        <button id="clearUploads" class="btn-secondary small"><i class="fa-solid fa-trash"></i> Clear</button>
+        <button id="startUpload" class="btn-primary small">
+          <i class="fa-solid fa-cloud-arrow-up"></i> Upload & Convert
+        </button>
+        <button id="clearUploads" class="btn-secondary small">
+          <i class="fa-solid fa-trash"></i> Clear
+        </button>
       </div>
 
       <div id="uploadProgress" class="progress hidden">
@@ -37,23 +47,23 @@
       </div>
     </section>
 
-
-    <!-- MIDDLE PANEL: Uploaded Files Dashboard -->
+    <!-- ========== MIDDLE: TABLE ========== -->
     <section class="dashboard-panel">
-      <h4><i class="fa-solid fa-table-list"></i> Uploaded Files</h4>
+      <h4><i class="fa-solid fa-table-list"></i> Converted/Uploaded Files</h4>
+
       <div class="search-bar">
-        <input type="text" id="searchUploads" class="form-input" placeholder="🔍 Search by title or subject...">
+        <input type="text" id="searchUploads" class="form-input" placeholder="🔍 Search by filename…">
       </div>
 
       <div class="table-wrapper">
         <table>
           <thead>
             <tr>
-              <th>Title</th>
-              <th>Subject</th>
-              <th>Date</th>
+              <th>Filename</th>
+              <th>Items</th>
+              <th>Size (KB)</th>
               <th>Status</th>
-              <th>Action</th>
+              <th style="min-width: 210px;">Action</th>
             </tr>
           </thead>
           <tbody id="uploadedTable">
@@ -61,23 +71,16 @@
           </tbody>
         </table>
       </div>
-
-      <div class="table-actions">
-        <button id="editFile" class="btn-secondary small"><i class="fa-solid fa-pen"></i> Edit</button>
-        <button id="deleteFile" class="btn-secondary small"><i class="fa-solid fa-trash"></i> Delete</button>
-        <button id="previewFile" class="btn-primary small"><i class="fa-solid fa-eye"></i> Preview</button>
-      </div>
     </section>
 
-
-    <!-- RIGHT PANEL: Push to Portal -->
+    <!-- ========== RIGHT: PUSH ========== -->
     <section class="push-panel">
       <h4><i class="fa-solid fa-paper-plane"></i> Push to Student Portal</h4>
-      <p>Automatically convert uploaded content to JSON and send to student folders.</p>
+      <p>When ready, push selected converted JSON to the student portal (integration to be wired later).</p>
 
       <div class="portal-preview">
         <i class="fa-solid fa-database db-icon"></i>
-        <p class="text-sm text-gray">Ready to push <span id="pushCount">0</span> uploaded items to database</p>
+        <p class="text-sm text-gray">Ready to push <span id="pushCount">0</span> item(s) to database</p>
       </div>
 
       <div class="push-actions">
@@ -91,8 +94,25 @@
 
       <div id="portalLog" class="log-box"></div>
     </section>
-
   </div>
 </div>
 
+<!-- ====== Modal (used for both View & Preview) ====== -->
+<div id="jsonModal" class="modal hidden">
+  <div class="modal-backdrop" data-close="true"></div>
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="jsonModalTitle">Preview</h3>
+      <button class="modal-close" data-close="true"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <pre id="jsonModalBody" class="json-pre pretty-scroll"></pre>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary small" data-close="true">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- The router re-attaches external scripts; this keeps the module self-contained -->
 <script src="{{ url_for('static', filename='js/uploads.js') }}"></script>

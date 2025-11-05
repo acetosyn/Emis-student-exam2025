@@ -1,5 +1,5 @@
 /* ==========================================================
-   EMIS TEACHER PAGE ROUTER — teacher_pageroutes.js (v3)
+   EMIS TEACHER PAGE ROUTER — teacher_pageroutes.js (v4)
    ----------------------------------------------------------
    Dynamically loads teacher tools (uploads, results, reports, etc.)
    into #teacherDynamicContent without leaving teachers.html
@@ -10,6 +10,7 @@
    - Error fallback panel
    - Active button highlight
    - Scroll-to-view on load
+   - ✅ Auto-executes scripts inside dynamically loaded HTML (Option 1)
 ========================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -28,7 +29,6 @@ document.addEventListener("DOMContentLoaded", () => {
       let page = btn.dataset.page;
 
       // ✅ Normalize route to ensure valid endpoint
-      // If no extension is given, add ".html" for Flask templates
       if (!page.endsWith(".html")) {
         page = `${page}.html`;
       }
@@ -41,18 +41,34 @@ document.addEventListener("DOMContentLoaded", () => {
       dynamicContainer.innerHTML = loaderHTML;
 
       try {
-        const response = await fetch(`/admin/${page.replace('.html', '')}`);
-
+        const response = await fetch(`/admin/${page.replace(".html", "")}`);
         if (!response.ok) throw new Error(`Page not found (${response.status})`);
 
         const html = await response.text();
 
-        // Delay a bit for transition smoothness
+        // Insert HTML + reload any embedded scripts
         setTimeout(() => {
-          dynamicContainer.innerHTML = `
-            <div class="fade-slide-in">${html}</div>
-          `;
+          dynamicContainer.innerHTML = `<div class="fade-slide-in">${html}</div>`;
           dynamicContainer.scrollIntoView({ behavior: "smooth" });
+
+          // ✅ Reattach and execute all external scripts inside the loaded HTML
+          const scriptTags = dynamicContainer.querySelectorAll("script[src]");
+          scriptTags.forEach((oldScript) => {
+            const newScript = document.createElement("script");
+            newScript.src = oldScript.src;
+            newScript.async = true;
+            document.body.appendChild(newScript);
+          });
+
+          // ✅ Execute inline scripts if any exist (rare but safe)
+          const inlineScripts = dynamicContainer.querySelectorAll("script:not([src])");
+          inlineScripts.forEach((inline) => {
+            try {
+              eval(inline.textContent);
+            } catch (err) {
+              console.error("⚠️ Inline script error:", err);
+            }
+          });
         }, 250);
       } catch (error) {
         console.error("❌ Route load error:", error);

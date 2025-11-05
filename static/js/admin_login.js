@@ -1,6 +1,5 @@
 // =============================================================
-// EMIS Admin Login Script — v7 (Dynamic Circle Loader + Message + Redirect)
-// Handles: Password toggle, Validation, Overlay, Toast, Typewriter
+// EMIS Admin Login Script — v8 (Live Submit + Rolling Circle Loader)
 // =============================================================
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("adminLoginForm");
@@ -23,50 +22,75 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // =========================================================
-  // FORM SUBMIT HANDLER
-  // =========================================================
-  if (form) {
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
+// =========================================================
+// FORM SUBMIT HANDLER (Live POST + Smooth Loader)
+// =========================================================
+if (form) {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-      const inputs = form.querySelectorAll("input[required]");
-      let valid = true;
+    if (form.classList.contains("submitting")) return;
+    form.classList.add("submitting");
 
-      inputs.forEach((input) => {
-        if (!input.value.trim()) valid = false;
+    const inputs = form.querySelectorAll("input[required]");
+    let valid = true;
+    inputs.forEach((input) => {
+      if (!input.value.trim()) valid = false;
+    });
+
+    if (!valid) {
+      showToast("⚠️ Please fill in all fields", "error");
+      form.classList.remove("submitting");
+      return;
+    }
+
+    // ✅ Show loader (overlay + button)
+    overlay.classList.remove("hidden");
+    const loginBtn = document.querySelector("#loginButton");
+    const btnText = loginBtn.querySelector(".btn-text");
+    const btnLoader = loginBtn.querySelector(".btn-loader");
+
+    btnText.textContent = "Authenticating...";
+    btnLoader.classList.remove("hidden");
+
+    try {
+      const formData = new FormData(form);
+      const response = await fetch("/admin_login", {
+        method: "POST",
+        body: formData,
       });
 
-      if (!valid) {
-        showToast("⚠️ Please fill in all fields", "error");
+      if (response.redirected) {
+        showToast("✅ Login successful! Redirecting...", "success");
+        // ❗ Do not hide loader — keep spinning till redirect
+        window.location.href = response.url;
         return;
       }
 
-      // Show dynamic circular overlay
-      if (overlay) {
-        overlay.classList.remove("hidden");
-        overlay.innerHTML = `
-          <div class="loading-box glassy">
-            <div class="dynamic-loader">
-              <div class="outer-circle"></div>
-              <div class="inner-circle"></div>
-            </div>
-            <p class="loading-text">Authenticating... please wait</p>
-          </div>
-        `;
+      const html = await response.text();
+      if (html.includes("Invalid credentials")) {
+        showToast("❌ Invalid username or password", "error");
+      } else {
+        showToast("⚠️ Login failed. Please try again.", "error");
       }
-
-      // Simulate short delay before redirect
+    } catch (err) {
+      console.error("Login error:", err);
+      showToast("🚫 Network error. Please check your connection.", "error");
+    } finally {
+      // ✅ Only hide loader if NOT redirected (error cases)
       setTimeout(() => {
-        showToast("✅ Login successful! Redirecting...", "success");
+        if (!overlay.classList.contains("hidden")) {
+          overlay.classList.add("hidden");
+          btnLoader.classList.add("hidden");
+          btnText.textContent = "🔑 Login to Dashboard";
+          form.classList.remove("submitting");
+        }
+      }, 800);
+    }
+  });
+}
 
-        // Redirect to admin.html
-        setTimeout(() => {
-          window.location.href = "admin.html";
-        }, 1200);
-      }, 2000);
-    });
-  }
+
 
   // =========================================================
   // TYPEWRITER EFFECT

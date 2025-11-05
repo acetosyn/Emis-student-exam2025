@@ -68,7 +68,7 @@
       <div id="typewriter" class="typewriter-text mb-5 text-center"></div>
 
       <!-- Login Form -->
-      <form id="adminLoginForm" method="POST" action="{{ url_for('admin_login') }}" class="space-y-5">
+      <form id="adminLoginForm" method="POST" action="{{ url_for('admin_bp.admin_login') }}" class="space-y-5">
         <!-- Username -->
         <div class="form-group">
           <label for="admin-username" class="form-label">Admin Username</label>
@@ -90,12 +90,15 @@
           </div>
         </div>
 
-        <!-- Submit -->
-        <button type="submit" class="btn-primary w-full flex items-center justify-center gap-2">
-          <i class="fa-solid fa-key"></i>
-          <span class="btn-text">Login to Dashboard</span>
-        </button>
-      </form>
+      <!-- Submit -->
+    <button type="submit" id="loginButton" class="btn-primary w-full flex items-center justify-center gap-2">
+      <span class="btn-text">🔑 Login to Dashboard</span>
+      <span class="btn-loader hidden">
+        <div class="outer-circle"></div>
+        <div class="inner-circle"></div>
+      </span>
+    </button>
+
 
       <!-- Footer -->
       <p class="login-footer text-center mt-6 text-sm text-gray-500">
@@ -113,6 +116,6 @@
   </div>
 
   <!-- Page Scripts -->
-  <!-- <script src="{{ url_for('static', filename='js/admin_login.js') }}"></script> -->
+  <script src="{{ url_for('static', filename='js/admin_login.js') }}"></script>
 </body>
 </html>

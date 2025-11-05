@@ -1,203 +1,312 @@
-/* ==========================================================
-   EMIS UPLOADS PAGE — uploads.css
-   ----------------------------------------------------------
-   Dynamic file management and database push panel
-   Clean, compact, and fully responsive.
-========================================================== */
-
+/* ============================================================
+   EMIS UPLOADS.CSS — Modern Three-Panel Interface
+   Version 3.0 — Optimized for Teacher Uploads
+   ============================================================ */
 :root {
   --primary: #0f2b46;
+  --primary-dark: #081a2b;
   --accent: #e11d48;
   --accent-light: #f43f5e;
-  --bg-soft: #f8fafc;
-  --bg-white: #ffffff;
-  --border: #e5e7eb;
-  --radius: 14px;
-  --shadow-sm: 0 2px 10px rgba(0,0,0,0.05);
-  --shadow-md: 0 6px 18px rgba(0,0,0,0.12);
-  --transition: all .3s ease;
+  --bg-light: #f8fafc;
+  --text-dark: #0f172a;
+  --radius: 12px;
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 15px rgba(0,0,0,0.08);
+  --shadow-lg: 0 6px 25px rgba(0,0,0,0.12);
 }
 
+/* ======================== Animations ======================== */
+.fade-in { animation: fadeIn 0.5s ease; }
+@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+
+/* ======================== Wrapper ======================== */
 .uploads-wrapper {
-  padding: 1.5rem;
-  background: var(--bg-soft);
+  padding: 1.6rem;
+  background: var(--bg-light);
+  color: var(--text-dark);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
 }
-
 .uploads-header {
+  text-align: center;
   margin-bottom: 1.5rem;
 }
 .uploads-header h3 {
   color: var(--primary);
-  font-weight: 800;
+  font-size: 1.5rem;
+  margin-bottom: 0.3rem;
 }
-.sub-text {
-  color: #6b7280;
+.uploads-header .sub-text {
+  color: #555;
   font-size: 0.9rem;
 }
 
+/* ======================== Grid Layout ======================== */
 .uploads-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: 1.2fr 2fr 1.2fr;
+  gap: 1.4rem;
+}
+.uploads-grid section {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 1rem 1.2rem;
+  display: flex;
+  flex-direction: column;
+  min-height: 480px;
 }
 
-/* ----------------------------------------- */
-/* UPLOAD PANEL */
-.upload-panel {
-  background: var(--bg-white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-  padding: 1.3rem;
-}
+/* ======================== Upload Panel ======================== */
 .upload-panel h4 {
   color: var(--primary);
-  font-weight: 700;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
 }
 .drop-box {
-  border: 2px dashed #cbd5e1;
+  border: 2px dashed var(--accent);
   border-radius: var(--radius);
-  background: #fff;
+  padding: 1.3rem;
+  margin: 0.8rem 0;
   text-align: center;
-  padding: 1.2rem;
-  margin: 1rem 0;
-  transition: var(--transition);
+  position: relative;
+  transition: all 0.25s ease;
 }
-.drop-box:hover {
-  background: #f8fbff;
-  border-color: #60a5fa;
+.drop-box.drag-over {
+  background: #fff3f6;
+  transform: scale(1.03);
 }
 .upload-icon {
-  font-size: 2.2rem;
+  font-size: 2rem;
   color: var(--accent);
+  margin-bottom: 0.4rem;
 }
-.btn-primary.small,
-.btn-secondary.small {
-  font-size: 0.8rem;
-  padding: 0.45rem 0.8rem;
-  border-radius: 8px;
-}
-.file-list {
-  list-style: none;
-  margin: 0.5rem 0;
-  padding: 0;
-  max-height: 120px;
-  overflow-y: auto;
+.flex { display: flex; }
+.gap-2 { gap: 0.6rem; }
+.justify-center { justify-content: center; }
+
+.btn-primary,
+.btn-secondary {
+  border: none;
+  border-radius: 6px;
+  padding: 0.45rem 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
   font-size: 0.85rem;
 }
-.file-list li {
-  padding: 0.3rem 0.5rem;
-  border-bottom: 1px solid var(--border);
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
 }
-.file-list li span {
-  float: right;
-  color: #64748b;
+.btn-primary:hover { background: #c3133e; }
+.btn-secondary {
+  background: #e5e7eb;
+  color: #111;
+}
+.btn-secondary:hover { background: #d1d5db; }
+
+.file-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 0.6rem;
+  font-size: 0.9rem;
+}
+.file-list li {
+  display: flex;
+  justify-content: space-between;
+  background: #f9fafb;
+  margin-bottom: 0.3rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 6px;
+}
+.file-list .empty { color: #999; text-align: center; }
+
+.file-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+  margin-top: 0.8rem;
+}
+.preview-card {
+  width: 90px;
+  height: 100px;
+  background: #f9fafb;
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  text-align: center;
+  padding: 0.4rem;
+  transition: 0.25s ease;
+}
+.preview-card:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-md);
+}
+.preview-card img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 0.2rem;
+}
+.pdf-icon { font-size: 2.4rem; color: #dc2626; margin-bottom: 0.2rem; }
+.generic-icon { font-size: 2.2rem; color: #6b7280; margin-bottom: 0.2rem; }
+
+.upload-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.8rem;
 }
 
-/* ----------------------------------------- */
-/* MIDDLE PANEL */
-.dashboard-panel {
-  background: var(--bg-white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-  padding: 1.3rem;
+.progress {
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 0.7rem;
+}
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width 0.3s linear;
+}
+
+/* ======================== Dashboard Panel ======================== */
+.dashboard-panel h4 {
+  color: var(--primary);
+  margin-bottom: 0.5rem;
 }
 .search-bar { margin-bottom: 0.8rem; }
-.table-wrapper {
-  max-height: 240px;
-  overflow-y: auto;
-  border: 1px solid var(--border);
+.search-bar input {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #ddd;
   border-radius: 8px;
 }
+.table-wrapper { overflow-x: auto; border-radius: 8px; }
 table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.85rem;
+  font-size: 0.88rem;
 }
-table th, table td {
-  padding: 0.5rem;
-  border-bottom: 1px solid var(--border);
+th, td {
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid #eee;
+  text-align: left;
 }
-table th {
-  color: #6b7280;
-  text-transform: uppercase;
-  font-size: 0.7rem;
-}
-table td.empty {
-  text-align: center;
-  color: #9ca3af;
-  padding: 1rem;
-}
-.table-actions {
-  margin-top: 0.6rem;
-  display: flex;
-  gap: 0.5rem;
-  justify-content: flex-end;
-}
-
-/* ----------------------------------------- */
-/* RIGHT PANEL */
-.push-panel {
-  background: var(--bg-white);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-  padding: 1.3rem;
-}
-.push-panel h4 {
+th {
+  background: #f3f4f6;
   color: var(--primary);
   font-weight: 700;
+}
+td.center { text-align: center; }
+.actions button { margin-right: 0.3rem; }
+.status.success { color: #16a34a; font-weight: 600; }
+
+/* ======================== Push Panel ======================== */
+.push-panel h4 {
+  color: var(--primary);
   margin-bottom: 0.5rem;
 }
 .portal-preview {
   text-align: center;
-  margin: 1rem 0;
+  background: #f9fafb;
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-bottom: 0.8rem;
 }
-.db-icon {
-  font-size: 2rem;
-  color: var(--accent);
-}
+.db-icon { font-size: 2.5rem; color: var(--accent); }
 .push-actions {
   display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-  margin-top: 1rem;
+  flex-direction: column;
+  gap: 0.6rem;
 }
 .log-box {
-  background: #f9fafb;
+  background: #f3f4f6;
+  font-size: 0.85rem;
+  color: #333;
   border-radius: 8px;
-  border: 1px solid var(--border);
-  font-size: 0.8rem;
-  padding: 0.8rem;
-  margin-top: 1rem;
+  padding: 0.6rem;
+  margin-top: 0.6rem;
   height: 120px;
   overflow-y: auto;
 }
 
-/* ----------------------------------------- */
-/* PROGRESS BAR */
-.progress {
-  width: 100%;
-  height: 6px;
-  background: #eef2f7;
-  border-radius: 999px;
+/* ======================== Modal ======================== */
+.modal.hidden { display: none; }
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  backdrop-filter: blur(2px);
+}
+.modal-card {
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  width: 85%;
+  max-width: 800px;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
   overflow: hidden;
-  margin-top: 0.8rem;
+  animation: fadeIn 0.4s ease;
 }
-.progress-bar {
-  height: 100%;
-  background: linear-gradient(90deg, var(--accent), var(--accent-light));
-  width: 0%;
-  transition: width 0.3s ease;
+.modal-header,
+.modal-footer {
+  padding: 0.7rem 1rem;
+  background: #f9fafb;
+  border-bottom: 1px solid #eee;
 }
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--primary);
+  font-weight: 700;
+}
+.modal-body {
+  padding: 1rem;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+.json-pre {
+  font-family: "Courier New", monospace;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #1e293b;
+  background: #f9fafb;
+  padding: 1rem;
+  border-radius: 8px;
+}
+.modal-close {
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #666;
+}
+.modal-close:hover { color: var(--accent); }
 
-/* ----------------------------------------- */
-/* ANIMATIONS */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.fade-in { animation: fadeIn 0.6s ease both; }
-
-@media (max-width: 768px) {
+/* ======================== Responsiveness ======================== */
+@media (max-width: 1024px) {
   .uploads-grid { grid-template-columns: 1fr; }
+  .uploads-grid section { min-height: auto; }
+  .modal-card { width: 95%; }
 }
