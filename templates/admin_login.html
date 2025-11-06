@@ -67,37 +67,67 @@
       <!-- Typewriter Text -->
       <div id="typewriter" class="typewriter-text mb-5 text-center"></div>
 
-      <!-- Login Form -->
-      <form id="adminLoginForm" method="POST" action="{{ url_for('admin_bp.admin_login') }}" class="space-y-5">
-        <!-- Username -->
-        <div class="form-group">
-          <label for="admin-username" class="form-label">Admin Username</label>
-          <div class="input-box">
-            <i class="fa-solid fa-user input-icon"></i>
-            <input type="text" id="admin-username" name="username" required placeholder="Enter your admin username" class="form-input pl-10">
-          </div>
-        </div>
+     <!-- Login Form -->
+{% if error %}
+  <div class="error-box bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 animate-fadeIn">
+    <strong class="font-semibold">Login Failed:</strong> {{ error }}
+  </div>
+{% endif %}
 
-        <!-- Password -->
-        <div class="form-group">
-          <label for="admin-password" class="form-label">Password</label>
-          <div class="password-box input-box">
-            <i class="fa-solid fa-lock input-icon"></i>
-            <input type="password" id="admin-password" name="password" required placeholder="Enter your password" class="form-input pl-10 pr-10">
-            <button type="button" class="toggle-password" data-target="admin-password" aria-label="Show/Hide password">
-              <i class="fas fa-eye"></i>
-            </button>
-          </div>
-        </div>
+<form id="adminLoginForm" method="POST" action="{{ url_for('admin_bp.admin_login') }}" class="space-y-5">
+  <!-- Username -->
+  <div class="form-group">
+    <label for="admin-username" class="form-label">Username / ID</label>
+    <div class="input-box">
+      <i class="fa-solid fa-user input-icon"></i>
+      <input
+        type="text"
+        id="admin-username"
+        name="username"
+        required
+        placeholder="Enter Admin or Teacher ID"
+        class="form-input pl-10"
+      >
+    </div>
+  </div>
 
-      <!-- Submit -->
-    <button type="submit" id="loginButton" class="btn-primary w-full flex items-center justify-center gap-2">
-      <span class="btn-text">🔑 Login to Dashboard</span>
-      <span class="btn-loader hidden">
-        <div class="outer-circle"></div>
-        <div class="inner-circle"></div>
-      </span>
-    </button>
+  <!-- Password -->
+  <div class="form-group">
+    <label for="admin-password" class="form-label">Password</label>
+    <div class="password-box input-box">
+      <i class="fa-solid fa-lock input-icon"></i>
+      <input
+        type="password"
+        id="admin-password"
+        name="password"
+        required
+        placeholder="Enter your password"
+        class="form-input pl-10 pr-10"
+      >
+      <button
+        type="button"
+        class="toggle-password"
+        data-target="admin-password"
+        aria-label="Show/Hide password"
+      >
+        <i class="fas fa-eye"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- Submit -->
+  <button
+    type="submit"
+    id="loginButton"
+    class="btn-primary w-full flex items-center justify-center gap-2"
+  >
+    <span class="btn-text">🔑 Login to Dashboard</span>
+    <span class="btn-loader hidden">
+      <div class="outer-circle"></div>
+      <div class="inner-circle"></div>
+    </span>
+  </button>
+</form>
 
 
       <!-- Footer -->
@@ -117,5 +147,7 @@
 
   <!-- Page Scripts -->
   <script src="{{ url_for('static', filename='js/admin_login.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/privileges.js') }}"></script>
+
 </body>
 </html>

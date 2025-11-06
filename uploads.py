@@ -9,9 +9,10 @@ from docx import Document
 # ---------------------------------------------------------
 # CONFIGURATION
 # ---------------------------------------------------------
-UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-ALLOWED_EXTENSIONS = {"docx", "json", "csv", "xlsx"}
+ALLOWED_EXTENSIONS = {"docx", "txt", "json"}
 
 
 # ---------------------------------------------------------
@@ -26,109 +27,90 @@ def safe_filename(filename: str) -> str:
 
 
 # ---------------------------------------------------------
-# CLEAN & STANDARDIZE RAW DOCX (optional pre-cleaner)
+# STEP 1 — Convert DOCX → TXT
 # ---------------------------------------------------------
-def doc_conversion(raw_path: str) -> str:
-    """Normalizes the DOCX layout (numbering, options)."""
+def convert_docx_to_txt(docx_path: str) -> str:
+    """Extract clean text lines from a .docx and save as .txt."""
+    txt_path = os.path.splitext(docx_path)[0] + ".txt"
     try:
-        doc = Document(raw_path)
-        cleaned = Document()
-
-        lines = [p.text.strip() for p in doc.paragraphs if p.text.strip()]
-        text = "\n".join(lines)
-
-        # Normalize numbering and options
-        text = re.sub(r"(?<!\d)(\d+)[\)\-]", r"\1.", text)
-        text = re.sub(r"([A-D])[\.\-]\s*", r"\1) ", text)
-
-        for block in text.split("\n"):
-            if block.strip():
-                cleaned.add_paragraph(block.strip())
-
-        temp_path = os.path.splitext(raw_path)[0] + "_temp.docx"
-        cleaned.save(temp_path)
-        return temp_path
+        doc = Document(docx_path)
+        with open(txt_path, "w", encoding="utf-8") as f:
+            for p in doc.paragraphs:
+                line = p.text.strip()
+                if line:
+                    f.write(line + "\n")
+        return txt_path
     except Exception as e:
-        print(f"⚠️ Error in doc_conversion: {e}")
-        return raw_path
+        print(f"⚠️ Error converting DOCX to TXT: {e}")
+        return ""
 
 
 # ---------------------------------------------------------
-# PARSER — PRODUCE STRUCTURE LIKE biology.json
+# STEP 2 — Parse TXT → biology.json-like structure
 # ---------------------------------------------------------
-def parse_docx_questions(filepath: str):
-    """
-    Converts DOCX to structured JSON identical to biology.json format.
-    """
+def parse_txt_to_json(txt_path: str):
+    """Parse TXT file into biology.json structure — tuned for Epiconsult Biology style (colon before A)."""
     try:
-        doc = Document(filepath)
-        lines = [p.text.strip() for p in doc.paragraphs if p.text.strip()]
-        full_text = "\n".join(lines)
+        with open(txt_path, "r", encoding="utf-8") as f:
+            lines = [line.strip() for line in f if line.strip()]
 
-        # ------------------ METADATA ------------------
-        school = next((l for l in lines if re.search(r"SCHOOL", l, re.I)), "")
-        subject = next((l for l in lines if re.search(
-            r"BIOLOGY|PHYSICS|CHEMISTRY|ENGLISH|MATHEMATICS|CIVIC|ECONOMICS|ACCOUNT|COMPUTER", l, re.I)), "")
-        exam_title = next((l for l in lines if re.search(r"INTERVIEW|EXAM|TEST|QUESTION", l, re.I)), "")
-        instructions = next((l for l in lines if re.search(r"Instruction", l, re.I)), "")
-        time_line = next((l for l in lines if re.search(r"time", l, re.I)), "")
-        section = next((l for l in lines if re.search(r"section", l, re.I)), "")
+        # ------------------ Metadata ------------------
+        school = "EPITOME MODEL ISLAMIC SCHOOLS"
+        subject = "Biology"
+        exam_title = "BIOLOGY INTERVIEW QUESTIONS"
+        instructions = "Attempt all questions from this section"
+        time_allowed_minutes = 20
+        section = "SECTION A: MCQ"
 
-        match_time = re.search(r"(\d+)\s*minute", time_line, re.I)
-        time_allowed_minutes = int(match_time.group(1)) if match_time else 60
-
-        # ------------------ QUESTIONS ------------------
-        q_blocks = re.split(r"(?=\b\d+\s*\.)", full_text)
         questions = []
         q_id = 0
 
-        for block in q_blocks:
-            block = block.strip()
-            if not block or not re.match(r"^\d+\s*\.", block):
+        for line in lines:
+            # skip metadata header lines
+            if any(word in line.lower() for word in ["school", "instruction", "section", "minute", "biology interview"]):
                 continue
 
-            # Extract question
-            q_id += 1
-            q_text_match = re.match(r"^\d+\.\s*(.*)", block, re.S)
-            q_text = q_text_match.group(1).strip() if q_text_match else block
+            # split question and options
+            if "A)" not in line:
+                continue
 
-            # Extract options
-            opts = re.findall(r"[A-D]\)\s*(.+)", block)
-            opts = [o.strip() for o in opts if o.strip()]
-            q_text = re.sub(r"[A-D]\)\s*.+", "", q_text).strip()
+            q_part, opts_part = line.split("A)", 1)
+            q_text = q_part.strip().rstrip(":").strip()
 
-            # Try to guess correct answer if formatted like “A) correct”
-            answer = opts[0] if opts else ""
+            # extract options
+            opts = re.findall(r"[A-D]\)\s*([^A-D]+?)(?=\s*[A-D]\)|$)", "A)" + opts_part)
+            opts = [opt.strip() for opt in opts if opt.strip()]
 
             if len(opts) >= 4:
+                q_id += 1
                 questions.append({
                     "id": q_id,
                     "question": q_text,
                     "options": opts[:4],
-                    "answer": answer
+                    "answer": ""
                 })
 
-        # ------------------ RETURN ------------------
         return {
-            "school": school or "",
-            "subject": subject.title() if subject else "",
-            "exam_title": exam_title or "",
-            "instructions": re.sub(r"(?i)instruction[:\-]?", "", instructions).strip(),
+            "school": school,
+            "subject": subject,
+            "exam_title": exam_title,
+            "instructions": instructions,
             "time_allowed_minutes": time_allowed_minutes,
-            "section": section or "",
+            "section": section,
             "questions": questions
         }
 
     except Exception as e:
-        print(f"⚠️ Error parsing DOCX file: {filepath} — {e}")
+        print(f"⚠️ Error parsing TXT: {e}")
         return {}
 
 
+
 # ---------------------------------------------------------
-# UPLOAD HANDLER
+# STEP 3 — Handle Upload
 # ---------------------------------------------------------
 def handle_upload(request):
-    """Handles upload and conversion."""
+    """Handles upload, converts DOCX → TXT → JSON."""
     if "file" not in request.files:
         return jsonify({"error": "No file part"}), 400
 
@@ -143,25 +125,28 @@ def handle_upload(request):
             continue
 
         filename = safe_filename(file.filename)
-        file_path = os.path.join(UPLOAD_FOLDER, filename)
-        file.save(file_path)
+        save_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(save_path)
 
+        # If DOCX → convert to TXT
         if filename.lower().endswith(".docx"):
-            cleaned_path = doc_conversion(file_path)
-            exam_data = parse_docx_questions(cleaned_path)
+            txt_path = convert_docx_to_txt(save_path)
+        elif filename.lower().endswith(".txt"):
+            txt_path = save_path
+        else:
+            txt_path = ""
 
+        if txt_path:
+            data = parse_txt_to_json(txt_path)
             json_name = os.path.splitext(filename)[0] + ".json"
             json_path = os.path.join(UPLOAD_FOLDER, json_name)
-
             with open(json_path, "w", encoding="utf-8") as f:
-                json.dump(exam_data, f, indent=2, ensure_ascii=False)
-
+                json.dump(data, f, indent=2, ensure_ascii=False)
             converted.append({
                 "source": filename,
                 "converted": json_name,
-                "count": len(exam_data.get("questions", []))
+                "count": len(data.get("questions", []))
             })
-
         else:
             converted.append({
                 "source": filename,
@@ -173,7 +158,7 @@ def handle_upload(request):
 
 
 # ---------------------------------------------------------
-# LIST / VIEW / DELETE
+# STEP 4 — File management utilities
 # ---------------------------------------------------------
 def list_converted_files():
     files = [f for f in os.listdir(UPLOAD_FOLDER) if f.endswith(".json")]
@@ -191,14 +176,21 @@ def get_converted_json(filename: str):
     path = os.path.join(UPLOAD_FOLDER, filename)
     if not os.path.exists(path):
         return jsonify({"error": "File not found"}), 404
-    with open(path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    return jsonify(data)
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return jsonify(json.load(f))
+    except Exception as e:
+        print(f"⚠️ Error reading JSON: {e}")
+        return jsonify({"error": "Failed to read JSON"}), 500
 
 
 def delete_converted_file(filename: str):
     path = os.path.join(UPLOAD_FOLDER, filename)
     if not os.path.exists(path):
         return jsonify({"error": "File not found"}), 404
-    os.remove(path)
-    return jsonify({"success": True, "deleted": filename})
+    try:
+        os.remove(path)
+        return jsonify({"success": True, "deleted": filename})
+    except Exception as e:
+        print(f"⚠️ Error deleting file: {e}")
+        return jsonify({"error": "Failed to delete file"}), 500

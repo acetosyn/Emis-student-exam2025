@@ -266,3 +266,43 @@
   transform: scale(1.05);
   box-shadow: var(--shadow-hover);
 }
+
+
+/* ==========================================================
+   FIX: Force visible colored header buttons (override admin1.css)
+========================================================== */
+.btn-primary,
+.btn-secondary {
+  all: unset; /* remove inherited white button rules */
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.4rem !important;
+  border-radius: 10px !important;
+  padding: 0.6rem 1rem !important;
+  font-weight: 600 !important;
+  font-size: 0.88rem !important;
+  cursor: pointer !important;
+  color: #fff !important;
+  transition: all 0.25s ease !important;
+}
+
+/* Manage button (Primary) */
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1e3a8a) !important;
+  box-shadow: 0 3px 10px rgba(37,99,235,0.25) !important;
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e3a8a) !important;
+  transform: translateY(-2px);
+}
+
+/* Refresh button (Secondary) */
+.btn-secondary {
+  background: linear-gradient(135deg, #0d9488, #115e59) !important;
+  box-shadow: 0 3px 10px rgba(13,148,136,0.25) !important;
+}
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #0f766e, #134e4a) !important;
+  transform: translateY(-2px);
+}

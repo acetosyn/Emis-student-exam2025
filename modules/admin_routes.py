@@ -1,5 +1,6 @@
 # modules/admin_routes.py
-from flask import Blueprint, render_template, redirect, url_for, session, jsonify, request
+from flask import Blueprint, request, session, redirect, url_for, jsonify, render_template
+from engine import generate_teacher_ids, get_all_teachers, validate_teacher_login
 from pathlib import Path
 import csv
 from datetime import datetime
@@ -13,23 +14,63 @@ LOGS_DIR = BASE_DIR / "logs"
 LOGS_DIR.mkdir(exist_ok=True)
 
 
-# -------------------- ADMIN LOGIN --------------------
+# -------------------- UNIFIED ADMIN / TEACHER LOGIN --------------------
 @admin_bp.route('/admin_login', methods=['GET', 'POST'])
 def admin_login():
-    from app import ADMIN_USERNAME, ADMIN_PASSWORD  # avoid circular import
+    from app import ADMIN_USERNAME, ADMIN_PASSWORD  # load env credentials
+
     if request.method == 'POST':
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '').strip()
 
+        # 1️⃣ Check for ADMIN credentials first
         if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
             session.clear()
             session['user_type'] = 'admin'
             session['username'] = username
             return redirect(url_for('admin_bp.admin_dashboard'))
-        else:
-            return render_template('admin_login.html', error="Invalid credentials")
+
+        # 2️⃣ If not admin, check for TEACHER credentials from DB
+        if validate_teacher_login(username, password):
+            session.clear()
+            session['user_type'] = 'teacher'
+            session['teacher_id'] = username
+            return redirect(url_for('admin_bp.admin_dashboard'))
+
+        # 3️⃣ If neither admin nor teacher match
+        return render_template('admin_login.html', error="❌ Invalid Username or Password")
 
     return render_template('admin_login.html')
+
+
+
+# -------------------- GENERATE TEACHER IDS (AJAX) --------------------
+@admin_bp.route("/generate_teacher_ids", methods=["GET", "POST"])
+def generate_teacher_ids_api():
+    if session.get("user_type") != "admin":
+        return jsonify({"error": "Unauthorized"}), 403
+
+    try:
+        if request.method == "POST":
+            num = int(request.form.get("count", 1))
+            if num < 1 or num > 100:
+                return jsonify({"error": "Invalid count"}), 400
+
+            generated = generate_teacher_ids(count=num)
+            all_teachers = get_all_teachers()
+            return jsonify({
+                "message": f"{len(generated)} Teacher IDs generated successfully.",
+                "generated": generated,
+                "teachers": all_teachers
+            })
+
+        # GET request → fetch all existing teacher IDs
+        return jsonify({"teachers": get_all_teachers()})
+    except Exception as e:
+        print("⚠️ Error generating IDs:", e)
+        return jsonify({"error": str(e)}), 500
+
+
 
 
 # -------------------- ADMIN DASHBOARD + SUBPAGES --------------------

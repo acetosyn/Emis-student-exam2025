@@ -1,0 +1,266 @@
+/* ==========================================================
+   EMIS ID MANAGEMENT — ids.css (v6.5)
+   ----------------------------------------------------------
+   Navy-blue stat cards + visible buttons (override admin1.css)
+========================================================== */
+
+:root {
+  --primary: #0f2b46;      /* Navy Blue */
+  --accent: #e11d48;
+  --bg-white: #ffffff;
+  --bg-soft: #f8fafc;
+  --border: #e5e7eb;
+  --radius: 12px;
+  --shadow-sm: 0 2px 6px rgba(0,0,0,0.06);
+  --shadow-md: 0 6px 16px rgba(0,0,0,0.12);
+  --shadow-hover: 0 8px 20px rgba(0,0,0,0.16);
+  --transition: all 0.25s ease;
+}
+
+/* ----------------------------------------------------------
+   ADMIN DASHBOARD LAYOUT
+---------------------------------------------------------- */
+.admin-dashboard {
+  padding: 2rem;
+  background: linear-gradient(135deg, #f9fafc, #eef2f7);
+  animation: fadeIn .6s ease both;
+}
+
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.dash-header h2 {
+  font-weight: 800;
+  color: var(--primary);
+  margin: 0;
+}
+.dash-header p {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-top: 0.3rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+/* ----------------------------------------------------------
+   BUTTONS — FORCE OVERRIDE admin1.css
+---------------------------------------------------------- */
+.btn-primary,
+.btn-secondary {
+  all: unset; /* reset admin1.css rules completely */
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.4rem !important;
+  border-radius: 10px !important;
+  padding: 0.6rem 1rem !important;
+  font-weight: 600 !important;
+  font-size: 0.88rem !important;
+  cursor: pointer !important;
+  color: #fff !important;
+  transition: var(--transition) !important;
+}
+
+/* Visible Generate Teacher IDs button */
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1e3a8a) !important;
+  box-shadow: 0 3px 10px rgba(37,99,235,0.25) !important;
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e3a8a) !important;
+  transform: translateY(-2px);
+}
+
+/* Visible Sync Supabase button */
+.btn-secondary {
+  background: linear-gradient(135deg, #0d9488, #115e59) !important;
+  box-shadow: 0 3px 10px rgba(13,148,136,0.25) !important;
+}
+.btn-secondary:hover {
+  background: linear-gradient(135deg, #0f766e, #134e4a) !important;
+  transform: translateY(-2px);
+}
+
+/* ----------------------------------------------------------
+   STAT CARDS — NAVY BLUE WITH WHITE TEXT
+---------------------------------------------------------- */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--primary) !important;
+  color: #ffffff !important;
+  border-radius: var(--radius);
+  padding: 0.7rem 1rem;
+  box-shadow: var(--shadow-md);
+  transition: var(--transition);
+  min-height: 65px;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.stat-card .icon {
+  font-size: 1.3rem;
+  opacity: 0.95;
+  color: #fff !important;
+}
+.stat-card p {
+  margin: 0;
+  font-weight: 600;
+  font-size: 0.82rem;
+  color: #fff !important;
+}
+.stat-card h2 {
+  margin: 0.15rem 0 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #fff !important;
+}
+
+/* ----------------------------------------------------------
+   QUICK ID TOOLS (retain colorful styles)
+---------------------------------------------------------- */
+.quick-modules {
+  background: var(--bg-white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+.quick-modules h3 {
+  font-weight: 700;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.quick-modules .sub-text {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 1.2rem;
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(85px, 1fr));
+  gap: 0.8rem;
+  justify-items: center;
+}
+.module-item {
+  width: 100%;
+  max-width: 90px;
+  min-height: 75px;
+  border-radius: 12px;
+  color: #fff;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.74rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.module-item:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Keep Quick Tool colors intact */
+.blue { background: #3b82f6; }
+.teal { background: #0d9488; }
+.green { background: #10b981; }
+.orange { background: #f59e0b; color: #111; }
+.purple { background: #6366f1; }
+.red { background: #e11d48; }
+.yellow { background: #facc15; color: #111; }
+.pink { background: #ec4899; }
+
+/* ----------------------------------------------------------
+   ANIMATIONS
+---------------------------------------------------------- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ==========================================================
+   FIX: Header Filters + Table Header (restore navy theme)
+========================================================== */
+
+/* Dropdown + Search row */
+.filter-bar,
+.view-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--primary);
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1rem;
+}
+
+.filter-bar select,
+.filter-bar input[type="text"],
+.view-controls select,
+.view-controls input[type="text"] {
+  background: #f1f5f9;
+  border: none;
+  border-radius: 8px;
+  padding: 0.45rem 0.75rem;
+  font-size: 0.9rem;
+  color: var(--primary);
+  font-weight: 600;
+  outline: none;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+  transition: var(--transition);
+}
+
+.filter-bar select:focus,
+.filter-bar input[type="text"]:focus {
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.25);
+}
+
+/* Export button area alignment */
+.export-btn {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* Table Header — bring back navy blue */
+table thead {
+  background: var(--primary) !important;
+  color: #fff !important;
+}
+table thead th {
+  padding: 0.85rem;
+  text-align: left;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  font-size: 0.85rem;
+}
+table tbody tr:hover {
+  background: #f9fafc;
+}
