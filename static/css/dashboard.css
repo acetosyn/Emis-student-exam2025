@@ -270,3 +270,55 @@
   }
   .module-item i { font-size: 1rem; }
 }
+
+
+
+/* ROLE DECORATOR BADGE */
+.user-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  box-shadow: var(--shadow-sm);
+  color: #fff;
+  letter-spacing: 0.3px;
+  margin-top: 0.8rem;
+  animation: fadeIn 0.5s ease both;
+}
+
+.user-role-badge[data-role="admin"] {
+  background: linear-gradient(135deg, #0f2b46, #1e3a8a);
+}
+
+.user-role-badge[data-role="teacher"] {
+  background: linear-gradient(135deg, #059669, #047857);
+}
+
+/* ==========================================================
+   LOGGED-IN USER DISPLAY
+   ----------------------------------------------------------
+   Shows the current username or teacher ID elegantly
+========================================================== */
+.logged-user-display {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #334155;
+  opacity: 0.9;
+}
+
+.logged-user-display i {
+  color: var(--primary);
+  font-size: 1rem;
+}
+
+.logged-user-display strong {
+  color: var(--accent);
+  font-weight: 700;
+}

@@ -23,15 +23,17 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 // =========================================================
-// FORM SUBMIT HANDLER (Live POST + Smooth Loader)
+// FORM SUBMIT HANDLER (Live POST + Smooth Loader + Inline Errors)
 // =========================================================
 if (form) {
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
+    // Prevent double submissions
     if (form.classList.contains("submitting")) return;
     form.classList.add("submitting");
 
+    // Validate inputs
     const inputs = form.querySelectorAll("input[required]");
     let valid = true;
     inputs.forEach((input) => {
@@ -44,7 +46,7 @@ if (form) {
       return;
     }
 
-    // ✅ Show loader (overlay + button)
+    // ✅ Show loader overlay + button spinner
     overlay.classList.remove("hidden");
     const loginBtn = document.querySelector("#loginButton");
     const btnText = loginBtn.querySelector(".btn-text");
@@ -53,6 +55,9 @@ if (form) {
     btnText.textContent = "Authenticating...";
     btnLoader.classList.remove("hidden");
 
+    // Remove any previous inline error box
+    document.querySelectorAll(".error-box").forEach(el => el.remove());
+
     try {
       const formData = new FormData(form);
       const response = await fetch("/admin_login", {
@@ -60,24 +65,44 @@ if (form) {
         body: formData,
       });
 
+      // ✅ Redirect if login success (Admin or Teacher)
       if (response.redirected) {
         showToast("✅ Login successful! Redirecting...", "success");
-        // ❗ Do not hide loader — keep spinning till redirect
         window.location.href = response.url;
         return;
       }
 
+      // 🔍 Parse returned HTML (error cases)
       const html = await response.text();
-      if (html.includes("Invalid credentials")) {
-        showToast("❌ Invalid username or password", "error");
-      } else {
-        showToast("⚠️ Login failed. Please try again.", "error");
+
+      // Detect backend error messages
+      let errorMessage = "⚠️ Login failed. Please try again.";
+      if (html.includes("Invalid") || html.includes("❌")) {
+        errorMessage = "❌ Invalid username or password";
       }
+
+      // ✅ Create and inject visible error box above form
+      const errorBox = document.createElement("div");
+      errorBox.className =
+        "error-box bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 animate-fadeIn";
+      errorBox.innerHTML = `<strong class='font-semibold'>Login Failed:</strong> ${errorMessage}`;
+      form.parentNode.insertBefore(errorBox, form);
+
+      showToast(errorMessage, "error");
     } catch (err) {
       console.error("Login error:", err);
+
+      // Inject network error box
+      const errorBox = document.createElement("div");
+      errorBox.className =
+        "error-box bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4 animate-fadeIn";
+      errorBox.innerHTML =
+        "<strong class='font-semibold'>Connection Error:</strong> 🚫 Please check your network.";
+      form.parentNode.insertBefore(errorBox, form);
+
       showToast("🚫 Network error. Please check your connection.", "error");
     } finally {
-      // ✅ Only hide loader if NOT redirected (error cases)
+      // ✅ Hide loader if not redirected
       setTimeout(() => {
         if (!overlay.classList.contains("hidden")) {
           overlay.classList.add("hidden");

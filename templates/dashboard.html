@@ -8,21 +8,38 @@
 {% block content %}
 <div class="admin-dashboard">
 
-  <!-- ================= HEADER ================= -->
-  <div class="dash-header">
-    <div class="title-block">
-      <h2>Admin Dashboard</h2>
-      <p>Real-time analytics • Performance tracking • Exam control</p>
+<!-- ================= HEADER ================= -->
+<div class="dash-header">
+  <div class="title-block">
+    <h2>Admin Dashboard</h2>
+    <p>Real-time analytics • Performance tracking • Exam control</p>
+
+    <!-- ROLE DECORATOR -->
+    <div class="user-role-badge" data-role="{{ user_type|default('admin') }}">
+      {% if user_type == 'teacher' %}
+        <i class="fa-solid fa-chalkboard-user"></i> Teacher Account
+      {% else %}
+        <i class="fa-solid fa-shield-halved"></i> Admin Account
+      {% endif %}
     </div>
-    <div class="header-actions">
-      <button id="manageSystem" class="btn-secondary">
-        <i class="fa-solid fa-gear"></i> Manage System
-      </button>
-      <button id="refreshDashboard" class="btn-primary">
-        <i class="fa-solid fa-rotate"></i> Refresh
-      </button>
+
+    <!-- LOGGED-IN USER DISPLAY -->
+    <div class="logged-user-display">
+      <i class="fa-solid fa-user-circle"></i>
+      <span>Logged in as:</span>
+      <strong>{{ session.get('username') or session.get('teacher_id') }}</strong>
     </div>
   </div>
+
+  <div class="header-actions">
+    <button id="manageSystem" class="btn-secondary">
+      <i class="fa-solid fa-gear"></i> Manage System
+    </button>
+    <button id="refreshDashboard" class="btn-primary">
+      <i class="fa-solid fa-rotate"></i> Refresh
+    </button>
+  </div>
+</div>
 
   <!-- ================= STATS OVERVIEW ================= -->
   <section class="stat-grid fade-in">

@@ -1,5 +1,6 @@
 # modules/admin_routes.py
-from flask import Blueprint, request, session, redirect, url_for, jsonify, render_template
+from flask import Blueprint, request, session, redirect, url_for, jsonify, render_template, flash
+from functools import wraps
 from engine import generate_teacher_ids, get_all_teachers, validate_teacher_login
 from pathlib import Path
 import csv
@@ -14,7 +15,33 @@ LOGS_DIR = BASE_DIR / "logs"
 LOGS_DIR.mkdir(exist_ok=True)
 
 
-# -------------------- UNIFIED ADMIN / TEACHER LOGIN --------------------
+# ==========================================================
+# 🔒 DECORATORS
+# ==========================================================
+def admin_only(view_func):
+    """Restrict access to admin users only."""
+    @wraps(view_func)
+    def wrapper(*args, **kwargs):
+        if session.get("user_type") != "admin":
+            flash("⚠️ Access Restricted — Admin privileges required.", "error")
+            return redirect(url_for("admin_bp.admin_login"))
+        return view_func(*args, **kwargs)
+    return wrapper
+
+
+def teacher_allowed(view_func):
+    """Allow both admin and teacher; block unauthenticated."""
+    @wraps(view_func)
+    def wrapper(*args, **kwargs):
+        if session.get("user_type") not in ["admin", "teacher"]:
+            return redirect(url_for("admin_bp.admin_login"))
+        return view_func(*args, **kwargs)
+    return wrapper
+
+
+# ==========================================================
+# 🧩 UNIFIED ADMIN / TEACHER LOGIN
+# ==========================================================
 @admin_bp.route('/admin_login', methods=['GET', 'POST'])
 def admin_login():
     from app import ADMIN_USERNAME, ADMIN_PASSWORD  # load env credentials
@@ -23,33 +50,33 @@ def admin_login():
         username = request.form.get('username', '').strip()
         password = request.form.get('password', '').strip()
 
-        # 1️⃣ Check for ADMIN credentials first
+        # ✅ Admin credentials
         if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
             session.clear()
             session['user_type'] = 'admin'
             session['username'] = username
             return redirect(url_for('admin_bp.admin_dashboard'))
 
-        # 2️⃣ If not admin, check for TEACHER credentials from DB
+        # ✅ Teacher credentials
         if validate_teacher_login(username, password):
             session.clear()
             session['user_type'] = 'teacher'
             session['teacher_id'] = username
-            return redirect(url_for('admin_bp.admin_dashboard'))
+            # Teachers skip dashboard → go to Teachers page directly
+            return redirect(url_for('admin_bp.admin_teachers'))
 
-        # 3️⃣ If neither admin nor teacher match
+        # ❌ Invalid credentials
         return render_template('admin_login.html', error="❌ Invalid Username or Password")
 
     return render_template('admin_login.html')
 
 
-
-# -------------------- GENERATE TEACHER IDS (AJAX) --------------------
+# ==========================================================
+# 🧩 TEACHER ID GENERATION (Admin Only)
+# ==========================================================
 @admin_bp.route("/generate_teacher_ids", methods=["GET", "POST"])
+@admin_only
 def generate_teacher_ids_api():
-    if session.get("user_type") != "admin":
-        return jsonify({"error": "Unauthorized"}), 403
-
     try:
         if request.method == "POST":
             num = int(request.form.get("count", 1))
@@ -64,110 +91,96 @@ def generate_teacher_ids_api():
                 "teachers": all_teachers
             })
 
-        # GET request → fetch all existing teacher IDs
         return jsonify({"teachers": get_all_teachers()})
     except Exception as e:
         print("⚠️ Error generating IDs:", e)
         return jsonify({"error": str(e)}), 500
 
 
-
-
-# -------------------- ADMIN DASHBOARD + SUBPAGES --------------------
+# ==========================================================
+# 🧩 DASHBOARD & SUB-PAGES
+# ==========================================================
 @admin_bp.route('/admin')
 @admin_bp.route('/admin/dashboard')
+@admin_only
 def admin_dashboard():
-    if session.get('user_type') != 'admin':
-        return redirect(url_for('admin_bp.admin_login'))
-    return render_template('dashboard.html')
+    """Dashboard restricted strictly to admins."""
+    return render_template('dashboard.html', user_type="admin")
 
 
+# ------- ALLOWED FOR BOTH ADMIN & TEACHER -------
 @admin_bp.route('/admin/teachers')
+@teacher_allowed
 def admin_teachers():
-    if session.get('user_type') != 'admin':
-        return redirect(url_for('admin_bp.admin_login'))
-    return render_template('teachers.html')
+    return render_template('teachers.html', user_type=session.get('user_type'))
 
 
 @admin_bp.route('/admin/students')
+@teacher_allowed
 def admin_students():
-    if session.get('user_type') != 'admin':
-        return redirect(url_for('admin_bp.admin_login'))
-    return render_template('students.html')
-
-
-@admin_bp.route('/admin/ids')
-def admin_ids():
-    if session.get('user_type') != 'admin':
-        return redirect(url_for('admin_bp.admin_login'))
-    return render_template('ids.html')
+    return render_template('students.html', user_type=session.get('user_type'))
 
 
 @admin_bp.route('/admin/past_questions')
+@teacher_allowed
 def admin_past_questions():
-    if session.get('user_type') != 'admin':
-        return redirect(url_for('admin_bp.admin_login'))
-    return render_template('past_questions.html')
+    return render_template('past_questions.html', user_type=session.get('user_type'))
 
 
 @admin_bp.route('/admin/mock_exam')
+@teacher_allowed
 def admin_mock_exam():
-    if session.get('user_type') != 'admin':
-        return redirect(url_for('admin_bp.admin_login'))
-    return render_template('mock_exam.html')
+    return render_template('mock_exam.html', user_type=session.get('user_type'))
 
 
 @admin_bp.route('/admin/results')
+@teacher_allowed
 def admin_results():
-    if session.get('user_type') != 'admin':
-        return redirect(url_for('admin_bp.admin_login'))
-    return render_template('result.html')
+    return render_template('result.html', user_type=session.get('user_type'))
+
+
+# ------- ADMIN-ONLY SECTIONS -------
+@admin_bp.route('/admin/ids')
+@admin_only
+def admin_ids():
+    return render_template('ids.html', user_type="admin")
 
 
 @admin_bp.route('/admin/third_party')
+@admin_only
 def admin_third_party():
-    if session.get('user_type') != 'admin':
-        return redirect(url_for('admin_bp.admin_login'))
-    return render_template('third_party.html')
+    return render_template('third_party.html', user_type="admin")
 
 
 @admin_bp.route('/admin/activities')
+@admin_only
 def admin_activities():
-    if session.get('user_type') != 'admin':
-        return redirect(url_for('admin_bp.admin_login'))
-    return render_template('activities.html')
+    return render_template('activities.html', user_type="admin")
 
 
 @admin_bp.route('/admin/settings')
+@admin_only
 def admin_settings():
-    if session.get('user_type') != 'admin':
-        return redirect(url_for('admin_bp.admin_login'))
-    return render_template('settings.html')
+    return render_template('settings.html', user_type="admin")
 
 
 @admin_bp.route('/admin/support')
+@admin_only
 def admin_support():
-    if session.get('user_type') != 'admin':
-        return redirect(url_for('admin_bp.admin_login'))
-    return render_template('support.html')
-
-
-# @admin_bp.route('/admin/uploads')
-# def admin_uploads():
-#     if session.get('user_type') != 'admin':
-#         return redirect(url_for('admin_bp.admin_login'))
-#     return render_template('uploads.html')
+    return render_template('support.html', user_type="admin")
 
 
 @admin_bp.route('/admin/dash_results')
+@admin_only
 def admin_dash_results():
-    if session.get('user_type') != 'admin':
-        return redirect(url_for('admin_bp.admin_login'))
-    return render_template('dash_results.html')
+    return render_template('dash_results.html', user_type="admin")
 
 
-# -------------------- VIEW / CLEAR RESULTS + CREDENTIALS --------------------
+# ==========================================================
+# 📄 VIEW / CLEAR RESULTS + CREDENTIALS (Admin Only)
+# ==========================================================
 @admin_bp.route("/view_credentials")
+@admin_only
 def view_credentials():
     files = sorted(LOGS_DIR.glob("credentials_*.csv"), reverse=True)
     if not files:
@@ -188,10 +201,8 @@ def view_credentials():
 
 
 @admin_bp.route("/view_results")
+@admin_only
 def view_results():
-    if session.get('user_type') != 'admin':
-        return jsonify({"error": "Unauthorized"}), 403
-
     results = []
     try:
         results = user_exam.get_exam_results() or []

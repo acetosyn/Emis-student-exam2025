@@ -310,3 +310,40 @@ td.center { text-align: center; }
   .uploads-grid section { min-height: auto; }
   .modal-card { width: 95%; }
 }
+
+
+
+/* ================= ROLE BANNER ================= */
+.role-banner {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  border-left: 4px solid var(--accent);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  color: var(--primary-dark);
+  animation: glowFade 3s ease-in-out infinite alternate;
+}
+
+.role-banner[data-role="teacher"] {
+  border-left-color: #10b981;
+  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 100%);
+}
+
+@keyframes glowFade {
+  from { box-shadow: 0 0 10px rgba(225, 29, 72, 0.3); }
+  to { box-shadow: 0 0 20px rgba(225, 29, 72, 0.5); }
+}
+
+.role-banner[data-role="teacher"] {
+  animation: glowFadeTeacher 3s ease-in-out infinite alternate;
+}
+
+@keyframes glowFadeTeacher {
+  from { box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+  to { box-shadow: 0 0 20px rgba(16, 185, 129, 0.5); }
+}

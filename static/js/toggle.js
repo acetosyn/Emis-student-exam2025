@@ -1,9 +1,10 @@
 // =============================================================
-// toggle.js — Sidebar + Header Dropdown (Stable v7, Hover Enabled)
+// toggle.js — Sidebar Control (Stable v9: Original Layout + Mobile)
 // =============================================================
 document.addEventListener("DOMContentLoaded", () => {
   const sidebar = document.getElementById("sidebar");
   const toggleBtn = document.getElementById("sidebarToggle");
+  const mobileBtn = document.getElementById("mobileSidebarBtn");
   const mainContent = document.querySelector(".main-content");
   const sidebarTitle = document.querySelector(".sidebar-title");
   const logoutText = document.querySelector(".btn-logout span");
@@ -12,15 +13,15 @@ document.addEventListener("DOMContentLoaded", () => {
   let isCollapsed = false;
   let isMobile = window.innerWidth < 768;
 
-  // ===== SIDEBAR TOGGLE =====
+  // =========================================================
+  // 🖥️ DESKTOP SIDEBAR TOGGLE (Collapse)
+  // =========================================================
   toggleBtn?.addEventListener("click", (e) => {
     e.stopPropagation();
 
+    // If mobile, redirect to mobile open/close
     if (isMobile) {
-      sidebar.classList.toggle("open");
-      sidebar.style.transform = sidebar.classList.contains("open")
-        ? "translateX(0)"
-        : "translateX(-100%)";
+      toggleMobileSidebar();
       return;
     }
 
@@ -28,13 +29,14 @@ document.addEventListener("DOMContentLoaded", () => {
     sidebar.classList.toggle("collapsed", isCollapsed);
     sidebar.style.transition = "width 0.25s ease";
     mainContent.style.transition = "margin-left 0.25s ease";
-    sidebar.style.width = isCollapsed ? "4.2rem" : "13rem";
-    mainContent.style.marginLeft = isCollapsed ? "4.2rem" : "13rem";
+
+    sidebar.style.width = isCollapsed ? "4.2rem" : "14rem";
+    mainContent.style.marginLeft = isCollapsed ? "4.2rem" : "14rem";
 
     const display = isCollapsed ? "none" : "inline";
     if (sidebarTitle) sidebarTitle.style.display = display;
     if (logoutText) logoutText.style.display = display;
-    menuTextSpans.forEach(span => (span.style.display = display));
+    menuTextSpans.forEach((span) => (span.style.display = display));
 
     const icon = toggleBtn.querySelector("i");
     if (icon) {
@@ -43,43 +45,100 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // ===== RESIZE RESET =====
+  // =========================================================
+  // 📱 MOBILE SIDEBAR TOGGLE (Floating Button)
+  // =========================================================
+  mobileBtn?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleMobileSidebar();
+  });
+
+  function toggleMobileSidebar() {
+    sidebar.classList.toggle("open");
+    document.body.classList.toggle("sidebar-open", sidebar.classList.contains("open"));
+    handleOverlay();
+  }
+
+  // =========================================================
+  // 🚪 CLOSE SIDEBAR WHEN CLICKING OUTSIDE (MOBILE)
+  // =========================================================
+  document.addEventListener("click", (e) => {
+    if (isMobile && sidebar.classList.contains("open")) {
+      const clickedOutside = !sidebar.contains(e.target) && !mobileBtn.contains(e.target);
+      if (clickedOutside) closeMobileSidebar();
+    }
+  });
+
+  function closeMobileSidebar() {
+    sidebar.classList.remove("open");
+    document.body.classList.remove("sidebar-open");
+    removeOverlay();
+  }
+
+  // =========================================================
+  // 💡 OVERLAY (Mobile Dimming)
+  // =========================================================
+function handleOverlay() {
+  let overlay = document.querySelector(".sidebar-overlay");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.className = "sidebar-overlay fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300";
+    overlay.style.zIndex = "1990";
+    document.body.appendChild(overlay);
+    overlay.addEventListener("click", closeMobileSidebar);
+  }
+  overlay.style.opacity = "1";
+  overlay.style.pointerEvents = "auto";
+}
+
+  function removeOverlay() {
+    const overlay = document.querySelector(".sidebar-overlay");
+    if (overlay) {
+      overlay.style.opacity = "0";
+      overlay.style.pointerEvents = "none";
+      setTimeout(() => overlay.remove(), 250);
+    }
+  }
+
+  // =========================================================
+  // 🔄 WINDOW RESIZE HANDLER
+  // =========================================================
   window.addEventListener("resize", () => {
     isMobile = window.innerWidth < 768;
     if (isMobile) {
       sidebar.classList.remove("collapsed");
-      sidebar.style.width = "13rem";
+      sidebar.style.width = "14rem";
       sidebar.style.transform = "translateX(-100%)";
       mainContent.style.marginLeft = "0";
     } else {
       sidebar.classList.remove("open");
+      removeOverlay();
       sidebar.style.transform = "translateX(0)";
-      mainContent.style.marginLeft = isCollapsed ? "4.2rem" : "13rem";
+      mainContent.style.marginLeft = isCollapsed ? "4.2rem" : "14rem";
     }
   });
 
-  // ===== HEADER DROPDOWNS (Hover + Click Hybrid) =====
+  // =========================================================
+  // 🧭 HEADER DROPDOWNS (Modules + Notifications)
+  // =========================================================
   const modulesBtn = document.getElementById("modulesBtn");
   const modulesMenu = document.getElementById("modulesMenu");
   const notifBtn = document.getElementById("notifBtn");
   const notifMenu = notifBtn?.nextElementSibling;
 
-  // Helper to show/hide menu
   function showMenu(menu) {
     if (!menu) return;
     menu.classList.remove("hidden");
     menu.classList.add("flex", "animate-dropdown");
   }
-
   function hideMenu(menu) {
     if (!menu) return;
     menu.classList.add("hidden");
     menu.classList.remove("flex");
   }
 
-  // === Hover for Desktop ===
   if (!isMobile) {
-    [ [modulesBtn, modulesMenu], [notifBtn, notifMenu] ].forEach(([btn, menu]) => {
+    [[modulesBtn, modulesMenu], [notifBtn, notifMenu]].forEach(([btn, menu]) => {
       if (btn && menu) {
         btn.addEventListener("mouseenter", () => showMenu(menu));
         btn.addEventListener("mouseleave", () => {
@@ -87,34 +146,29 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!menu.matches(":hover")) hideMenu(menu);
           }, 200);
         });
-
         menu.addEventListener("mouseleave", () => hideMenu(menu));
         menu.addEventListener("mouseenter", () => showMenu(menu));
       }
     });
   }
 
-  // === Click fallback for Mobile ===
-  [ [modulesBtn, modulesMenu], [notifBtn, notifMenu] ].forEach(([btn, menu]) => {
+  [[modulesBtn, modulesMenu], [notifBtn, notifMenu]].forEach(([btn, menu]) => {
     btn?.addEventListener("click", (e) => {
       if (isMobile) {
         e.stopPropagation();
         const isHidden = menu.classList.contains("hidden");
-        document.querySelectorAll(".dropdown-menu").forEach(m => m.classList.add("hidden"));
+        document.querySelectorAll(".dropdown-menu").forEach((m) => m.classList.add("hidden"));
         if (isHidden) showMenu(menu);
         else hideMenu(menu);
       }
     });
   });
 
-  // === Close on Outside Click (Mobile) ===
   document.addEventListener("click", (e) => {
     if (isMobile) {
-      [modulesMenu, notifMenu].forEach(menu => {
+      [modulesMenu, notifMenu].forEach((menu) => {
         const btn = menu?.previousElementSibling;
-        if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) {
-          hideMenu(menu);
-        }
+        if (menu && btn && !menu.contains(e.target) && !btn.contains(e.target)) hideMenu(menu);
       });
     }
   });
