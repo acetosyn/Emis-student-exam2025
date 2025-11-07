@@ -100,73 +100,80 @@ body {
 }
 
 /* ==========================================================
-   == 2. SIDEBAR (Restored — Clean Collapsible + Mobile)
+   == 2. SIDEBAR (Unified — Desktop + Mobile + Overlay)
+   ----------------------------------------------------------
+   Features:
+   • Smooth collapse on desktop
+   • Slide-in overlay on mobile
+   • Fixes dropdown stacking and blur issue
+   • Clean transition between viewports
 ========================================================== */
 .sidebar {
   position: fixed;
   top: var(--header-height);
   left: 0;
-  width: 14rem; /* slightly wider for text comfort */
   height: calc(100vh - var(--header-height));
+  width: var(--sidebar-width);
   background: linear-gradient(180deg, #344a61 0%, #2b3f54 100%);
   color: #fff;
   box-shadow: var(--shadow-md);
   overflow-y: auto;
-  transition: width 0.25s ease, transform 0.3s ease;
+  transition: width 0.25s ease, transform 0.35s ease-in-out, opacity 0.25s ease;
   z-index: 1000;
+  transform: translateX(0);
+  visibility: visible;
+  opacity: 1;
 }
 
-/* Collapsed state */
+/* --- Collapsed (Desktop) --- */
 .sidebar.collapsed {
-  width: 4.2rem;
+  width: var(--sidebar-collapsed);
+}
+.sidebar.collapsed .sidebar-title,
+.sidebar.collapsed .sidebar-menu a span,
+.sidebar.collapsed .btn-logout span {
+  display: none;
+}
+.sidebar.collapsed .sidebar-menu a {
+  justify-content: center;
+  padding: 0.7rem 0;
+}
+.sidebar.collapsed .sidebar-menu i {
+  font-size: 1.2rem;
 }
 
-/* Sidebar header */
+/* --- Sidebar Header --- */
 .sidebar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.8rem 0.9rem;
+  padding: 0.8rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
-
-
 .sidebar-header .flex-col {
-  margin-left: 2.2rem;  /* pushes text right to clear toggle */
+  margin-left: 2.1rem;
 }
-
-@media (max-width: 768px) {
-  .sidebar-header .flex-col {
-    margin-left: 1.6rem; /* slightly less on small screens */
-  }
-}
-
-.sidebar-title {
-  font-weight: 600;
-  font-size: 0.9rem;
-  transition: opacity 0.2s ease;
-}
-
 .sidebar-header button {
   color: #fff;
   font-size: 1rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
   transition: var(--transition);
 }
 .sidebar-header button:hover {
   color: var(--accent);
 }
 
-/* Sidebar menu */
+/* --- Menu Links --- */
 .sidebar-menu {
   list-style: none;
   margin: 0;
-  padding: 1rem 0.4rem;
+  padding: 1rem 0.5rem;
 }
-
 .sidebar-menu li {
   position: relative;
 }
-
 .sidebar-menu a {
   display: flex;
   align-items: center;
@@ -187,30 +194,16 @@ body {
   color: #fff;
 }
 
-/* Icons */
+/* --- Icons --- */
 .sidebar i {
   width: 22px;
   text-align: center;
   font-size: 1rem;
   color: #f1f5f9;
-  transition: all 0.3s ease;
+  transition: color 0.3s ease;
 }
 
-/* Collapsed adjustments */
-.sidebar.collapsed .sidebar-title,
-.sidebar.collapsed .btn-logout span,
-.sidebar.collapsed .sidebar-menu a span {
-  display: none;
-}
-.sidebar.collapsed .sidebar-menu a {
-  justify-content: center;
-  padding: 0.7rem 0;
-}
-.sidebar.collapsed .sidebar-menu i {
-  font-size: 1.2rem;
-}
-
-/* Logout button */
+/* --- Logout Button --- */
 .sidebar .btn-logout {
   display: flex;
   align-items: center;
@@ -232,79 +225,89 @@ body {
 }
 
 /* ==========================================================
-   == MOBILE SIDEBAR (Slide-in + Overlay — Fixed)
+   == FIXED MOBILE SIDEBAR VISIBILITY & OVERLAY BEHAVIOR (v3.2 Stable)
 ========================================================== */
 @media (max-width: 768px) {
+  /* Sidebar Base */
   .sidebar {
     position: fixed !important;
     top: var(--header-height);
     left: 0;
     width: 14rem;
     height: calc(100vh - var(--header-height));
-    background: #344a61;
+    background: linear-gradient(180deg, #344a61 0%, #2b3f54 100%);
     box-shadow: 6px 0 16px rgba(0, 0, 0, 0.25);
-    transform: translateX(-105%); /* hide fully offscreen */
-    visibility: hidden;
+    transform: translateX(-100%);
     opacity: 0;
-    transition: transform 0.35s ease, opacity 0.25s ease, visibility 0.25s ease;
-    z-index: 2200 !important;
+    visibility: hidden;
+    transition:
+      transform 0.35s ease-in-out,
+      opacity 0.3s ease-in-out,
+      visibility 0.3s ease-in-out;
+    z-index: 2300 !important; /* above overlay, below header */
   }
-.sidebar.open {
-  transform: translateX(0) !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  transition: transform 0.35s ease, opacity 0.25s ease;
-}
 
+  /* Sidebar Open State */
+  .sidebar.open {
+    transform: translateX(0) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  /* Keep main content stationary when sidebar opens */
   .main-content {
     margin-left: 0 !important;
     transition: none !important;
   }
 
-  /* Prevent scroll bleed when sidebar is open */
-  body.sidebar-open {
-    overflow: hidden;
+  /* Overlay — Dim Background When Sidebar Is Active */
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 2200 !important; /* under sidebar */
+    transition: opacity 0.3s ease-in-out;
   }
 
-.sidebar-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45); /* simple semi-dark overlay */
-  z-index: 2100 !important;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-}
+  body.sidebar-open .sidebar-overlay {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
 
+  /* Toggle button stays visible above everything */
+  #mobileSidebarBtn {
+    position: fixed;
+    top: calc(var(--header-height) + 0.7rem);
+    left: 0.7rem;
+    z-index: 2400 !important;
+    transition: transform 0.3s ease;
+  }
+
+  #mobileSidebarBtn:hover {
+    transform: scale(1.08);
+  }
+}
 
 /* ==========================================================
-   == SIDEBAR TOGGLE BUTTONS (Desktop + Mobile)
+   == 2.2 SIDEBAR TOGGLE BUTTONS
 ========================================================== */
-#sidebarToggle {
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-#sidebarToggle:hover {
-  transform: scale(1.05);
-}
-
-/* Keep toggle always above content */
 #sidebarToggle,
 #mobileSidebarBtn {
+  cursor: pointer;
+  transition: all 0.3s ease;
   z-index: 2300;
 }
-
-/* ensure toggle visible even when collapsed */
-.sidebar.collapsed + #sidebarToggle {
-  left: 0.5rem !important;
-}
-
-/* floating mobile toggle */
-#mobileSidebarBtn {
-  transition: all 0.3s ease;
-}
+#sidebarToggle:hover,
 #mobileSidebarBtn:hover {
-  transform: scale(1.05);
+  transform: scale(1.08);
+}
+
+/* Keep toggle visible when collapsed */
+.sidebar.collapsed + #sidebarToggle {
+  left: 0.6rem !important;
 }
 
 
@@ -571,6 +574,28 @@ footer p { line-height: 1.5; margin: 0; }
 @keyframes dropdownFade {
   from { opacity: 0; transform: translateY(-8px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ==========================================================
+   == HEADER DROPDOWN FIX — OVERLAY PRIORITY
+   Ensures Modules / Notifications dropdown always appear
+   above sidebar and overlay on all devices.
+========================================================== */
+.top-header,
+.top-header * {
+  position: relative;
+  z-index: 3000;
+}
+
+/* Force dropdown menus to be visible above all layers */
+.dropdown-menu {
+  z-index: 3200 !important;
+}
+
+/* Optional: smoother dropdown fade-in animation */
+.dropdown-menu.animate-dropdown {
+  animation: dropdownFade 0.25s ease forwards;
 }
 
 
