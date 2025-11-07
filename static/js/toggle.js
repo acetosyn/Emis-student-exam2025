@@ -82,7 +82,8 @@ function handleOverlay() {
   let overlay = document.querySelector(".sidebar-overlay");
   if (!overlay) {
     overlay = document.createElement("div");
-    overlay.className = "sidebar-overlay fixed inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300";
+    overlay.className = "sidebar-overlay fixed inset-0 bg-black/50 transition-opacity duration-300";
+
     overlay.style.zIndex = "1990";
     document.body.appendChild(overlay);
     overlay.addEventListener("click", closeMobileSidebar);
@@ -101,20 +102,33 @@ function handleOverlay() {
   }
 
   // =========================================================
-  // 🔄 WINDOW RESIZE HANDLER
+  // 🔄 WINDOW RESIZE HANDLER (Fix Blurry/Overlay Desync)
   // =========================================================
   window.addEventListener("resize", () => {
     isMobile = window.innerWidth < 768;
+
     if (isMobile) {
+      // Switch to mobile layout
       sidebar.classList.remove("collapsed");
       sidebar.style.width = "14rem";
-      sidebar.style.transform = "translateX(-100%)";
+      sidebar.style.transform = "translateX(-105%)";
+      sidebar.style.opacity = "0";
+      sidebar.style.visibility = "hidden";
       mainContent.style.marginLeft = "0";
-    } else {
-      sidebar.classList.remove("open");
+
+      // Ensure overlay removed
       removeOverlay();
+      document.body.classList.remove("sidebar-open");
+
+    } else {
+      // Switch to desktop layout
+      sidebar.classList.remove("open");
       sidebar.style.transform = "translateX(0)";
+      sidebar.style.opacity = "1";
+      sidebar.style.visibility = "visible";
       mainContent.style.marginLeft = isCollapsed ? "4.2rem" : "14rem";
+      removeOverlay();
+      document.body.classList.remove("sidebar-open");
     }
   });
 

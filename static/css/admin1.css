@@ -230,8 +230,9 @@ body {
   background: #be123c;
   transform: scale(1.03);
 }
+
 /* ==========================================================
-   == MOBILE SIDEBAR (Visible Slide-in + Overlay Fix)
+   == MOBILE SIDEBAR (Slide-in + Overlay — Fixed)
 ========================================================== */
 @media (max-width: 768px) {
   .sidebar {
@@ -242,36 +243,39 @@ body {
     height: calc(100vh - var(--header-height));
     background: #344a61;
     box-shadow: 6px 0 16px rgba(0, 0, 0, 0.25);
-    transform: translateX(-100%);
-    transition: transform 0.35s ease-in-out;
-    z-index: 2200 !important; /* ensure it's ABOVE overlay */
+    transform: translateX(-105%); /* hide fully offscreen */
+    visibility: hidden;
+    opacity: 0;
+    transition: transform 0.35s ease, opacity 0.25s ease, visibility 0.25s ease;
+    z-index: 2200 !important;
   }
-
-  .sidebar.open {
-    transform: translateX(0);
-  }
+.sidebar.open {
+  transform: translateX(0) !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  transition: transform 0.35s ease, opacity 0.25s ease;
+}
 
   .main-content {
     margin-left: 0 !important;
+    transition: none !important;
   }
 
-  /* Overlay (below sidebar) */
-  .sidebar-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    backdrop-filter: blur(4px);
-    z-index: 2100 !important; /* ensure BELOW sidebar */
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease-in-out;
+  /* Prevent scroll bleed when sidebar is open */
+  body.sidebar-open {
+    overflow: hidden;
   }
 
-  body.sidebar-open .sidebar-overlay {
-    opacity: 1 !important;
-    pointer-events: auto !important;
-  }
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45); /* simple semi-dark overlay */
+  z-index: 2100 !important;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
 }
+
 
 /* ==========================================================
    == SIDEBAR TOGGLE BUTTONS (Desktop + Mobile)
