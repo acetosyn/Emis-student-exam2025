@@ -3,20 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Student Portal | EMIS</title>
+  <title>Student Dashboard | EMIS</title>
 
   <!-- Font Awesome -->
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
-  <!-- Students CSS -->
-  <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/students.css') }}"
-  />
+  <!-- NEW Student Dashboard CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/students.css') }}"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/student-exams.css') }}"/>
 </head>
+
 <body class="students-body">
 
   <!-- ================= HEADER ================= -->
@@ -31,143 +27,98 @@
         <i class="fa-solid fa-bell"></i>
         <span class="notif-dot"></span>
       </button>
+
       <button class="icon-btn" id="themeToggle" title="Toggle Theme">
         <i class="fa-solid fa-sun"></i>
       </button>
-      <img
-        src="{{ url_for('static', filename='images/student.jpg') }}"
-        alt="Student Avatar"
-        class="student-avatar"
-      />
+
+      <img src="{{ url_for('static', filename='images/student.jpg') }}"
+           alt="Student Avatar"
+           class="student-avatar"/>
     </div>
   </header>
 
-  <!-- ================= HERO SECTION ================= -->
+  <!-- ================= FIRST CARD ================= -->
   <section class="hero-section fade-in">
     <div class="hero-overlay"></div>
+
     <div class="hero-content">
-      <h1>Hello, Students!</h1>
-      <p>Welcome to Your academic dashboard — access everything at a glance.</p>
-      <div class="hero-actions">
-        <button class="btn-primary">
+      <h1>Welcome back, {{ first_name or "Student" }}!</h1>
+      <p>Your academic dashboard — everything you need at a glance.</p>
+
+      <div class="hero-actions expanded-buttons">
+        <button class="btn-primary" id="openExamPortal">
           <i class="fa-solid fa-laptop-file"></i> Exam Portal
         </button>
-        <button class="btn-secondary">
-          <i class="fa-solid fa-circle-question"></i> Help
-        </button>
+
+        <button class="btn-light"><i class="fa-solid fa-book"></i> Subjects</button>
+        <button class="btn-light"><i class="fa-solid fa-chart-line"></i> Results</button>
+        <button class="btn-light"><i class="fa-solid fa-folder-open"></i> Past Questions</button>
+        <button class="btn-light"><i class="fa-solid fa-file-circle-check"></i> Study Materials</button>
+        <button class="btn-light"><i class="fa-solid fa-user-circle"></i> Profile</button>
+        <button class="btn-light"><i class="fa-solid fa-id-card"></i> Student ID</button>
       </div>
     </div>
   </section>
 
-  <!-- ================= BODY SECTION WITH IMAGE BACKGROUND ================= -->
+  <!-- ================= MAIN AREA ================= -->
   <main class="content-area">
 
-    <!-- ================= QUICK ACCESS ================= -->
-    <section class="quick-access fade-in">
-      <h2><i class="fa-solid fa-bolt"></i> Quick Access</h2>
-      <p class="subtitle">Your core tools, always one click away.</p>
-
-      <div class="tools-grid">
-        <div class="tool-card blue">
-          <i class="fa-solid fa-book"></i>
-          <span>Subjects</span>
-        </div>
-        <div class="tool-card green">
-          <i class="fa-solid fa-chart-line"></i>
-          <span>Results</span>
-        </div>
-        <div class="tool-card purple">
-          <i class="fa-solid fa-folder-open"></i>
-          <span>Past Questions</span>
-        </div>
-        <div class="tool-card orange">
-          <i class="fa-solid fa-file-circle-check"></i>
-          <span>Study Materials</span>
-        </div>
-        <div class="tool-card teal">
-          <i class="fa-solid fa-user-circle"></i>
-          <span>Profile</span>
-        </div>
-        <div class="tool-card pink">
-          <i class="fa-solid fa-id-card"></i>
-          <span>Student ID</span>
-        </div>
-      </div>
-    </section>
-
     <!-- ================= PERFORMANCE OVERVIEW ================= -->
-    <section class="performance fade-in">
+    <section class="performance small-performance fade-in">
       <div class="section-header">
         <h2><i class="fa-solid fa-chart-pie"></i> Performance Overview</h2>
-        <p class="subtitle">Monitor your progress in real time.</p>
+        <p class="subtitle">Track your academic progress</p>
       </div>
 
-      <div class="stats-grid">
-        <div class="stat-card">
-          <span class="stat-title">Average Score</span>
-          <h3 id="avgScore">--%</h3>
-        </div>
-        <div class="stat-card">
-          <span class="stat-title">Exams Attempted</span>
-          <h3 id="examCount">--</h3>
-        </div>
-        <div class="stat-card">
-          <span class="stat-title">Subjects Passed</span>
-          <h3 id="passedSubjects">--</h3>
-        </div>
-        <div class="stat-card">
-          <span class="stat-title">Study Hours</span>
-          <h3 id="studyHours">--</h3>
-        </div>
+      <div class="stats-grid compact">
+        <div class="stat-card"><span>Average Score</span><h3 id="avgScore">--%</h3></div>
+        <div class="stat-card"><span>Exams Taken</span><h3 id="examCount">--</h3></div>
+        <div class="stat-card"><span>Subjects Passed</span><h3 id="passedSubjects">--</h3></div>
       </div>
 
       <canvas id="performanceChart"></canvas>
     </section>
 
-    <!-- ================= UPCOMING EXAMS ================= -->
-    <section class="upcoming-exams fade-in">
-      <h2><i class="fa-solid fa-calendar-days"></i> Upcoming Exams</h2>
-      <table class="exam-table">
-        <thead>
-          <tr>
-            <th>Subject</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Venue</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="examSchedule">
-          <!-- dynamically injected -->
-        </tbody>
-      </table>
-    </section>
+    <!-- ================= THREE CARD ROW ================= -->
+    <section class="triple-grid fade-in">
 
-    <!-- ================= ANNOUNCEMENTS ================= -->
-    <section class="announcements fade-in">
-      <h2><i class="fa-solid fa-bullhorn"></i> Announcements</h2>
-      <ul id="announcementList" class="announcement-list"></ul>
-    </section>
-
-    <!-- ================= FEEDBACK / CHAT SECTION ================= -->
-    <section class="feedback-section fade-in">
-      <h2><i class="fa-solid fa-comments"></i> Feedback & Support</h2>
-
-      <div class="chat-container" id="feedbackChat">
-        <div class="chat-messages" id="chatMessages">
-          <!-- Chat messages dynamically loaded -->
+      <!-- Recent Activity -->
+      <div class="tri-card">
+        <h2><i class="fa-solid fa-clock-rotate-left"></i> Recent Activity</h2>
+        <div id="activityList" class="activity-list">
+          <div class="activity-item">
+            <div class="dot"></div>
+            <div>
+              <div class="title">Logged in</div>
+              <div class="meta">Just now</div>
+            </div>
+          </div>
         </div>
-
-        <form id="feedbackForm" class="chat-input">
-          <textarea
-            id="feedbackText"
-            placeholder="Type your message..."
-          ></textarea>
-          <button type="submit" class="send-btn">
-            <i class="fa-solid fa-paper-plane"></i>
-          </button>
-        </form>
       </div>
+
+      <!-- Announcements -->
+      <div class="tri-card">
+        <h2><i class="fa-solid fa-bullhorn"></i> Announcements</h2>
+        <ul id="announcementList" class="announcement-list"></ul>
+      </div>
+
+      <!-- Feedback -->
+      <div class="tri-card">
+        <h2><i class="fa-solid fa-comments"></i> Feedback</h2>
+
+        <div class="chat-container">
+          <div class="chat-messages" id="chatMessages"></div>
+
+          <form id="feedbackForm" class="chat-input">
+            <textarea id="feedbackText" placeholder="Type your message..."></textarea>
+            <button type="submit" class="send-btn">
+              <i class="fa-solid fa-paper-plane"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+
     </section>
 
   </main>
@@ -177,16 +128,45 @@
     <p>© <span id="year"></span> EMIS Portal — Empowering Students for Success</p>
   </footer>
 
-  <!-- ================= NOTIFICATIONS PANEL ================= -->
-  <aside class="notification-panel" id="notificationPanel">
-    <div class="notif-header">
-      <h3>Notifications</h3>
-      <button class="icon-btn" id="closeNotif"><i class="fa-solid fa-xmark"></i></button>
+<!-- ================= EXAM SUBJECT MODAL ================= -->
+<div class="modal-overlay" id="examModal">
+  <div class="modal-box">
+
+    <h2 class="modal-title">
+      <i class="fa-solid fa-pen-to-square"></i> Start Your Exam
+    </h2>
+
+    <div class="form-group">
+      <label for="subjectDropdown">Select Subject</label>
+      <select id="subjectDropdown">
+        <option value="">-- Select Subject --</option>
+        {% for subject in subjects %}
+        <option value="{{ subject }}">{{ subject }}</option>
+        {% endfor %}
+      </select>
     </div>
-    <ul id="notifList" class="notif-list"></ul>
-  </aside>
+
+    <div class="modal-actions">
+
+      <button class="btn-secondary" id="refreshSubjectsBtn">
+        Refresh Subjects
+      </button>
+
+      <button class="btn-primary" id="startExamBtn" disabled>
+        Start Exam
+      </button>
+
+      <button class="btn-secondary" id="closeExamModal">
+        Cancel
+      </button>
+
+    </div>
+  </div>
+</div>
+
 
   <!-- ================= JS ================= -->
-  <script src="{{ url_for('static', filename='js/students.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/student-exams.js') }}"></script>
+
 </body>
 </html>

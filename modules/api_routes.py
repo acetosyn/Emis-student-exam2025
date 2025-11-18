@@ -115,6 +115,9 @@ def api_exam_submit():
     return jsonify({"success": True, "message": f"Exam result recorded ({status})"})
 
 
+
+
+
 # -------------------- Unified Exam Results API --------------------
 @api_bp.route('/api/exam/results')
 def api_exam_results():

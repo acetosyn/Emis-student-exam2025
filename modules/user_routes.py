@@ -1,62 +1,59 @@
-# modules/user_routes.py
+# modules/user_routes.py  (now serving STUDENTS)
 from flask import Blueprint, render_template, redirect, url_for, session, request, jsonify
-import user_credentials
-import user_exam
 
 user_bp = Blueprint('user_bp', __name__)
 
 
-# -------------------- USER LOGIN --------------------
-@user_bp.route('/user_login', methods=['GET', 'POST'])
-def user_login():
+# =======================================================
+#  STUDENT LOGIN  (renders student_login.html)
+# =======================================================
+@user_bp.route('/student_login', methods=['GET', 'POST'])
+def student_login():
     if request.method == 'POST':
-        full_name = request.form.get('full_name', '').strip()
-        email = request.form.get('email', '').strip()
-        gender = request.form.get('gender', '').strip()
-        subject = request.form.get('subject', '').strip()
-        username = request.form.get('username', '').strip()
-        password = request.form.get('password', '').strip()
+        admission_number = request.form.get('admission_number', '').strip()
+        first_name = request.form.get('first_name', '').strip()
 
-        if user_credentials.validate_credentials(username, password):
+        # ⚠️ Supabase login NOT implemented yet
+        # For now, just redirect to student portal if fields are not empty
+        if admission_number and first_name:
             session.clear()
-            session['user_type'] = 'user'
-            session['username'] = username
-            session['full_name'] = full_name
-            session['email'] = email
-            session['gender'] = gender
-            session['subject'] = subject
+            session['user_type'] = 'student'
+            session['admission_number'] = admission_number
+            session['first_name'] = first_name
             session['exam_started'] = False
             session['exam_submitted'] = False
-            return redirect(url_for('user_bp.user_portal'))
 
-        return render_template('user_login.html', error="Invalid login details")
+            return redirect(url_for('user_bp.student_portal'))
 
-    return render_template('user_login.html')
+        return render_template('student_login.html', error="Invalid login details")
+
+    return render_template('student_login.html')
 
 
-# -------------------- USER PORTAL --------------------
-@user_bp.route('/user_portal')
-def user_portal():
-    if session.get('user_type') != 'user':
-        return redirect(url_for('user_bp.user_login'))
+# =======================================================
+#  STUDENT PORTAL
+# =======================================================
+@user_bp.route('/student_portal')
+def student_portal():
+    if session.get('user_type') != 'student':
+        return redirect(url_for('user_bp.student_login'))
 
     return render_template(
-        'user_portal.html',
-        full_name=session.get('full_name'),
-        username=session.get('username'),
-        email=session.get('email'),
-        gender=session.get('gender'),
-        subject=session.get('subject'),
+        'student_portal.html',
+        first_name=session.get('first_name'),
+        admission_number=session.get('admission_number'),
         exam_started=session.get('exam_started', False),
         exam_submitted=session.get('exam_submitted', False)
     )
 
 
-# -------------------- START EXAM --------------------
+# =======================================================
+#  START EXAM
+# =======================================================
 @user_bp.route('/start_exam', methods=['POST'])
 def start_exam():
-    if session.get('user_type') != 'user':
-        return redirect(url_for('user_bp.user_login'))
+    if session.get('user_type') != 'student':
+        return redirect(url_for('user_bp.student_login'))
 
     if session.get('exam_submitted'):
         return redirect(url_for('user_bp.result'))
@@ -65,54 +62,61 @@ def start_exam():
     return redirect(url_for('user_bp.exam'))
 
 
-# -------------------- EXAM PAGE --------------------
+# =======================================================
+#  EXAM PAGE
+# =======================================================
 @user_bp.route('/exam')
 def exam():
-    if session.get('user_type') != 'user':
-        return redirect(url_for('user_bp.user_login'))
+    if session.get('user_type') != 'student':
+        return redirect(url_for('user_bp.student_login'))
 
     return render_template(
         'exam.html',
-        full_name=session.get('full_name'),
-        username=session.get('username'),
-        subject=session.get('subject'),
+        first_name=session.get('first_name'),
+        admission_number=session.get('admission_number'),
         exam_started=session.get('exam_started', False)
     )
 
 
-# -------------------- SUBMIT / END EXAM --------------------
+# =======================================================
+#  SUBMIT EXAM
+# =======================================================
 @user_bp.route('/submit_exam', methods=['POST'])
 def submit_exam():
-    if session.get('user_type') != 'user':
-        return redirect(url_for('user_bp.user_login'))
+    if session.get('user_type') != 'student':
+        return redirect(url_for('user_bp.student_login'))
 
     session['exam_submitted'] = True
     session['exam_started'] = False
     return redirect(url_for('user_bp.result'))
 
 
-# -------------------- RESULT PAGE --------------------
+# =======================================================
+#  RESULT PAGE
+# =======================================================
 @user_bp.route('/result')
 def result():
-    if session.get('user_type') != 'user':
-        return redirect(url_for('user_bp.user_login'))
+    if session.get('user_type') != 'student':
+        return redirect(url_for('user_bp.student_login'))
 
-    username = session.get('username')
-    latest = user_exam.get_user_latest_result(username)
+    # Placeholder result for now
+    latest_result = {
+        "score": None,
+        "status": "No exam record yet"
+    }
 
     return render_template(
         'result.html',
-        full_name=session.get('full_name'),
-        username=username,
-        result=latest or {}
+        first_name=session.get('first_name'),
+        admission_number=session.get('admission_number'),
+        result=latest_result
     )
 
 
-# -------------------- LOGOUT --------------------
+# =======================================================
+#  LOGOUT
+# =======================================================
 @user_bp.route('/logout')
 def logout():
-    user_type = session.get('user_type')
     session.clear()
-    if user_type == 'user':
-        return redirect(url_for('user_bp.user_login'))
-    return redirect(url_for('admin_bp.admin_login'))
+    return redirect(url_for('user_bp.student_login'))

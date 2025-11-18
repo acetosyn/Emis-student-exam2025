@@ -82,9 +82,32 @@
     <p class="sub-text">Instant navigation to primary operations</p>
 
     <div class="modules-grid">
-      <button class="module-item blue"><i class="fa-solid fa-user-graduate"></i><span>Student Portal</span></button>
-      <button class="module-item green"><i class="fa-solid fa-chalkboard-user"></i><span>Teachers Dashboard</span></button>
-      <button class="module-item purple"><i class="fa-solid fa-file-arrow-up"></i><span>Upload Exam</span></button>
+      <button class="module-item blue"
+        onclick="window.open('/student_login', '_blank');">
+    <i class="fa-solid fa-user-graduate"></i>
+    <span>Student Portal</span>
+</button>
+
+    <!-- Teachers Dashboard (load teachers.html in same tab) -->
+  <button class="module-item green"
+    onclick="window.location.href='/teachers';">
+      <i class="fa-solid fa-chalkboard-user"></i>
+      <span>Teachers Dashboard</span>
+  </button>
+
+  
+
+
+  <!-- Upload Exam (load teachers.html and jump to upload section) -->
+ <button class="module-item purple"
+    onclick="window.location.href='/admin/uploads#upload-section';">
+      <i class="fa-solid fa-file-arrow-up"></i>
+      <span>Upload Exam</span>
+  </button>
+
+
+
+      
       <button class="module-item orange"><i class="fa-solid fa-chart-column"></i><span>Results</span></button>
       <button class="module-item pink"><i class="fa-solid fa-id-card"></i><span>Credentials</span></button>
       <button class="module-item gray"><i class="fa-solid fa-book"></i><span>Past Questions</span></button>

@@ -1,5 +1,5 @@
 /* ==============================
-   Candidate Login Page (user_login.css)
+   Student Login Page (student_login.css)
    ============================== */
 
 body, html {
@@ -7,21 +7,25 @@ body, html {
   padding: 0;
   font-family: "Segoe UI", Roboto, sans-serif;
   height: 100%;
-  overflow: hidden;
+  overflow-x: hidden;
 }
 
-/* ============================== */
-/* Background with blur effect — FINAL TWEAK */
-/* ============================== */
+/* ===============================
+   BACKGROUND + LAYOUT
+   =============================== */
 .login-page {
   position: relative;
   min-height: 100vh;
   display: flex;
-  align-items: flex-start;  
-  justify-content: center;
-  padding-top: 0;            
-  padding-bottom: 1rem;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  
+  /* Push page UP so login card is fully visible */
+  padding-top: 1.5rem;
+
   z-index: 1;
+  gap: 1rem; /* space between title card and login card */
 }
 
 .login-page::before {
@@ -34,9 +38,37 @@ body, html {
   z-index: -1;
 }
 
-/* ============================== */
-/* Login Card — adjusted for spacing */
-/* ============================== */
+/* ===============================
+   TITLE CARD (MATCHES LOGIN CARD WIDTH)
+   =============================== */
+.title-card {
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  color: white;
+  padding: 1rem 1.2rem;
+  border-radius: 1rem;
+  text-align: center;
+  width: 100%;
+  max-width: 360px; /* Same width as login card */
+  box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+  margin-top: 0; /* no extra spacing */
+}
+
+.title-card h1 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.title-card p {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  opacity: 0.9;
+}
+
+/* ===============================
+   LOGIN CARD
+   =============================== */
 .login-card {
   background: rgba(255, 255, 255, 0.92);
   border-radius: 1rem;
@@ -47,20 +79,21 @@ body, html {
   text-align: center;
   position: relative;
   z-index: 2;
-  margin-top: 0;
-  transform: translateY(-1%);   /* ⬅️ Reduced upward shift */
+
+  /* Pull card UP to ensure button stays above fold */
+  margin-top: 0rem;
 }
 
-/* Mobile tweak: keep it neat on small screens */
 @media (max-width: 480px) {
-  .login-card {
-    padding: 1rem 1.2rem;
-    max-width: 95%;
-    transform: translateY(-2%); /* slightly less on mobile */
+  .login-card,
+  .title-card {
+    max-width: 92%; /* Slightly wider on mobile */
   }
 }
 
-
+/* ===============================
+   LOGO
+   =============================== */
 .logo-container {
   margin-bottom: 0.8rem;
 }
@@ -86,13 +119,15 @@ body, html {
   margin-bottom: 1rem;
 }
 
-/* Form */
+/* ===============================
+   FORM INPUTS
+   =============================== */
 .login-form {
   text-align: left;
 }
 
 .form-field {
-  margin-bottom: 0.6rem;   /* tighter */
+  margin-bottom: 0.6rem;
 }
 
 .form-field label {
@@ -120,7 +155,9 @@ body, html {
   outline: none;
 }
 
-/* Password wrapper */
+/* ===============================
+   PASSWORD FIELD
+   =============================== */
 .password-wrapper {
   display: flex;
   align-items: center;
@@ -146,7 +183,9 @@ body, html {
   color: #d4af37;
 }
 
-/* Login Button */
+/* ===============================
+   BUTTON
+   =============================== */
 .login-btn {
   width: 100%;
   padding: 0.6rem;
@@ -174,7 +213,9 @@ body, html {
   transform: translateY(0);
 }
 
-/* Loading spinner */
+/* ===============================
+   SPINNER
+   =============================== */
 .loading-spinner {
   border: 3px solid #e5e7eb;
   border-top: 3px solid #0f2b46;
@@ -198,7 +239,9 @@ body, html {
   display: none !important;
 }
 
-/* Overlay */
+/* ===============================
+   OVERLAY
+   =============================== */
 .loading-overlay {
   position: fixed;
   inset: 0;
@@ -223,19 +266,9 @@ body, html {
   color: #6b7280;
 }
 
-/* Mobile */
-@media (max-width: 480px) {
-  .login-card {
-    padding: 1rem 1.2rem;
-    max-width: 95%;
-    margin-top: 1.5rem;
-  }
-  .school-name {
-    font-size: 1rem;
-  }
-}
-
-
+/* ===============================
+   ERROR BANNER
+   =============================== */
 .error-banner {
   background: #fee2e2;
   color: #b91c1c;
@@ -245,4 +278,15 @@ body, html {
   margin-bottom: 1rem;
   font-weight: 600;
   text-align: center;
+}
+
+
+.username-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.username-wrapper input {
+  flex: 1;
 }
