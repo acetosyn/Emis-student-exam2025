@@ -3,13 +3,20 @@ from flask import Flask, redirect, url_for
 from dotenv import load_dotenv
 import os
 
+# ----------------------------
+# BLUEPRINT IMPORTS
+# ----------------------------
 from modules.admin_routes import admin_bp
 from modules.user_routes import user_bp
+from modules.student_portal import student_portal_bp
 from modules.api_routes import api_bp
 from modules.document_routes import document_bp
 
-import user_credentials, user_exam
+# Other system modules
+import user_credentials
+import user_exam
 
+# Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
@@ -20,6 +27,7 @@ app.secret_key = os.getenv("SECRET_KEY", "fallback_secret_key")
 # ----------------------------
 app.register_blueprint(admin_bp)
 app.register_blueprint(user_bp)
+app.register_blueprint(student_portal_bp)  # NEW STUDENT PORTAL MODULE
 app.register_blueprint(api_bp)
 app.register_blueprint(document_bp)
 

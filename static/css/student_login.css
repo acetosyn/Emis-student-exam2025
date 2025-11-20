@@ -16,16 +16,19 @@ body, html {
 .login-page {
   position: relative;
   min-height: 100vh;
+
+  /* Center everything vertically */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  
-  /* Push page UP so login card is fully visible */
-  padding-top: 1.5rem;
+  justify-content: center;
+
+  /* More breathing space */
+  padding-top: 3rem;
+  padding-bottom: 2rem;
 
   z-index: 1;
-  gap: 1rem; /* space between title card and login card */
+  gap: 1.5rem;
 }
 
 .login-page::before {

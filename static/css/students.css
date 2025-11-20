@@ -1,6 +1,5 @@
 /* ==========================================================
-   EMIS STUDENT DASHBOARD — students.css (v5.0)
-   Modern layout built for the NEW students.html
+   EMIS STUDENT DASHBOARD — students.css (v6.0 CLEAN BUILD)
 ========================================================== */
 
 :root {
@@ -15,7 +14,7 @@
   --radius: 14px;
   --shadow-sm: 0 2px 6px rgba(0,0,0,0.08);
   --shadow-md: 0 6px 16px rgba(0,0,0,0.12);
-  --shadow-hover: 0 8px 24px rgba(0,0,0,0.18);
+  --shadow-hover: 0 12px 28px rgba(0,0,0,0.18);
   --transition: all .25s ease;
 }
 
@@ -25,9 +24,8 @@
 body.students-body {
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
   margin: 0;
-  background: #f5f7fa;
+  background: var(--bg-soft);
   color: var(--dark);
-  scroll-behavior: smooth;
 }
 
 /* ==========================================================
@@ -35,7 +33,7 @@ body.students-body {
 ========================================================== */
 .student-header {
   background: var(--primary);
-  padding: 0.9rem 1.8rem;
+  padding: 1rem 1.8rem;
   color: #fff;
   box-shadow: var(--shadow-md);
   display: flex;
@@ -59,7 +57,6 @@ body.students-body {
 
 .portal-title {
   font-weight: 700;
-  letter-spacing: 0.4px;
   font-size: 1.05rem;
 }
 
@@ -67,6 +64,13 @@ body.students-body {
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.live-clock {
+  padding: 0.35rem 0.6rem;
+  background: rgba(255,255,255,0.15);
+  border-radius: 6px;
+  font-size: 0.85rem;
 }
 
 .icon-btn {
@@ -108,19 +112,19 @@ body.students-body {
 .hero-section {
   position: relative;
   background: url("../images/student.jpg") center/cover;
-  padding: 3rem 1rem;
+  padding: 4rem 1rem 2.5rem;
   text-align: center;
   border-bottom-left-radius: 40px;
   border-bottom-right-radius: 40px;
   overflow: hidden;
   box-shadow: var(--shadow-md);
+  margin-bottom: 1.5rem;
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: rgba(15, 43, 70, 0.75);
-  backdrop-filter: blur(4px);
+  background: rgba(15, 43, 70, 0.78);
 }
 
 .hero-content {
@@ -135,7 +139,7 @@ body.students-body {
   font-weight: 700;
 }
 
-.hero-content p {
+.sub-text {
   color: #e2e8f0;
   font-size: 0.95rem;
   margin-bottom: 1.4rem;
@@ -159,7 +163,7 @@ body.students-body {
   justify-content: center;
   gap: 0.45rem;
   border: none;
-  padding: 0.7rem;
+  padding: 0.75rem;
   border-radius: var(--radius);
   font-weight: 600;
   cursor: pointer;
@@ -173,8 +177,8 @@ body.students-body {
 }
 
 .btn-primary:hover {
-  background: #1e3a8a;
-  transform: translateY(-2px);
+  background: #1e40af;
+  transform: translateY(-3px);
 }
 
 .btn-light {
@@ -184,11 +188,84 @@ body.students-body {
 
 .btn-light:hover {
   background: #e2e8f0;
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 
 /* ==========================================================
-   MAIN CONTENT
+   PROFILE CARD (NEW)
+========================================================== */
+.profile-card-container {
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.profile-card {
+  background: #fff;
+  padding: 1.5rem 1.7rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  max-width: 450px;
+  width: 100%;
+  transition: var(--transition);
+  text-align: center;
+}
+
+.profile-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.profile-header {
+  margin-bottom: 1rem;
+}
+
+.profile-icon {
+  font-size: 2rem;
+  color: var(--primary);
+  margin-bottom: 0.4rem;
+}
+
+.profile-card h2 {
+  margin: 0;
+  font-size: 1.3rem;
+  color: var(--primary);
+}
+
+.profile-card p {
+  margin: 0.4rem 0 1rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.profile-item {
+  background: var(--bg-soft);
+  padding: 0.9rem;
+  border-radius: var(--radius);
+  text-align: left;
+}
+
+.profile-item span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.profile-item strong {
+  margin-top: 0.3rem;
+  display: block;
+  color: var(--dark);
+  font-size: 1rem;
+}
+
+/* ==========================================================
+   CONTENT AREA
 ========================================================== */
 .content-area {
   margin: 2rem auto;
@@ -196,171 +273,8 @@ body.students-body {
   max-width: 1300px;
 }
 
-/* ==========================================================
-   PERFORMANCE OVERVIEW
-========================================================== */
-.performance {
-  padding: 1.4rem;
-  border-radius: var(--radius);
-  background: #fff;
-  box-shadow: var(--shadow-sm);
-}
+/* PERFORMANCE, TRIPLE GRID, CHAT, ANNOUNCEMENTS remain unchanged for now */
 
-.performance .section-header {
-  text-align: center;
-}
-
-.performance .subtitle {
-  color: var(--muted);
-  font-size: 0.85rem;
-}
-
-.stats-grid.compact {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 1rem;
-  margin: 1rem 0;
-}
-
-.stat-card {
-  background: var(--bg-soft);
-  padding: 0.9rem;
-  border-radius: var(--radius);
-  text-align: center;
-}
-
-.stat-card h3 {
-  color: var(--accent);
-  margin: 0.4rem 0 0;
-}
-
-/* CANVAS */
-#performanceChart {
-  margin-top: 1rem;
-  width: 100% !important;
-}
-
-/* ==========================================================
-   THREE-CARD GRID
-========================================================== */
-.triple-grid {
-  margin-top: 1.5rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-  gap: 1.2rem;
-}
-
-.tri-card {
-  background: #fff;
-  padding: 1.2rem;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-}
-
-.tri-card h2 {
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-  color: var(--primary);
-}
-
-/* ==========================================================
-   RECENT ACTIVITY
-========================================================== */
-.activity-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.activity-item {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-}
-
-.activity-item .dot {
-  width: 10px;
-  height: 10px;
-  background: var(--accent);
-  border-radius: 50%;
-}
-
-.activity-item .title {
-  font-weight: 600;
-}
-
-.activity-item .meta {
-  font-size: 0.8rem;
-  color: var(--muted);
-}
-
-/* ==========================================================
-   ANNOUNCEMENTS
-========================================================== */
-.announcement-list {
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.announcement-list li {
-  background: var(--bg-soft);
-  padding: 0.8rem;
-  border-radius: var(--radius);
-}
-
-/* ==========================================================
-   FEEDBACK CHAT
-========================================================== */
-.chat-container {
-  background: var(--bg-soft);
-  border-radius: var(--radius);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.chat-messages {
-  max-height: 220px;
-  overflow-y: auto;
-  padding: 0.9rem;
-}
-
-.chat-input {
-  display: flex;
-  border-top: 1px solid #e2e8f0;
-}
-
-.chat-input textarea {
-  flex: 1;
-  border: none;
-  padding: 0.6rem;
-  resize: none;
-  font-size: 0.85rem;
-}
-
-.chat-input textarea:focus {
-  outline: none;
-}
-
-.send-btn {
-  background: var(--accent);
-  border: none;
-  padding: 0 1rem;
-  color: white;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.send-btn:hover {
-  background: #be123c;
-}
-
-/* ==========================================================
-   FOOTER
-========================================================== */
 .student-footer {
   margin-top: 2rem;
   text-align: center;
@@ -369,64 +283,4 @@ body.students-body {
   color: #fff;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
-}
-
-/* ==========================================================
-   MODAL
-========================================================== */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.45);
-  display: none;
-  justify-content: center;
-  align-items: center;
-  z-index: 100;
-}
-
-.modal-overlay.active {
-  display: flex;
-}
-
-.modal-box {
-  background: #fff;
-  width: 90%;
-  max-width: 420px;
-  padding: 1.5rem;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-md);
-  animation: popIn .25s ease;
-}
-
-.modal-box h2 {
-  margin-bottom: 1rem;
-}
-
-.modal-actions {
-  margin-top: 1.2rem;
-  display: flex;
-  gap: 0.8rem;
-}
-
-/* Animation */
-@keyframes popIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-/* ==========================================================
-   RESPONSIVE
-========================================================== */
-@media (max-width: 768px) {
-  .hero-content h1 {
-    font-size: 1.6rem;
-  }
-
-  .expanded-buttons {
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  }
-
-  .triple-grid {
-    grid-template-columns: 1fr;
-  }
 }

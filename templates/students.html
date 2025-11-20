@@ -8,7 +8,7 @@
   <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
-  <!-- NEW Student Dashboard CSS -->
+  <!-- Student Dashboard CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/students.css') }}"/>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/student-exams.css') }}"/>
 </head>
@@ -23,11 +23,17 @@
     </div>
 
     <div class="header-right">
+
+      <!-- Live Clock -->
+      <span id="liveClock" class="live-clock"></span>
+
+      <!-- Notifications -->
       <button class="icon-btn" id="notifBtn" title="Notifications">
         <i class="fa-solid fa-bell"></i>
         <span class="notif-dot"></span>
       </button>
 
+      <!-- Theme Toggle -->
       <button class="icon-btn" id="themeToggle" title="Toggle Theme">
         <i class="fa-solid fa-sun"></i>
       </button>
@@ -38,13 +44,15 @@
     </div>
   </header>
 
-  <!-- ================= FIRST CARD ================= -->
+  <!-- ================= HERO ================= -->
   <section class="hero-section fade-in">
     <div class="hero-overlay"></div>
 
     <div class="hero-content">
-      <h1>Welcome back, {{ first_name or "Student" }}!</h1>
-      <p>Your academic dashboard — everything you need at a glance.</p>
+      <h1 class="animated-greeting">
+        Welcome back, {{ student.full_name if student else "Student" }}!
+      </h1>
+      <p class="sub-text">Your academic dashboard — everything you need at a glance.</p>
 
       <div class="hero-actions expanded-buttons">
         <button class="btn-primary" id="openExamPortal">
@@ -58,6 +66,41 @@
         <button class="btn-light"><i class="fa-solid fa-user-circle"></i> Profile</button>
         <button class="btn-light"><i class="fa-solid fa-id-card"></i> Student ID</button>
       </div>
+    </div>
+  </section>
+
+  <!-- ================= STUDENT PROFILE CARD ================= -->
+  <section class="profile-card-container fade-in">
+    <div class="profile-card">
+
+      <div class="profile-header">
+        <i class="fa-solid fa-id-card profile-icon"></i>
+        <h2>Student Profile</h2>
+        <p>Basic information associated with your registration</p>
+      </div>
+
+      <div class="profile-grid">
+        <div class="profile-item">
+          <span>Full Name</span>
+          <strong>{{ student.full_name }}</strong>
+        </div>
+
+        <div class="profile-item">
+          <span>Admission Number</span>
+          <strong>{{ student.admission_number }}</strong>
+        </div>
+
+        <div class="profile-item">
+          <span>Class</span>
+          <strong>{{ student.class }}</strong>
+        </div>
+
+        <div class="profile-item">
+          <span>System ID</span>
+          <strong>{{ student.id }}</strong>
+        </div>
+      </div>
+
     </div>
   </section>
 
@@ -86,15 +129,11 @@
       <!-- Recent Activity -->
       <div class="tri-card">
         <h2><i class="fa-solid fa-clock-rotate-left"></i> Recent Activity</h2>
+
         <div id="activityList" class="activity-list">
-          <div class="activity-item">
-            <div class="dot"></div>
-            <div>
-              <div class="title">Logged in</div>
-              <div class="meta">Just now</div>
-            </div>
-          </div>
+          <!-- Auto-populated on login -->
         </div>
+
       </div>
 
       <!-- Announcements -->
@@ -125,48 +164,50 @@
 
   <!-- ================= FOOTER ================= -->
   <footer class="student-footer fade-in">
-    <p>© <span id="year"></span> EMIS Portal — Empowering Students for Success</p>
+    <p>&copy; <span id="year"></span> EMIS Portal — Empowering Students for Success</p>
   </footer>
 
-<!-- ================= EXAM SUBJECT MODAL ================= -->
-<div class="modal-overlay" id="examModal">
-  <div class="modal-box">
+  <!-- ================= EXAM SUBJECT MODAL ================= -->
+  <div class="modal-overlay" id="examModal">
+    <div class="modal-box">
 
-    <h2 class="modal-title">
-      <i class="fa-solid fa-pen-to-square"></i> Start Your Exam
-    </h2>
+      <h2 class="modal-title">
+        <i class="fa-solid fa-pen-to-square"></i> Start Your Exam
+      </h2>
 
-    <div class="form-group">
-      <label for="subjectDropdown">Select Subject</label>
-      <select id="subjectDropdown">
-        <option value="">-- Select Subject --</option>
-        {% for subject in subjects %}
-        <option value="{{ subject }}">{{ subject }}</option>
-        {% endfor %}
-      </select>
-    </div>
+      <div class="form-group">
+        <label for="subjectDropdown">Select Subject</label>
+        <select id="subjectDropdown">
+          <option value="">-- Select Subject --</option>
+          {% for subject in subjects %}
+          <option value="{{ subject }}">{{ subject }}</option>
+          {% endfor %}
+        </select>
+      </div>
 
-    <div class="modal-actions">
+      <div class="modal-actions">
 
-      <button class="btn-secondary" id="refreshSubjectsBtn">
-        Refresh Subjects
-      </button>
+        <button class="btn-secondary" id="refreshSubjectsBtn">
+          Refresh Subjects
+        </button>
 
-      <button class="btn-primary" id="startExamBtn" disabled>
-        Start Exam
-      </button>
+        <button class="btn-primary" id="startExamBtn" disabled>
+          Start Exam
+        </button>
 
-      <button class="btn-secondary" id="closeExamModal">
-        Cancel
-      </button>
+        <button class="btn-secondary" id="closeExamModal">
+          Cancel
+        </button>
 
+      </div>
     </div>
   </div>
-</div>
-
 
   <!-- ================= JS ================= -->
   <script src="{{ url_for('static', filename='js/student-exams.js') }}"></script>
+
+  <!-- TODO: Add dynamic JS (Theme toggle, Clock, Animations) -->
+  <script src="{{ url_for('static', filename='js/student-dashboard.js') }}"></script>
 
 </body>
 </html>
