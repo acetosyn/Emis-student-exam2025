@@ -5,17 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Student Dashboard | EMIS</title>
 
-  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-
-  <!-- Student Dashboard CSS -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/students.css') }}"/>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/student-exams.css') }}"/>
 </head>
 
 <body class="students-body">
 
-  <!-- ================= HEADER ================= -->
+  <!-- ----------------------------------------------------
+       HEADER
+  ----------------------------------------------------- -->
   <header class="student-header">
     <div class="header-left">
       <i class="fa-solid fa-graduation-cap header-logo"></i>
@@ -26,6 +25,11 @@
 
       <!-- Live Clock -->
       <span id="liveClock" class="live-clock"></span>
+
+      <!-- Logout Button -->
+      <a href="{{ url_for('user_bp.logout') }}" class="logout-btn" title="Logout">
+        <i class="fa-solid fa-right-from-bracket"></i>
+      </a>
 
       <!-- Notifications -->
       <button class="icon-btn" id="notifBtn" title="Notifications">
@@ -38,23 +42,59 @@
         <i class="fa-solid fa-sun"></i>
       </button>
 
+      <!-- Avatar -->
       <img src="{{ url_for('static', filename='images/student.jpg') }}"
            alt="Student Avatar"
            class="student-avatar"/>
     </div>
   </header>
 
-  <!-- ================= HERO ================= -->
-  <section class="hero-section fade-in">
-    <div class="hero-overlay"></div>
+  <!-- ----------------------------------------------------
+       HERO SPLIT LAYOUT — PROFILE LEFT / WELCOME RIGHT
+  ----------------------------------------------------- -->
+  <section class="hero-split">
 
-    <div class="hero-content">
-      <h1 class="animated-greeting">
-        Welcome back, {{ student.full_name if student else "Student" }}!
-      </h1>
-      <p class="sub-text">Your academic dashboard — everything you need at a glance.</p>
+    <!-- LEFT — STUDENT PROFILE -->
+    <div class="hero-left">
+      <div class="profile-card hero-profile-card">
 
-      <div class="hero-actions expanded-buttons">
+        <div class="profile-header">
+          <i class="fa-solid fa-id-card profile-icon"></i>
+          <h2>Student Profile</h2>
+          <p>Your basic information</p>
+        </div>
+
+        <div class="profile-grid">
+          <div class="profile-item">
+            <span>Full Name</span>
+            <strong>{{ student.full_name }}</strong>
+          </div>
+
+          <div class="profile-item">
+            <span>Admission Number</span>
+            <strong>{{ student.admission_number }}</strong>
+          </div>
+
+          <div class="profile-item">
+            <span>Class</span>
+            <strong>{{ student.class }}</strong>
+          </div>
+
+          <div class="profile-item">
+            <span>System ID</span>
+            <strong>{{ student.id }}</strong>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- RIGHT — GREETING + ACTION BUTTONS -->
+    <div class="hero-right">
+      <h1 class="hero-title">Welcome back, {{ student.full_name }}!</h1>
+      <p class="hero-sub">Your academic dashboard — everything you need at a glance.</p>
+
+      <div class="hero-buttons">
         <button class="btn-primary" id="openExamPortal">
           <i class="fa-solid fa-laptop-file"></i> Exam Portal
         </button>
@@ -67,107 +107,74 @@
         <button class="btn-light"><i class="fa-solid fa-id-card"></i> Student ID</button>
       </div>
     </div>
+
   </section>
 
-  <!-- ================= STUDENT PROFILE CARD ================= -->
-  <section class="profile-card-container fade-in">
-    <div class="profile-card">
+ <!-- ----------------------------------------------------
+     UNIFIED DASHBOARD CARD (4 MINI CARDS INSIDE)
+----------------------------------------------------- -->
+<main class="content-area">
 
-      <div class="profile-header">
-        <i class="fa-solid fa-id-card profile-icon"></i>
-        <h2>Student Profile</h2>
-        <p>Basic information associated with your registration</p>
+  <div class="dashboard-wrapper card">
+
+    <div class="dashboard-grid">
+
+      <!-- 1. Performance -->
+      <div class="mini-card mini-performance">
+        <h3><i class="fa-solid fa-chart-pie"></i> Performance</h3>
+
+        <div class="mini-stats">
+          <div><span>Avg</span><strong id="avgScore">--%</strong></div>
+          <div><span>Exams</span><strong id="examCount">--</strong></div>
+          <div><span>Passed</span><strong id="passedSubjects">--</strong></div>
+        </div>
+
+        <canvas id="performanceChart" class="mini-chart"></canvas>
       </div>
 
-      <div class="profile-grid">
-        <div class="profile-item">
-          <span>Full Name</span>
-          <strong>{{ student.full_name }}</strong>
+      <!-- 2. Recent Activity -->
+      <div class="mini-card mini-activity">
+        <h3><i class="fa-solid fa-clock-rotate-left"></i> Activity</h3>
+
+        <div id="activityList" class="mini-list"></div>
+      </div>
+
+      <!-- 3. Announcements -->
+      <div class="mini-card mini-announce">
+        <h3><i class="fa-solid fa-bullhorn"></i> Announcements</h3>
+        <ul id="announcementList" class="mini-list"></ul>
+      </div>
+
+      <!-- 4. Feedback -->
+      <div class="mini-card mini-feedback">
+        <h3><i class="fa-solid fa-comments"></i> Feedback</h3>
+
+        <div class="mini-chat">
+          <div id="chatMessages" class="chat-messages"></div>
+
+          <form id="feedbackForm" class="chat-input">
+            <textarea id="feedbackText" placeholder="Type..."></textarea>
+            <button class="send-btn"><i class="fa-solid fa-paper-plane"></i></button>
+          </form>
         </div>
 
-        <div class="profile-item">
-          <span>Admission Number</span>
-          <strong>{{ student.admission_number }}</strong>
-        </div>
-
-        <div class="profile-item">
-          <span>Class</span>
-          <strong>{{ student.class }}</strong>
-        </div>
-
-        <div class="profile-item">
-          <span>System ID</span>
-          <strong>{{ student.id }}</strong>
-        </div>
       </div>
 
     </div>
-  </section>
 
-  <!-- ================= MAIN AREA ================= -->
-  <main class="content-area">
+  </div>
 
-    <!-- ================= PERFORMANCE OVERVIEW ================= -->
-    <section class="performance small-performance fade-in">
-      <div class="section-header">
-        <h2><i class="fa-solid fa-chart-pie"></i> Performance Overview</h2>
-        <p class="subtitle">Track your academic progress</p>
-      </div>
+</main>
 
-      <div class="stats-grid compact">
-        <div class="stat-card"><span>Average Score</span><h3 id="avgScore">--%</h3></div>
-        <div class="stat-card"><span>Exams Taken</span><h3 id="examCount">--</h3></div>
-        <div class="stat-card"><span>Subjects Passed</span><h3 id="passedSubjects">--</h3></div>
-      </div>
 
-      <canvas id="performanceChart"></canvas>
-    </section>
-
-    <!-- ================= THREE CARD ROW ================= -->
-    <section class="triple-grid fade-in">
-
-      <!-- Recent Activity -->
-      <div class="tri-card">
-        <h2><i class="fa-solid fa-clock-rotate-left"></i> Recent Activity</h2>
-
-        <div id="activityList" class="activity-list">
-          <!-- Auto-populated on login -->
-        </div>
-
-      </div>
-
-      <!-- Announcements -->
-      <div class="tri-card">
-        <h2><i class="fa-solid fa-bullhorn"></i> Announcements</h2>
-        <ul id="announcementList" class="announcement-list"></ul>
-      </div>
-
-      <!-- Feedback -->
-      <div class="tri-card">
-        <h2><i class="fa-solid fa-comments"></i> Feedback</h2>
-
-        <div class="chat-container">
-          <div class="chat-messages" id="chatMessages"></div>
-
-          <form id="feedbackForm" class="chat-input">
-            <textarea id="feedbackText" placeholder="Type your message..."></textarea>
-            <button type="submit" class="send-btn">
-              <i class="fa-solid fa-paper-plane"></i>
-            </button>
-          </form>
-        </div>
-      </div>
-
-    </section>
-
-  </main>
-
-  <!-- ================= FOOTER ================= -->
-  <footer class="student-footer fade-in">
+  <!-- ----------------------------------------------------
+       FOOTER
+  ----------------------------------------------------- -->
+  <footer class="student-footer">
     <p>&copy; <span id="year"></span> EMIS Portal — Empowering Students for Success</p>
   </footer>
 
-  <!-- ================= EXAM SUBJECT MODAL ================= -->
+  <!-- Exam Modal -->
   <div class="modal-overlay" id="examModal">
     <div class="modal-box">
 
@@ -186,27 +193,15 @@
       </div>
 
       <div class="modal-actions">
-
-        <button class="btn-secondary" id="refreshSubjectsBtn">
-          Refresh Subjects
-        </button>
-
-        <button class="btn-primary" id="startExamBtn" disabled>
-          Start Exam
-        </button>
-
-        <button class="btn-secondary" id="closeExamModal">
-          Cancel
-        </button>
-
+        <button class="btn-secondary" id="refreshSubjectsBtn">Refresh Subjects</button>
+        <button class="btn-primary" id="startExamBtn" disabled>Start Exam</button>
+        <button class="btn-secondary" id="closeExamModal">Cancel</button>
       </div>
+
     </div>
   </div>
 
-  <!-- ================= JS ================= -->
   <script src="{{ url_for('static', filename='js/student-exams.js') }}"></script>
-
-  <!-- TODO: Add dynamic JS (Theme toggle, Clock, Animations) -->
   <script src="{{ url_for('static', filename='js/student-dashboard.js') }}"></script>
 
 </body>

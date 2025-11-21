@@ -1,53 +1,55 @@
-/* ==========================================================
-   EMIS STUDENT DASHBOARD — students.css (v6.0 CLEAN BUILD)
-========================================================== */
+/* ============================================================================
+   EMIS STUDENT DASHBOARD — Layout A (v7.0)
+   Clean professional split-hero + adaptive grid layout
+============================================================================ */
 
 :root {
   --primary: #0f2b46;
   --accent: #e11d48;
   --secondary: #0d9488;
+
   --light: #ffffff;
   --dark: #0f172a;
   --bg-soft: #f1f5f9;
   --muted: #64748b;
 
   --radius: 14px;
-  --shadow-sm: 0 2px 6px rgba(0,0,0,0.08);
-  --shadow-md: 0 6px 16px rgba(0,0,0,0.12);
-  --shadow-hover: 0 12px 28px rgba(0,0,0,0.18);
-  --transition: all .25s ease;
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.07);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 12px 26px rgba(0, 0, 0, 0.16);
+  --transition: all 0.25s ease;
 }
 
-/* ==========================================================
-   BASE LAYOUT
-========================================================== */
+/* ============================================================================
+   BODY
+============================================================================ */
 body.students-body {
-  font-family: "Inter", "Segoe UI", Arial, sans-serif;
   margin: 0;
   background: var(--bg-soft);
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
   color: var(--dark);
 }
 
-/* ==========================================================
-   HEADER
-========================================================== */
+/* ============================================================================
+   HEADER — with Logout Button
+============================================================================ */
 .student-header {
   background: var(--primary);
-  padding: 1rem 1.8rem;
   color: #fff;
-  box-shadow: var(--shadow-md);
+  padding: 1rem 1.8rem;
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow-md);
   position: sticky;
   top: 0;
-  z-index: 50;
+  z-index: 100;
 }
 
 .header-left {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.7rem;
 }
 
 .header-logo {
@@ -56,8 +58,8 @@ body.students-body {
 }
 
 .portal-title {
-  font-weight: 700;
   font-size: 1.05rem;
+  font-weight: 700;
 }
 
 .header-right {
@@ -67,25 +69,37 @@ body.students-body {
 }
 
 .live-clock {
-  padding: 0.35rem 0.6rem;
-  background: rgba(255,255,255,0.15);
+  background: rgba(255, 255, 255, 0.15);
+  padding: 0.35rem 0.7rem;
   border-radius: 6px;
   font-size: 0.85rem;
 }
 
-.icon-btn {
-  background: transparent;
-  border: none;
+.logout-btn {
   color: #fff;
   font-size: 1.15rem;
+  text-decoration: none;
+  transition: 0.2s ease;
+}
+
+.logout-btn:hover {
+  color: #ffb4b4;
+  transform: scale(1.12);
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
   cursor: pointer;
   transition: var(--transition);
   position: relative;
 }
 
 .icon-btn:hover {
-  transform: scale(1.12);
   color: var(--accent);
+  transform: scale(1.1);
 }
 
 .notif-dot {
@@ -101,122 +115,55 @@ body.students-body {
 .student-avatar {
   width: 38px;
   height: 38px;
-  object-fit: cover;
   border-radius: 50%;
+  object-fit: cover;
   border: 2px solid var(--accent);
 }
 
-/* ==========================================================
-   HERO SECTION
-========================================================== */
-.hero-section {
-  position: relative;
+/* ============================================================================
+   HERO SPLIT LAYOUT
+============================================================================ */
+.hero-split {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 2rem;
+  padding: 2rem;
+  margin-top: 1rem;
+
   background: url("../images/student.jpg") center/cover;
-  padding: 4rem 1rem 2.5rem;
-  text-align: center;
-  border-bottom-left-radius: 40px;
-  border-bottom-right-radius: 40px;
+  border-radius: 35px;
+  position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-md);
-  margin-bottom: 1.5rem;
 }
 
-.hero-overlay {
+.hero-split::before {
+  content: "";
   position: absolute;
   inset: 0;
-  background: rgba(15, 43, 70, 0.78);
+  background: rgba(15, 43, 70, 0.8);
+  backdrop-filter: blur(4px);
 }
 
-.hero-content {
+.hero-left,
+.hero-right {
   position: relative;
-  z-index: 2;
-  color: white;
+  z-index: 3;
 }
 
-.hero-content h1 {
-  font-size: 2rem;
-  margin-bottom: 0.6rem;
-  font-weight: 700;
-}
-
-.sub-text {
-  color: #e2e8f0;
-  font-size: 0.95rem;
-  margin-bottom: 1.4rem;
-}
-
-.expanded-buttons {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 0.7rem;
-  max-width: 900px;
-  margin: auto;
-}
-
-/* ==========================================================
-   BUTTONS
-========================================================== */
-.btn-primary,
-.btn-light {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.45rem;
-  border: none;
-  padding: 0.75rem;
-  border-radius: var(--radius);
-  font-weight: 600;
-  cursor: pointer;
-  transition: var(--transition);
-  font-size: 0.9rem;
-}
-
-.btn-primary {
-  background: #2563eb;
-  color: #fff;
-}
-
-.btn-primary:hover {
-  background: #1e40af;
-  transform: translateY(-3px);
-}
-
-.btn-light {
-  background: #ffffff;
-  color: var(--primary);
-}
-
-.btn-light:hover {
-  background: #e2e8f0;
-  transform: translateY(-3px);
-}
-
-/* ==========================================================
-   PROFILE CARD (NEW)
-========================================================== */
-.profile-card-container {
-  display: flex;
-  justify-content: center;
-  padding: 1rem;
-}
-
-.profile-card {
-  background: #fff;
-  padding: 1.5rem 1.7rem;
+/* ============================================================================
+   PROFILE CARD (Left Side)
+============================================================================ */
+.hero-profile-card {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 1.4rem 1.3rem;
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
-  max-width: 450px;
-  width: 100%;
-  transition: var(--transition);
-  text-align: center;
-}
-
-.profile-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-hover);
+  max-width: 350px;
 }
 
 .profile-header {
+  text-align: center;
   margin-bottom: 1rem;
 }
 
@@ -226,61 +173,279 @@ body.students-body {
   margin-bottom: 0.4rem;
 }
 
-.profile-card h2 {
-  margin: 0;
-  font-size: 1.3rem;
-  color: var(--primary);
-}
-
-.profile-card p {
-  margin: 0.4rem 0 1rem;
-  font-size: 0.85rem;
-  color: var(--muted);
-}
-
 .profile-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  grid-template-columns: 1fr;
+  gap: 0.8rem;
 }
 
 .profile-item {
   background: var(--bg-soft);
-  padding: 0.9rem;
+  padding: 0.8rem;
   border-radius: var(--radius);
-  text-align: left;
 }
 
 .profile-item span {
-  display: block;
   color: var(--muted);
   font-size: 0.78rem;
 }
 
 .profile-item strong {
-  margin-top: 0.3rem;
   display: block;
-  color: var(--dark);
+  margin-top: 0.3rem;
   font-size: 1rem;
 }
 
-/* ==========================================================
-   CONTENT AREA
-========================================================== */
-.content-area {
-  margin: 2rem auto;
-  width: 95%;
-  max-width: 1300px;
+/* ============================================================================
+   RIGHT HERO — TEXT + BUTTONS
+============================================================================ */
+.hero-title {
+  color: #fff;
+  font-size: 1.9rem;
+  margin-bottom: 0.5rem;
 }
 
-/* PERFORMANCE, TRIPLE GRID, CHAT, ANNOUNCEMENTS remain unchanged for now */
+.hero-sub {
+  color: #dce7f5;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
 
+.hero-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.7rem;
+  max-width: 620px;
+}
+
+/* BUTTONS */
+.btn-primary,
+.btn-light {
+  border: none;
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #1e3a8a;
+  transform: translateY(-2px);
+}
+
+.btn-light {
+  background: white;
+  color: var(--primary);
+}
+
+.btn-light:hover {
+  background: #e2e8f0;
+  transform: translateY(-2px);
+}
+
+/* ============================================================================
+   GENERAL CARD STYLE
+============================================================================ */
+.card {
+  background: white;
+  padding: 1.4rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ============================================================
+   UNIFIED DASHBOARD — SMALL, CLEAN, SINGLE COLOR
+============================================================ */
+
+/* Parent wrapper */
+.dashboard-wrapper {
+  width: 100%;
+  padding: 1.2rem;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: var(--shadow-md);
+  margin-top: 1.2rem;
+}
+
+/* Grid of 4 small cards */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.8rem;
+}
+
+/* ================================================
+   MINI CARDS — Navy Blue, smaller, bold text
+================================================ */
+
+.mini-card {
+  background: #0f2b46;        /* single navy color */
+  color: #ffffff;
+  padding: 0.75rem;
+  border-radius: 10px;
+  min-height: 130px;          /* reduced height */
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  font-size: 0.82rem;
+}
+
+.mini-card h3 {
+  font-size: 0.92rem;
+  font-weight: 800;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+/* stats small */
+.mini-stats {
+  display: flex;
+  justify-content: space-between;
+}
+
+.mini-stats div span {
+  font-size: 0.65rem;
+  opacity: 0.9;
+}
+
+.mini-stats div strong {
+  font-size: 1rem;
+  font-weight: 800;
+}
+
+/* ================================================
+   MINI LISTS (Announcements + Activity)
+================================================ */
+
+.mini-list {
+  max-height: 90px;
+  overflow-y: auto;
+  padding: 0;
+  list-style: none;
+}
+
+.mini-list li,
+.mini-list .activity-item {
+  background: rgba(255,255,255,0.12);
+  padding: 0.35rem 0.45rem;
+  border-radius: 6px;
+  margin-bottom: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+/* ================================================
+   FEEDBACK COMPACT AREA
+================================================ */
+
+.mini-chat {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.chat-messages {
+  flex: 1;
+  background: rgba(255,255,255,0.12);
+  border-radius: 6px;
+  padding: 0.45rem;
+  font-size: 0.72rem;
+  overflow-y: auto;
+}
+
+/* white input area, not dark */
+.chat-input textarea {
+  background: #ffffff !important;
+  color: #0f2b46;
+  border-radius: 6px;
+  padding: 0.45rem;
+  font-size: 0.8rem;
+  resize: none;
+  border: none;
+}
+
+.send-btn {
+  background: #ffffff;
+  color: #0f2b46;
+  border: none;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  border-radius: 6px;
+  margin-left: 0.4rem;
+}
+
+/* ================================================
+   MINI CHART SMALL SIZE
+================================================ */
+
+.mini-chart {
+  height: 60px !important;
+}
+
+/* ================================================
+   RESPONSIVE
+================================================ */
+
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================================
+   FOOTER
+============================================================================ */
 .student-footer {
-  margin-top: 2rem;
-  text-align: center;
+  margin-top: 2.5rem;
   padding: 1rem;
   background: var(--primary);
-  color: #fff;
+  color: white;
+  text-align: center;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
+}
+
+/* ============================================================================
+   RESPONSIVE
+============================================================================ */
+@media (max-width: 1024px) {
+  .hero-split {
+    grid-template-columns: 1fr;
+  }
+
+  .two-grid,
+  .bottom-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-buttons {
+    grid-template-columns: 1fr 1fr;
+  }
 }

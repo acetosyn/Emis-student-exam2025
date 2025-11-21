@@ -35,6 +35,7 @@ Thumbs.db
 # Backups
 users.json
 users.xlsx
+/subjects/
 /logs
 /EMIS INTERVIEW QUESTIONS/
 EMIS INTERVIEW QUESTIONS.zip

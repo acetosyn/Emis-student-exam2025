@@ -189,12 +189,6 @@
     <li><a href="{{ url_for('admin_bp.admin_dashboard') }}"><i class="fa-solid fa-gauge-high"></i><span>Dashboard</span></a></li>
     <li><a href="{{ url_for('admin_bp.admin_teachers') }}"><i class="fa-solid fa-user-tie"></i><span>Teachers</span></a></li>
   
-<li>
-  <a href="{{ url_for('admin_bp.admin_students') }}" data-newtab>
-    <i class="fa-solid fa-users"></i>
-    <span>Students</span>
-  </a>
-</li>
 
     <li><a href="{{ url_for('admin_bp.admin_ids') }}"><i class="fa-solid fa-id-card"></i><span>IDs</span></a></li>
     <li><a href="{{ url_for('admin_bp.admin_past_questions') }}"><i class="fa-solid fa-clock-rotate-left"></i><span>Past Questions</span></a></li>
@@ -234,7 +228,9 @@
 <!-- ================= SCRIPTS ================= -->
 <script src="{{ url_for('static', filename='js/toggle.js') }}"></script>
 <script src="{{ url_for('static', filename='js/privileges.js') }}"></script>
-<script src="{{ url_for('static', filename='js/page_link.js') }}"></script>
+<script src="{{ url_for('static', filename='js/page-routes.js') }}"></script>
+
+
 
 
 {% block scripts %}{% endblock %}
