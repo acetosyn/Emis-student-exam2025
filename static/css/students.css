@@ -449,3 +449,122 @@ body.students-body {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+
+
+
+/* ============================================================
+   AVAILABLE SUBJECTS PREVIEW CARD — Hero Right Section
+   Fully Responsive, Clean, Floating Card Design
+============================================================ */
+
+.available-subjects-card {
+  position: absolute;
+  top: 130px;
+  right: 25px;
+  width: 260px;
+
+  background: #ffffff;
+  padding: 1rem 1.2rem;
+  border-radius: 14px;
+  box-shadow: var(--shadow-md);
+
+  display: none;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.25s ease;
+  z-index: 50;
+}
+
+.available-subjects-card.show {
+  display: block;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.available-subjects-card h4 {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.small-sub {
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin-bottom: 0.7rem;
+}
+
+.subjects-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.subjects-list li {
+  margin-bottom: 6px;
+  padding: 6px 10px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #0f2b46;
+  font-size: 0.85rem;
+  border-left: 4px solid var(--primary);
+}
+
+.subjects-list li.empty {
+  text-align: center;
+  border-left: none;
+  color: #64748b;
+}
+
+.btn-mini {
+  width: 100%;
+  margin-top: 0.7rem;
+  padding: 0.55rem;
+  background: var(--primary);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.btn-mini:hover {
+  background: #0a1c30;
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+   MOBILE RESPONSIVE — Small Screens
+============================================================ */
+@media (max-width: 1024px) {
+  .available-subjects-card {
+    position: relative;
+    top: 0;
+    right: 0;
+    width: 100%;
+    margin-top: 1rem;
+    transform: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .available-subjects-card {
+    padding: 1rem;
+  }
+
+  .subjects-list li {
+    font-size: 0.82rem;
+    padding: 6px 8px;
+  }
+}
+
+

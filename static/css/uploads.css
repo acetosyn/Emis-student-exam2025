@@ -1,6 +1,6 @@
 /* ============================================================
-   EMIS UPLOADS.CSS — Modern Three-Panel Interface
-   Version 3.0 — Optimized for Teacher Uploads
+   EMIS UPLOADS PAGE — NEW UI (2025)
+   Cleaned, optimized, de-duplicated, structured
    ============================================================ */
 :root {
   --primary: #0f2b46;
@@ -10,340 +10,716 @@
   --bg-light: #f8fafc;
   --text-dark: #0f172a;
   --radius: 12px;
-  --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
   --shadow-md: 0 4px 15px rgba(0,0,0,0.08);
   --shadow-lg: 0 6px 25px rgba(0,0,0,0.12);
 }
 
-/* ======================== Animations ======================== */
-.fade-in { animation: fadeIn 0.5s ease; }
-@keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
-
-/* ======================== Wrapper ======================== */
-.uploads-wrapper {
-  padding: 1.6rem;
-  background: var(--bg-light);
-  color: var(--text-dark);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-md);
-}
-.uploads-header {
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-.uploads-header h3 {
-  color: var(--primary);
-  font-size: 1.5rem;
-  margin-bottom: 0.3rem;
-}
-.uploads-header .sub-text {
-  color: #555;
-  font-size: 0.9rem;
+/* ============================================================
+   GLOBAL UTILITIES
+   ============================================================ */
+.fade-in {
+  animation: fadeIn .45s ease;
 }
 
-/* ======================== Grid Layout ======================== */
-.uploads-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 2fr 1.2fr;
-  gap: 1.4rem;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-.uploads-grid section {
+
+.pretty-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) #e5e7eb;
+}
+
+.pretty-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.pretty-scroll::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 10px;
+}
+.pretty-scroll::-webkit-scrollbar-track {
+  background: #e5e7eb;
+}
+
+.card {
   background: #fff;
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
   padding: 1rem 1.2rem;
   display: flex;
   flex-direction: column;
-  min-height: 480px;
 }
 
-/* ======================== Upload Panel ======================== */
-.upload-panel h4 {
-  color: var(--primary);
-  margin-bottom: 0.4rem;
-}
-.drop-box {
-  border: 2px dashed var(--accent);
+/* ============================================================
+   WRAPPER + HEADER
+   ============================================================ */
+.uploads-wrapper {
+  padding: 1.6rem;
+  background: var(--bg-light);
   border-radius: var(--radius);
-  padding: 1.3rem;
-  margin: 0.8rem 0;
-  text-align: center;
-  position: relative;
-  transition: all 0.25s ease;
 }
-.drop-box.drag-over {
-  background: #fff3f6;
-  transform: scale(1.03);
-}
-.upload-icon {
-  font-size: 2rem;
-  color: var(--accent);
-  margin-bottom: 0.4rem;
-}
-.flex { display: flex; }
-.gap-2 { gap: 0.6rem; }
-.justify-center { justify-content: center; }
 
-.btn-primary,
-.btn-secondary {
-  border: none;
-  border-radius: 6px;
-  padding: 0.45rem 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.25s ease;
-  font-size: 0.85rem;
+.uploads-header {
+  margin-bottom: 1.5rem;
 }
-.btn-primary {
-  background: var(--accent);
-  color: #fff;
-}
-.btn-primary:hover { background: #c3133e; }
-.btn-secondary {
-  background: #e5e7eb;
-  color: #111;
-}
-.btn-secondary:hover { background: #d1d5db; }
 
-.file-list {
-  list-style: none;
-  padding: 0;
-  margin-top: 0.6rem;
-  font-size: 0.9rem;
-}
-.file-list li {
+.uploads-header-main {
   display: flex;
   justify-content: space-between;
-  background: #f9fafb;
-  margin-bottom: 0.3rem;
-  padding: 0.45rem 0.6rem;
-  border-radius: 6px;
-}
-.file-list .empty { color: #999; text-align: center; }
-
-.file-preview {
-  display: flex;
+  align-items: flex-start;
+  gap: 1.4rem;
   flex-wrap: wrap;
-  gap: 0.7rem;
-  margin-top: 0.8rem;
-}
-.preview-card {
-  width: 90px;
-  height: 100px;
-  background: #f9fafb;
-  border-radius: 8px;
-  box-shadow: var(--shadow-sm);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.75rem;
-  text-align: center;
-  padding: 0.4rem;
-  transition: 0.25s ease;
-}
-.preview-card:hover {
-  transform: scale(1.05);
-  box-shadow: var(--shadow-md);
-}
-.preview-card img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 6px;
-  margin-bottom: 0.2rem;
-}
-.pdf-icon { font-size: 2.4rem; color: #dc2626; margin-bottom: 0.2rem; }
-.generic-icon { font-size: 2.2rem; color: #6b7280; margin-bottom: 0.2rem; }
-
-.upload-actions {
-  display: flex;
-  gap: 0.6rem;
-  margin-top: 0.8rem;
 }
 
-.progress {
-  height: 8px;
-  background: #e5e7eb;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 0.7rem;
-}
-.progress-bar {
-  height: 100%;
-  width: 0;
-  background: var(--accent);
-  transition: width 0.3s linear;
-}
-
-/* ======================== Dashboard Panel ======================== */
-.dashboard-panel h4 {
+.uploads-header-left h3 {
   color: var(--primary);
-  margin-bottom: 0.5rem;
-}
-.search-bar { margin-bottom: 0.8rem; }
-.search-bar input {
-  width: 100%;
-  padding: 0.55rem 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-}
-.table-wrapper { overflow-x: auto; border-radius: 8px; }
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.88rem;
-}
-th, td {
-  padding: 0.5rem 0.6rem;
-  border-bottom: 1px solid #eee;
-  text-align: left;
-}
-th {
-  background: #f3f4f6;
-  color: var(--primary);
-  font-weight: 700;
-}
-td.center { text-align: center; }
-.actions button { margin-right: 0.3rem; }
-.status.success { color: #16a34a; font-weight: 600; }
-
-/* ======================== Push Panel ======================== */
-.push-panel h4 {
-  color: var(--primary);
-  margin-bottom: 0.5rem;
-}
-.portal-preview {
-  text-align: center;
-  background: #f9fafb;
-  border-radius: var(--radius);
-  padding: 1rem;
-  margin-bottom: 0.8rem;
-}
-.db-icon { font-size: 2.5rem; color: var(--accent); }
-.push-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-}
-.log-box {
-  background: #f3f4f6;
-  font-size: 0.85rem;
-  color: #333;
-  border-radius: 8px;
-  padding: 0.6rem;
-  margin-top: 0.6rem;
-  height: 120px;
-  overflow-y: auto;
+  font-size: 1.55rem;
+  margin-bottom: .3rem;
 }
 
-/* ======================== Modal ======================== */
-.modal.hidden { display: none; }
-.modal {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.modal-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
-  backdrop-filter: blur(2px);
-}
-.modal-card {
-  background: #fff;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
-  width: 85%;
-  max-width: 800px;
-  z-index: 1001;
-  display: flex;
-  flex-direction: column;
-  max-height: 85vh;
-  overflow: hidden;
-  animation: fadeIn 0.4s ease;
-}
-.modal-header,
-.modal-footer {
-  padding: 0.7rem 1rem;
-  background: #f9fafb;
-  border-bottom: 1px solid #eee;
-}
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: var(--primary);
-  font-weight: 700;
-}
-.modal-body {
-  padding: 1rem;
-  overflow-y: auto;
-  flex-grow: 1;
-}
-.json-pre {
-  font-family: "Courier New", monospace;
-  font-size: 0.85rem;
-  line-height: 1.4;
-  white-space: pre-wrap;
-  word-break: break-word;
-  color: #1e293b;
-  background: #f9fafb;
-  padding: 1rem;
-  border-radius: 8px;
-}
-.modal-close {
-  background: transparent;
-  border: none;
-  font-size: 1.2rem;
-  cursor: pointer;
-  color: #666;
-}
-.modal-close:hover { color: var(--accent); }
-
-/* ======================== Responsiveness ======================== */
-@media (max-width: 1024px) {
-  .uploads-grid { grid-template-columns: 1fr; }
-  .uploads-grid section { min-height: auto; }
-  .modal-card { width: 95%; }
+.sub-text {
+  font-size: .9rem;
+  color: #555;
 }
 
+.header-actions {
+  margin-top: .3rem;
+  text-align: right;
+}
 
-
-/* ================= ROLE BANNER ================= */
+/* ============================================================
+   ROLE BANNER
+   ============================================================ */
 .role-banner {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  font-weight: 700;
-  font-size: 0.9rem;
-  background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
-  padding: 0.6rem 1.2rem;
+  gap: .45rem;
+  padding: .55rem 1rem;
   border-radius: 10px;
   border-left: 4px solid var(--accent);
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffffff, #f9fafb);
   color: var(--primary-dark);
-  animation: glowFade 3s ease-in-out infinite alternate;
+  box-shadow: var(--shadow-sm);
+  animation: glowPulse 3s infinite alternate;
+}
+
+@keyframes glowPulse {
+  from { box-shadow: 0 0 10px rgba(225,29,72,.25); }
+  to { box-shadow: 0 0 20px rgba(225,29,72,.4); }
 }
 
 .role-banner[data-role="teacher"] {
   border-left-color: #10b981;
-  background: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 100%);
+  background: linear-gradient(135deg, #ecfdf5, #f0fdfa);
+  animation: glowPulseTeacher 3s infinite alternate;
 }
 
-@keyframes glowFade {
-  from { box-shadow: 0 0 10px rgba(225, 29, 72, 0.3); }
-  to { box-shadow: 0 0 20px rgba(225, 29, 72, 0.5); }
+@keyframes glowPulseTeacher {
+  from { box-shadow: 0 0 10px rgba(16,185,129,.25); }
+  to { box-shadow: 0 0 20px rgba(16,185,129,.4); }
 }
 
-.role-banner[data-role="teacher"] {
-  animation: glowFadeTeacher 3s ease-in-out infinite alternate;
+/* ============================================================
+   GRID LAYOUT
+   ============================================================ */
+.uploads-grid {
+  display: grid;
+  grid-template-columns: 1.05fr 1.45fr 1.1fr;
+  gap: 1.4rem;
+  align-items: start;
 }
 
-@keyframes glowFadeTeacher {
-  from { box-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
-  to { box-shadow: 0 0 20px rgba(16, 185, 129, 0.5); }
+/* ============================================================
+   LEFT: UPLOAD PANEL
+   ============================================================ */
+.upload-panel.card {
+  padding: 1.2rem;
+  max-height: 470px;
+  overflow-y: auto;
+}
+
+.drop-box {
+  padding: 1.2rem;
+  border: 2px dashed var(--accent);
+  border-radius: var(--radius);
+  transition: .25s ease;
+}
+
+.drop-box .upload-icon {
+  font-size: 2.6rem;
+  margin-bottom: .4rem;
+}
+
+.btn-row button {
+  margin-right: .5rem;
+  padding: .55rem .9rem !important;
+  font-size: .85rem !important;
+}
+
+.upload-actions {
+  display: flex;
+  gap: .7rem;
+  margin-top: 1rem;
+}
+
+.upload-actions button {
+  padding: .65rem 1rem;
+  font-size: .85rem;
+  font-weight: 600;
+}
+
+/* ============================================================
+   MIDDLE: TABLE PANEL
+   ============================================================ */
+.dashboard-panel.card {
+  padding: 1.1rem;
+  max-height: 470px;
+  overflow-y: auto;
+}
+
+.table-wrapper {
+  overflow-y: auto;
+  max-height: 340px;
+}
+
+.uploads-table th,
+.uploads-table td {
+  padding: .5rem .55rem;
+  font-size: .82rem;
+}
+
+.uploads-table th {
+  background: #eef2f6;
+  font-weight: 700;
+}
+
+/* ============================================================
+   RIGHT: PUSH PANEL
+   ============================================================ */
+.push-panel.card {
+  padding: 1.15rem;
+  max-height: 470px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.push-panel .panel-subtitle {
+  margin-bottom: .6rem;
+}
+
+/* Summary card */
+.portal-summary {
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: .8rem .95rem;
+  display: flex;
+  gap: .9rem;
+  align-items: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.portal-icon {
+  background: white;
+  padding: .6rem .8rem;
+  border-radius: 9px;
+  font-size: 1.65rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.summary-title {
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+.summary-sub {
+  font-size: .8rem;
+  color: #475569;
+}
+
+/* Push actions */
+.push-actions {
+  display: flex;
+  flex-direction: column;
+  gap: .6rem;
+  margin-top: .9rem;
+}
+
+.push-actions-row {
+  display: flex;
+  gap: .6rem;
+}
+
+#pushSelectedToPortal,
+#viewPortalJSON {
+  padding: .55rem .9rem;
+  font-size: .82rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+#clearQueue {
+  padding: .25rem .55rem !important;
+  font-size: .7rem !important;
+  border-radius: 5px !important;
+  width: fit-content;
+  opacity: .85;
+}
+
+/* ============================================================
+   LIVE PREVIEW
+   ============================================================ */
+.preview-card {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8fafc;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  box-shadow: var(--shadow-sm);
+}
+
+.preview-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.preview-card-header h5 {
+  margin: 0;
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+
+.preview-subtitle {
+  font-size: .75rem;
+  color: #64748b;
+}
+
+.preview-meta {
+  margin: .6rem 0;
+  display: flex;
+  gap: .4rem;
+  flex-wrap: wrap;
+}
+
+.preview-pill {
+  background: #e2e8f0;
+  padding: .2rem .55rem;
+  border-radius: 6px;
+  font-size: .72rem;
+  color: #334155;
+}
+
+.preview-body {
+  max-height: 170px;
+  border: 1px solid #e5e7eb;
+  background: white;
+  padding: .7rem;
+  border-radius: 8px;
+  overflow-y: auto;
+  font-size: .78rem;
+  line-height: 1.3rem;
+}
+
+/* ============================================================
+   PORTAL LOG
+   ============================================================ */
+.log-box {
+  margin-top: 1rem;
+  background: #f1f5f9;
+  padding: .8rem;
+  border-radius: 10px;
+  border: 1px solid #e2e8f0;
+  height: 160px;
+  display: flex;
+  flex-direction: column;
+}
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: .4rem;
+}
+
+.log-title {
+  font-weight: 700;
+  font-size: .9rem;
+  color: var(--primary-dark);
+}
+
+.log-body {
+  font-size: .78rem;
+  overflow-y: auto;
+  padding-right: .3rem;
+  line-height: 1.25rem;
+}
+
+.log-placeholder {
+  font-size: .78rem;
+  opacity: .7;
+}
+
+/* ============================================================
+   SUBJECT CARDS (MODAL) + TINY BUTTONS
+   ============================================================ */
+.subjects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  gap: .7rem;
+}
+
+.subject-card {
+  background: #fff;
+  padding: .55rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: .25rem;
+}
+
+.subject-card header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.subject-name {
+  font-weight: 700;
+  font-size: .8rem;
+  color: var(--primary-dark);
+}
+
+.subject-version-pill {
+  padding: .12rem .35rem;
+  font-size: .65rem;
+  border-radius: 5px;
+  background: #f1f5f9;
+}
+
+.subject-filename {
+  font-size: .72rem;
+  color: #334155;
+}
+
+.subject-meta {
+  font-size: .7rem;
+  color: #6b7280;
+}
+
+/* Tiny action buttons on subject cards */
+.subject-actions {
+  margin-top: .35rem;
+  display: flex;
+  gap: .3rem;
+}
+
+.subject-actions .btn-primary,
+.subject-actions .btn-secondary {
+  padding: .22rem .38rem;
+  font-size: .68rem;
+  border-radius: 5px;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 1080px) {
+  .uploads-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============================================================
+   TEACHER OVERRIDES (CONFLICT FIX + MODAL LAYOUT)
+   These ensure the uploads modals & subject cards stay compact
+   even inside teachers.html
+   ============================================================ */
+#teacherDynamicContent .modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 1vh;
+  z-index: 3000;
+}
+
+#teacherDynamicContent .modal.hidden {
+  display: none;
+}
+
+#teacherDynamicContent .modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(2px);
+}
+
+#teacherDynamicContent .modal-card {
+  position: relative;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  width: 78%;
+  max-width: 880px;
+  max-height: 83vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: translateY(-22%);
+}
+
+#teacherDynamicContent .modal-header {
+  padding: .6rem 1rem;
+  background: #f9fafb;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#teacherDynamicContent .modal-header-main h3 {
+  color: var(--primary);
+  font-size: 1rem;
+}
+
+#teacherDynamicContent .modal-subtitle {
+  font-size: .78rem;
+  color: #64748b;
+}
+
+#teacherDynamicContent .modal-body {
+  padding: .7rem;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+#teacherDynamicContent .modal-footer {
+  padding: .55rem 1rem;
+  background: #f9fafb;
+  border-top: 1px solid #eee;
+  text-align: right;
+}
+
+#teacherDynamicContent .modal-close {
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* SUBJECT GRID — TINY CARDS (inside teacher container) */
+#teacherDynamicContent .subjects-grid {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+  gap: .6rem !important;
+}
+
+#teacherDynamicContent .subject-card {
+  padding: .45rem !important;
+  border-radius: 7px !important;
+  gap: .20rem !important;
+}
+
+#teacherDynamicContent .subject-name {
+  font-size: .75rem !important;
+}
+
+#teacherDynamicContent .subject-version-pill {
+  font-size: .58rem !important;
+  padding: .1rem .3rem !important;
+}
+
+#teacherDynamicContent .subject-filename {
+  font-size: .68rem !important;
+}
+
+#teacherDynamicContent .subject-meta {
+  font-size: .65rem !important;
+}
+
+/* MINI BUTTONS FOR SUBJECT ACTIONS (strong override) */
+#teacherDynamicContent .subject-actions button {
+  padding: .18rem .35rem !important;
+  font-size: .63rem !important;
+  border-radius: 4px !important;
+  min-width: auto !important;
+}
+
+/* Fix invisible "View Subjects" etc. from teachers.css */
+#teacherDynamicContent .btn-secondary.small,
+#teacherDynamicContent .btn-primary.small {
+  all: revert !important;
+  padding: .35rem .55rem !important;
+  border-radius: 6px !important;
+  font-size: .78rem !important;
+}
+
+/* JSON preview modal width */
+#teacherDynamicContent .modal-code .modal-card {
+  width: 70% !important;
+  max-width: 750px !important;
+  transform: translateY(-20%) !important;
+}
+
+
+
+/* ============================================================
+   MODAL REFINEMENTS — COMPACT PUSH MODAL (2025)
+   ============================================================ */
+
+/* 1. Move modal card lower (not at the very top) */
+.modal {
+  align-items: flex-start !important;
+  padding-top: 120px !important;  /* push modal DOWN */
+}
+
+/* 2. SMALL SQUARE CARD */
+.modal-card.small {
+  width: 300px !important;      /* much smaller width */
+  border-radius: 14px !important;
+  padding: 0 !important;
+  transform: translateY(0) !important;
+}
+
+/* Header compact */
+.modal-header {
+  padding: 0.6rem 0.9rem !important;
+  font-size: 0.9rem !important;
+}
+
+/* Body compact */
+.modal-body {
+  padding: 0.8rem 1rem !important;
+  font-size: 0.8rem !important;
+}
+
+/* Footer compact */
+.modal-footer {
+  padding: 0.6rem 0.9rem !important;
+}
+
+/* 3. TINY CLASS BUTTONS */
+.class-options {
+  display: flex;
+  justify-content: center;
+  gap: 0.45rem !important;
+  margin: 0.7rem 0 !important;
+}
+
+.class-btn,
+.clear-btn {
+  flex: unset !important;           /* remove stretching */
+  width: 60px !important;           /* tiny equal buttons */
+  padding: 0.45rem 0 !important;    /* smaller height */
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+}
+
+/* Selected class text */
+.chosen-class {
+  margin-top: 0.5rem !important;
+  font-size: 0.8rem !important;
+}
+
+/* 4. Tiny Confirm & Cancel buttons */
+.modal-footer .btn-primary,
+.modal-footer .btn-secondary {
+  padding: 0.45rem 0.75rem !important;
+  font-size: 0.78rem !important;
+  border-radius: 6px !important;
+}
+
+
+/* Restore & enhance hover color for tiny class buttons */
+.class-btn:hover {
+  background: var(--primary) !important;     /* your main brand blue */
+  color: #fff !important;
+  border-color: var(--primary-dark) !important;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+
+
+
+/* ============================================================
+   CLEAR MODAL — TINY BUTTONS + HOVER COLORS (2025)
+   Matches the compact push modal styling
+============================================================ */
+
+/* Same compact layout */
+#clearPortalModal .modal-card.small {
+  width: 300px !important;
+  border-radius: 14px;
+  padding: 0 !important;
+}
+
+/* Header */
+#clearPortalModal .modal-header {
+  padding: 0.6rem 0.9rem !important;
+  font-size: 0.9rem !important;
+}
+
+/* Body */
+#clearPortalModal .modal-body {
+  padding: 0.8rem 1rem !important;
+  font-size: 0.8rem !important;
+}
+
+/* Footer */
+#clearPortalModal .modal-footer {
+  padding: 0.6rem 0.9rem !important;
+}
+
+/* TINY CLEAR BUTTONS (SS1 / SS2 / SS3 / ALL) */
+#clearPortalModal .class-options {
+  display: flex;
+  justify-content: center;
+  gap: 0.45rem !important;
+  margin: 0.7rem 0 !important;
+}
+
+#clearPortalModal .clear-btn {
+  width: 80px !important;          /* Slightly wider for “Clear SS1” text */
+  padding: 0.45rem 0 !important;
+  font-size: 0.75rem !important;
+  font-weight: 600 !important;
+  border-radius: 6px !important;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: var(--primary);
+  transition: 0.25s ease;
+  cursor: pointer;
+}
+
+/* Normal hover (SS1 / SS2 / SS3) */
+#clearPortalModal .clear-btn:hover:not(.danger) {
+  background: var(--primary) !important;
+  color: #fff !important;
+  border-color: var(--primary-dark) !important;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* DANGER button (Clear ALL Classes) */
+#clearPortalModal .clear-btn.danger {
+  background: #fee2e2 !important;
+  border-color: #fecaca !important;
+  color: #b91c1c !important;
+}
+
+/* DANGER hover effect */
+#clearPortalModal .clear-btn.danger:hover {
+  background: #dc2626 !important;
+  border-color: #b91c1c !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }

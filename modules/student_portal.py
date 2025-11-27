@@ -33,6 +33,37 @@ def student_portal():
     )
 
 
+
+# =======================================================
+#  EXAM DASHBOARD (Intermediate page before exam.html)
+# =======================================================
+@student_portal_bp.route('/exam_dashboard')
+def exam_dashboard():
+    if session.get('user_type') != 'student':
+        return redirect(url_for('user_bp.student_login'))
+
+    student = session.get('student')
+    if not student:
+        return redirect(url_for('user_bp.student_login'))
+
+    subject = request.args.get('subject', '').strip()
+
+    # Save selected subject into session
+    session['selected_subject'] = subject
+
+    return render_template(
+        'exam_dashboard.html',
+        full_name=student.get('full_name'),
+        admission_number=student.get('admission_number'),
+        class_name=student.get('class'),
+        class_category=student.get('class_category'),  # ⭐ ADDED
+        system_id=student.get('id'),
+        subject=subject,
+        exam_started=session.get('exam_started', False),
+        exam_submitted=session.get('exam_submitted', False)
+    )
+
+
 # =======================================================
 #  START EXAM
 # =======================================================
@@ -48,9 +79,6 @@ def start_exam():
     return redirect(url_for('student_portal_bp.exam'))
 
 
-# =======================================================
-#  EXAM PAGE
-# =======================================================
 @student_portal_bp.route('/exam')
 def exam():
     if session.get('user_type') != 'student':
@@ -60,10 +88,13 @@ def exam():
     if not student:
         return redirect(url_for('user_bp.student_login'))
 
+    subject = session.get('selected_subject', None)
+
     return render_template(
         'exam.html',
         first_name=student.get('first_name'),
         admission_number=student.get('admission_number'),
+        subject=subject,
         exam_started=session.get('exam_started', False)
     )
 

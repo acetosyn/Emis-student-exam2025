@@ -306,3 +306,44 @@
   background: linear-gradient(135deg, #0f766e, #134e4a) !important;
   transform: translateY(-2px);
 }
+
+
+
+/* ============================================================
+   GLOBAL FLASH MESSAGE (Success / Error)
+============================================================ */
+.flash-message {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 99999;
+
+  background: #0f2b46;
+  color: #fff;
+  padding: 0.85rem 1.4rem;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+  opacity: 0;
+  pointer-events: none;
+
+  transition: all 0.35s ease;
+}
+
+.flash-message.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(5px);
+}
+
+.flash-message.success { background: #16a34a; }  /* Green */
+.flash-message.error   { background: #dc2626; }  /* Red */
+
+@media (max-width: 600px) {
+  .flash-message {
+    width: 90%;
+    font-size: 0.85rem;
+    padding: 0.75rem 1rem;
+  }
+}
