@@ -1,17 +1,13 @@
 /* ==========================================================
-   EMIS TEACHER PAGE ROUTER — teacher_pageroutes.js (v5)
+   EMIS TEACHER PAGE ROUTER — teacher_pageroutes.js (v6)
    ----------------------------------------------------------
-   Dynamically loads teacher tools (uploads, results, reports, etc.)
+   Dynamically loads teacher tools (uploads, results, reports)
    into #teacherDynamicContent without leaving teachers.html
 
-   ✳️ Features:
-   - Smooth fade-in transitions
-   - Loader spinner animation
-   - Error fallback panel
-   - Active button highlight
-   - Scroll-to-view animation
-   - Auto-load module via URL param (?open=uploads)
-   - Auto-executes external + inline scripts in loaded HTML
+   ✳️ Fixes:
+   - Reinitialize uploads.js + push.js after dynamic load
+   - Ensures push buttons work inside uploads.html
+   - Prevents duplicate event binding
 ========================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -26,8 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
 
   /* ==========================================================
-     AUTO LOAD MODULE BASED ON URL PARAM
-     Example: /admin/teachers?open=uploads
+     AUTO LOAD VIA ?open=uploads
   ========================================================== */
   const urlParams = new URLSearchParams(window.location.search);
   const moduleToOpen = urlParams.get("open");
@@ -39,28 +34,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (targetBtn) {
       setTimeout(() => {
-        targetBtn.click(); // simulate click to load module
+        targetBtn.click();
       }, 350);
     }
   }
 
   /* ==========================================================
-     BUTTON CLICK HANDLING FOR MODULE LOADING
+     LOAD MODULE WHEN BUTTON CLICKED
   ========================================================== */
   toolButtons.forEach((btn) => {
     btn.addEventListener("click", async () => {
       let page = btn.dataset.page;
 
-      // Normalize expected file format
       if (!page.endsWith(".html")) {
         page = `${page}.html`;
       }
 
-      // Highlight selected module
       toolButtons.forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
 
-      // Show loading animation
       dynamicContainer.innerHTML = loaderHTML;
 
       try {
@@ -69,12 +61,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const html = await response.text();
 
-        // Delay to smoothen visual transition
         setTimeout(() => {
           dynamicContainer.innerHTML = `<div class="fade-slide-in">${html}</div>`;
           dynamicContainer.scrollIntoView({ behavior: "smooth" });
 
-          // Reattach external scripts found inside loaded content
+          /* ================================================
+             AUTO INIT MODULES AFTER HTML INSERTION
+          ================================================= */
+          if (page === "uploads.html") {
+            // Init uploads (file convert UI)
+            if (window.EmisUploads) {
+              EmisUploads.initOnce(dynamicContainer);
+            }
+
+            // Init push controller (push modals)
+            if (window.EmisPush) {
+              EmisPush.init();  
+            }
+          }
+
+          /* ================================================
+             RE-EXECUTE EXTERNAL SCRIPTS INSIDE LOADED HTML
+          ================================================= */
           const scriptTags = dynamicContainer.querySelectorAll("script[src]");
           scriptTags.forEach((oldScript) => {
             const newScript = document.createElement("script");
@@ -83,10 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.appendChild(newScript);
           });
 
-          // Execute inline scripts
-          const inlineScripts = dynamicContainer.querySelectorAll(
-            "script:not([src])"
-          );
+          /* Execute inline scripts */
+          const inlineScripts = dynamicContainer.querySelectorAll("script:not([src])");
           inlineScripts.forEach((inline) => {
             try {
               eval(inline.textContent);
@@ -94,6 +100,7 @@ document.addEventListener("DOMContentLoaded", () => {
               console.error("⚠️ Inline script error:", err);
             }
           });
+
         }, 250);
       } catch (error) {
         console.error("❌ Route load error:", error);
@@ -109,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   /* ==========================================================
-     OPTIONAL DASHBOARD REFRESH BUTTON
+     DASHBOARD REFRESH BUTTON
   ========================================================== */
   const refreshBtn = document.getElementById("refreshDashboard");
   if (refreshBtn) {

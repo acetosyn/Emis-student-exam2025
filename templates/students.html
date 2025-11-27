@@ -51,62 +51,87 @@
 
   <!-- ----------------------------------------------------
        HERO SPLIT LAYOUT — PROFILE LEFT / WELCOME RIGHT
-  ----------------------------------------------------- -->
-  <section class="hero-split">
+----------------------------------------------------- -->
+<section class="hero-split">
 
-    <!-- LEFT — STUDENT PROFILE -->
-    <div class="hero-left">
-      <div class="profile-card hero-profile-card">
+  <!-- LEFT — STUDENT PROFILE -->
+  <div class="hero-left">
+    <div class="profile-card hero-profile-card">
 
-        <div class="profile-header">
-          <i class="fa-solid fa-id-card profile-icon"></i>
-          <h2>Student Profile</h2>
-          <p>Your basic information</p>
+      <div class="profile-header">
+        <i class="fa-solid fa-id-card profile-icon"></i>
+        <h2>Student Profile</h2>
+        <p>Your basic information</p>
+      </div>
+
+      <div class="profile-grid">
+
+        <div class="profile-item">
+          <span>Full Name</span>
+          <strong>{{ student.full_name }}</strong>
         </div>
 
-        <div class="profile-grid">
-          <div class="profile-item">
-            <span>Full Name</span>
-            <strong>{{ student.full_name }}</strong>
-          </div>
+        <div class="profile-item">
+          <span>Admission Number</span>
+          <strong>{{ student.admission_number }}</strong>
+        </div>
 
-          <div class="profile-item">
-            <span>Admission Number</span>
-            <strong>{{ student.admission_number }}</strong>
-          </div>
+        <div class="profile-item">
+          <span>Class</span>
+          <strong>{{ student.class }}</strong>
+        </div>
 
-          <div class="profile-item">
-            <span>Class</span>
-            <strong>{{ student.class }}</strong>
-          </div>
+        <!-- ⭐ NEW FIELD: Class Category (SS1 / SS2 / SS3) -->
+        <div class="profile-item">
+          <span>Class Category</span>
+          <strong>{{ student.class_category }}</strong>
+        </div>
 
-          <div class="profile-item">
-            <span>System ID</span>
-            <strong>{{ student.id }}</strong>
-          </div>
+        <div class="profile-item">
+          <span>System ID</span>
+          <strong>{{ student.id }}</strong>
         </div>
 
       </div>
+
     </div>
+  </div>
 
-    <!-- RIGHT — GREETING + ACTION BUTTONS -->
-    <div class="hero-right">
-      <h1 class="hero-title">Welcome back, {{ student.full_name }}!</h1>
-      <p class="hero-sub">Your academic dashboard — everything you need at a glance.</p>
+  <!-- RIGHT — GREETING + ACTION BUTTONS -->
+  <div class="hero-right">
+    <h1 class="hero-title">Welcome back, {{ student.full_name }}!</h1>
+    <p class="hero-sub">Your academic dashboard — everything you need at a glance.</p>
 
-      <div class="hero-buttons">
-        <button class="btn-primary" id="openExamPortal">
-          <i class="fa-solid fa-laptop-file"></i> Exam Portal
-        </button>
+    <div class="hero-buttons">
 
-        <button class="btn-light"><i class="fa-solid fa-book"></i> Subjects</button>
+      <button class="btn-primary" id="openExamPortal">
+        <i class="fa-solid fa-laptop-file"></i> Exam Portal
+      </button>
+
+      <button class="btn-light" id="openSubjectsBtn">
+        <i class="fa-solid fa-book"></i> Subjects
+      </button>
         <button class="btn-light"><i class="fa-solid fa-chart-line"></i> Results</button>
         <button class="btn-light"><i class="fa-solid fa-folder-open"></i> Past Questions</button>
         <button class="btn-light"><i class="fa-solid fa-file-circle-check"></i> Study Materials</button>
-        <button class="btn-light"><i class="fa-solid fa-user-circle"></i> Profile</button>
         <button class="btn-light"><i class="fa-solid fa-id-card"></i> Student ID</button>
       </div>
+
+
+<!-- SMALL AVAILABLE SUBJECTS CARD -->
+<div class="available-subjects-card" id="availableSubjectsCard">
+  <h4><i class="fa-solid fa-book-open"></i> Available Exams</h4>
+  <p class="small-sub">Subjects pushed to your portal:</p>
+
+  <ul id="availableSubjectsList" class="subjects-list"></ul>
+
+  <button id="viewSubjectsBtn" class="btn-mini">
+    View All
+  </button>
+</div>
+
     </div>
+
 
   </section>
 
@@ -179,7 +204,7 @@
     <div class="modal-box">
 
       <h2 class="modal-title">
-        <i class="fa-solid fa-pen-to-square"></i> Start Your Exam
+        <i class="fa-solid fa-pen-to-square"></i> Go to Exam Portal
       </h2>
 
       <div class="form-group">
@@ -194,7 +219,7 @@
 
       <div class="modal-actions">
         <button class="btn-secondary" id="refreshSubjectsBtn">Refresh Subjects</button>
-        <button class="btn-primary" id="startExamBtn" disabled>Start Exam</button>
+        <button class="btn-primary" id="startExamBtn" disabled>Go to Exam portal</button>
         <button class="btn-secondary" id="closeExamModal">Cancel</button>
       </div>
 
@@ -203,6 +228,8 @@
 
   <script src="{{ url_for('static', filename='js/student-exams.js') }}"></script>
   <script src="{{ url_for('static', filename='js/student-dashboard.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/students.js') }}"></script>
+
 
 </body>
 </html>

@@ -1,18 +1,15 @@
 # modules/user_routes.py
 from flask import Blueprint, render_template, redirect, url_for, session, request
 from pathlib import Path
-import csv
 from modules.supabase_client import supabase   # add this at the top of user_routes.py
 
 
 user_bp = Blueprint('user_bp', __name__)
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-STUDENTS_CSV_PATH = BASE_DIR / "ids" / "SS1_Students.csv"
-
 
 def _find_student(admission_number: str, first_name: str):
-    """Validate student using Supabase and return profile (excluding phone)."""
+    """Validate student from Supabase SS_Students table."""
+    
     adm = (admission_number or "").strip()
     fname = (first_name or "").strip()
 
@@ -20,10 +17,9 @@ def _find_student(admission_number: str, first_name: str):
         return None
 
     try:
-        # Case-insensitive matching with ILIKE
         response = (
             supabase
-            .table("SS1_Students")
+            .table("SS_Students")
             .select("*")
             .ilike("Admission_number", adm)
             .ilike("First_name", fname)
@@ -51,13 +47,13 @@ def _find_student(admission_number: str, first_name: str):
             "last_name": row.get("Last_name"),
             "other_names": row.get("Other_names"),
             "class": row.get("Class"),
+            "class_category": row.get("Class_category"),   # ⭐ NEW
             "full_name": full_name.strip(),
         }
 
     except Exception as e:
         print("Supabase error:", e)
         return None
-
 
 
 
@@ -76,9 +72,16 @@ def student_login():
             session.clear()
             session['user_type'] = 'student'
             session['student'] = student
+            
+            # ⭐ NEW: make class + class_category accessible globally
+            session['class'] = student.get('class')
+            session['class_category'] = student.get('class_category')   # ⭐ CRITICAL
+            
             session['exam_started'] = False
             session['exam_submitted'] = False
+
             return redirect(url_for('student_portal_bp.student_portal'))
+
 
         return render_template(
             'student_login.html',

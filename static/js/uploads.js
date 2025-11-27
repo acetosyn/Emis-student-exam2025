@@ -1,342 +1,428 @@
 /* ==========================================================
-   EMIS UPLOADS — uploads.js (v7, backend-integrated)
-   Works when uploads.html is injected dynamically.
-   Safely re-initializes with guards.
-========================================================== */
+   EMIS UPLOADS — uploads.js (v14, PUSH REMOVED)
+   Handles:
+     • Upload DOCX/JSON → /api/upload
+     • Overwrite detection
+     • Overwrite / Skip modal
+     • Staging files
+     • Rendering converted table
+     • Selection queue (no push here)
+     • Preview JSON
+     • Refresh table
+   ========================================================== */
 
+/* ==========================================================
+   FLASH MESSAGE
+========================================================== */
+function flashMessage(text, type = "success") {
+  const fm = document.getElementById("flashMessage");
+  if (!fm) return;
+  fm.textContent = text;
+  fm.className = `flash-message ${type} show`;
+  setTimeout(() => fm.classList.remove("show"), 3000);
+}
+
+/* ==========================================================
+   OVERWRITE MODAL
+========================================================== */
+function showOverwriteModal(item, onOverwrite, onSkip) {
+  let modal = document.getElementById("overwriteModal");
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "overwriteModal";
+    modal.className = "overwrite-modal";
+
+    modal.innerHTML = `
+      <div class="ov-content">
+        <h3>Subject Already Exists</h3>
+        <p>
+          <strong>${item.subject}</strong> (${item.class_category}) already has a JSON file.<br>
+          Do you want to overwrite it?
+        </p>
+
+        <div class="ov-buttons">
+          <button id="ovOverwrite" class="btn-danger">Overwrite</button>
+          <button id="ovSkip" class="btn-secondary">Skip</button>
+        </div>
+      </div>
+    `;
+
+    const css = document.createElement("style");
+    css.textContent = `
+      .overwrite-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.55);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+      }
+      .ov-content {
+        background: white;
+        padding: 1.3rem;
+        width: 350px;
+        border-radius: 10px;
+        text-align: center;
+      }
+      .ov-buttons { margin-top: 1rem; display: flex; gap: 1rem; justify-content: center; }
+      .btn-danger { background:#dc2626;color:white;padding:.5rem 1rem;border-radius:6px;}
+      .btn-secondary { background:#e5e7eb;padding:.5rem 1rem;border-radius:6px;}
+    `;
+    document.head.appendChild(css);
+    document.body.appendChild(modal);
+  }
+
+  modal.style.display = "flex";
+  document.getElementById("ovOverwrite").onclick = () => {
+    modal.style.display = "none";
+    onOverwrite();
+  };
+  document.getElementById("ovSkip").onclick = () => {
+    modal.style.display = "none";
+    onSkip();
+  };
+}
+
+/* ==========================================================
+   UPLOAD MODULE
+========================================================== */
 (() => {
-  // Prevent duplicate init if the script is included more than once
   if (window.__EMIS_UPLOADS_BOUND__) return;
   window.__EMIS_UPLOADS_BOUND__ = true;
 
-  // Expose a re-init that the page router can call after HTML injection
   window.EmisUploads = {
+    selectedFiles: new Set(),
+    convertedItems: [],
+
+    getMeta(fname) {
+      return this.convertedItems.find((i) => i.filename === fname);
+    },
+
+    queueFromPreview(fname) {
+      this.selectedFiles.add(fname);
+      updateSelectionBadge();
+    },
+
     initOnce(container = document) {
       const root = container.querySelector(".uploads-wrapper");
       if (!root || root.__initialized__) return;
       root.__initialized__ = true;
 
-      // ---------- Elements ----------
-      const dropZone       = root.querySelector("#uploadDropZone");
-      const inputSingle    = root.querySelector("#uploadInputSingle");
-      const inputMulti     = root.querySelector("#uploadInputMulti");
-      const chooseSingle   = root.querySelector("#chooseSingle");
-      const chooseMulti    = root.querySelector("#chooseMulti");
-      const fileList       = root.querySelector("#fileList");
-      const filePreview    = root.querySelector("#filePreview");
-      const startUpload    = root.querySelector("#startUpload");
-      const clearUploads   = root.querySelector("#clearUploads");
-      const progress       = root.querySelector("#uploadProgress");
-      const bar            = progress ? progress.querySelector(".progress-bar") : null;
+      /* ------------------------------------------------------
+         ELEMENTS
+      ------------------------------------------------------ */
+      const dropZone = root.querySelector("#uploadDropZone");
+      const inputSingle = root.querySelector("#uploadInputSingle");
+      const inputMulti = root.querySelector("#uploadInputMulti");
+      const chooseSingle = root.querySelector("#chooseSingle");
+      const chooseMulti = root.querySelector("#chooseMulti");
+      const fileList = root.querySelector("#fileList");
+      const selectedCount = root.querySelector("#selectedCount");
 
-      const tableBody      = root.querySelector("#uploadedTable");
-      const searchBox      = root.querySelector("#searchUploads");
-      const pushBtn        = root.querySelector("#pushToPortal");
-      const jsonBtn        = root.querySelector("#viewPortalJSON");
-      const portalLog      = root.querySelector("#portalLog");
-      const pushCountEl    = root.querySelector("#pushCount");
+      const startUpload = root.querySelector("#startUpload");
+      const clearUploads = root.querySelector("#clearUploads");
 
-      const modal          = document.getElementById("jsonModal");
-      const modalTitle     = document.getElementById("jsonModalTitle");
-      const modalBody      = document.getElementById("jsonModalBody");
+      const uploadProgress = root.querySelector("#uploadProgress");
+      const uploadProgressBar = root.querySelector("#uploadProgressBar");
+      const uploadProgressLabel = root.querySelector("#uploadProgressLabel");
 
-      // ---------- State ----------
-      let stagedFiles = [];           // Files selected/dragged before upload
-      let convertedItems = [];        // Rows from backend /api/uploads
+      const tableBody = root.querySelector("#uploadedTable");
+      const searchBox = root.querySelector("#searchUploads");
+      const refreshBtn = root.querySelector("#refreshUploads");
 
-      // ---------- Helpers ----------
-      const showProgress = (on) => {
-        if (!progress) return;
-        progress.classList.toggle("hidden", !on);
+      const btnViewSubjects = root.querySelector("#btnViewSubjects");
+
+      let stagedFiles = [];
+
+      /* ------------------------------------------------------
+         UTILITIES
+      ------------------------------------------------------ */
+      const niceKB = (b) => Math.round((b / 1024) * 10) / 10;
+
+      const showProgress = (on, msg = "Converting…") => {
+        uploadProgress.classList.toggle("hidden", !on);
+        uploadProgressLabel.textContent = msg;
       };
 
-      const setBar = (v) => { if (bar) bar.style.width = `${v}%`; };
+      const setProgress = (v) => (uploadProgressBar.style.width = `${v}%`);
 
-      const niceKB = (bytes) => Math.round((bytes / 1024) * 10) / 10;
-
-      const openModal = (title, content) => {
-        modalTitle.textContent = title;
-        modalBody.textContent = content; // pre tag -> keep formatting
-        modal.classList.remove("hidden");
-        document.body.classList.add("overflow-hidden");
+      const updateSelectionBadge = () => {
+        selectedCount.textContent = `${stagedFiles.length} selected`;
       };
 
-      const closeModal = () => {
-        modal.classList.add("hidden");
-        document.body.classList.remove("overflow-hidden");
-        modalBody.textContent = "";
-      };
-
-      modal?.addEventListener("click", (e) => {
-        if (e.target.dataset.close === "true") closeModal();
-      });
-
-      // ---------- File selection ----------
-      chooseSingle?.addEventListener("click", (e) => {
-        e.preventDefault();
-        inputSingle?.click();
-      });
-      chooseMulti?.addEventListener("click", (e) => {
-        e.preventDefault();
-        inputMulti?.click();
-      });
-
-      inputSingle?.addEventListener("change", (e) => {
-        if (!e.target.files?.length) return;
-        stagedFiles = [e.target.files[0]];
-        renderStaged();
-      });
-      inputMulti?.addEventListener("change", (e) => {
-        if (!e.target.files?.length) return;
-        stagedFiles = Array.from(e.target.files);
-        renderStaged();
-      });
-
-      // Drag & drop
-      dropZone?.addEventListener("dragover", (e) => {
-        e.preventDefault();
-        dropZone.classList.add("drag-over");
-      });
-      dropZone?.addEventListener("dragleave", () => dropZone.classList.remove("drag-over"));
-      dropZone?.addEventListener("drop", (e) => {
-        e.preventDefault();
-        dropZone.classList.remove("drag-over");
-        if (!e.dataTransfer?.files?.length) return;
-        stagedFiles = Array.from(e.dataTransfer.files);
-        renderStaged();
-      });
-
-      function renderStaged() {
-        // list
+      /* ------------------------------------------------------
+         STAGING FILES
+      ------------------------------------------------------ */
+      const renderStaged = () => {
         fileList.innerHTML = "";
         if (!stagedFiles.length) {
           fileList.innerHTML = `<li class="empty">No files selected</li>`;
-        } else {
-          stagedFiles.forEach((f) => {
-            const li = document.createElement("li");
-            li.innerHTML = `<i class="fa-solid fa-file"></i> ${f.name}
-              <span>${niceKB(f.size)} KB</span>`;
-            fileList.appendChild(li);
-          });
-        }
-        // tiny preview cards
-        filePreview.innerHTML = "";
-        stagedFiles.forEach((file) => {
-          const card = document.createElement("div");
-          card.className = "preview-card";
-          const name = document.createElement("p");
-          name.textContent = file.name;
-
-          // Only show icon (no heavy previews needed)
-          const icon = document.createElement("i");
-          icon.className = "fa-solid fa-file-lines generic-icon";
-          if (file.type === "application/pdf") icon.className = "fa-solid fa-file-pdf pdf-icon";
-          card.appendChild(icon);
-          card.appendChild(name);
-          filePreview.appendChild(card);
-        });
-      }
-
-      clearUploads?.addEventListener("click", () => {
-        stagedFiles = [];
-        renderStaged();
-      });
-
-      // ---------- Upload to backend (/api/upload) ----------
-      startUpload?.addEventListener("click", async () => {
-        if (!stagedFiles.length) {
-          alert("Please select at least one file.");
+          updateSelectionBadge();
           return;
         }
+
+        stagedFiles.forEach((f) => {
+          fileList.innerHTML += `
+            <li>
+              <i class="fa-solid fa-file"></i>
+              <span class="file-name">${f.name}</span>
+              <span class="file-size">${niceKB(f.size)} KB</span>
+            </li>
+          `;
+        });
+
+        updateSelectionBadge();
+      };
+
+      chooseSingle.onclick = () => inputSingle.click();
+      chooseMulti.onclick = () => inputMulti.click();
+
+      inputSingle.onchange = (e) => {
+        stagedFiles = [...e.target.files];
+        renderStaged();
+      };
+      inputMulti.onchange = (e) => {
+        stagedFiles = [...e.target.files];
+        renderStaged();
+      };
+
+      /* Drag & Drop */
+      dropZone.ondragover = (e) => {
+        e.preventDefault();
+        dropZone.classList.add("drag-over");
+      };
+      dropZone.ondragleave = () => dropZone.classList.remove("drag-over");
+      dropZone.ondrop = (e) => {
+        e.preventDefault();
+        dropZone.classList.remove("drag-over");
+        stagedFiles = [...e.dataTransfer.files];
+        renderStaged();
+      };
+
+      clearUploads.onclick = () => {
+        stagedFiles = [];
+        renderStaged();
+      };
+
+      /* ------------------------------------------------------
+         LOADER FOR UPLOAD
+      ------------------------------------------------------ */
+      const normalBtnHTML = startUpload.innerHTML;
+
+      const showLoading = (txt = "Converting…") => {
+        startUpload.disabled = true;
+        startUpload.innerHTML = `<span class="spinner"></span>${txt}`;
+        startUpload.classList.add("loading");
+      };
+
+      const hideLoading = () => {
+        startUpload.disabled = false;
+        startUpload.innerHTML = normalBtnHTML;
+        startUpload.classList.remove("loading");
+      };
+
+      const cssSpin = document.createElement("style");
+      cssSpin.textContent = `
+        .spinner {
+          width: 18px; height: 18px;
+          border: 3px solid white;
+          border-top-color: transparent;
+          border-radius: 50%;
+          display: inline-block;
+          margin-right: 8px;
+          animation: spin .6s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        button.loading { opacity: .7; pointer-events: none; }
+      `;
+      document.head.appendChild(cssSpin);
+
+      /* ------------------------------------------------------
+         BEGIN UPLOAD
+      ------------------------------------------------------ */
+      startUpload.onclick = async () => {
+        if (!stagedFiles.length) return alert("No files selected.");
+
         try {
+          showLoading();
           showProgress(true);
-          setBar(5);
+          setProgress(25);
 
           const fd = new FormData();
           stagedFiles.forEach((f) => fd.append("file", f));
 
-          // Simulate ramp
-          setBar(30);
-
           const res = await fetch("/api/upload", { method: "POST", body: fd });
-          setBar(70);
+          if (!res.ok) throw new Error("Upload failed");
 
-          if (!res.ok) {
-            const err = await res.json().catch(() => ({}));
-            throw new Error(err.error || `Upload failed (${res.status})`);
+          setProgress(55);
+
+          const payload = await res.json();
+          setProgress(85);
+
+          /* Handle overwrite scenario */
+          const existsItems = payload.converted.filter((i) => i.status === "exists");
+          if (existsItems.length) {
+            hideLoading();
+            showProgress(false);
+
+            const item = existsItems[0];
+
+            showOverwriteModal(
+              item,
+              async () => {
+                const fd2 = new FormData();
+                stagedFiles.forEach((f) => fd2.append("file", f));
+                fd2.append("overwrite", "true");
+
+                showLoading("Overwriting…");
+                await fetch("/api/upload", { method: "POST", body: fd2 });
+                await fetchConverted();
+                hideLoading();
+                flashMessage("Subject overwritten successfully.");
+              },
+              () => flashMessage("Skipped overwrite.", "error")
+            );
+            return;
           }
 
-          const data = await res.json();
-          setBar(95);
-
-          // Refresh table from backend
+          /* Normal success */
           await fetchConverted();
-
-          // Reset staged
           stagedFiles = [];
           renderStaged();
-          setBar(100);
-        } catch (e) {
-          console.error(e);
-          alert(`Upload error: ${e.message}`);
-        } finally {
-          setTimeout(() => {
-            showProgress(false);
-            setBar(0);
-          }, 350);
-        }
-      });
+          setProgress(100);
+          flashMessage("Conversion completed.");
 
-      // ---------- Backend reads ----------
-      async function fetchConverted() {
+        } catch (err) {
+          alert(err.message);
+        } finally {
+          setTimeout(() => showProgress(false), 300);
+          hideLoading();
+          setProgress(0);
+        }
+      };
+
+      /* ------------------------------------------------------
+         TABLE LOADING
+      ------------------------------------------------------ */
+      async function fetchConverted(showRefresh = false) {
         try {
+          if (showRefresh) {
+            refreshBtn.disabled = true;
+            refreshBtn.innerHTML = `<span class="spinner"></span>`;
+          }
+
           const res = await fetch("/api/uploads");
-          if (!res.ok) throw new Error(`List failed (${res.status})`);
           const data = await res.json();
-          convertedItems = Array.isArray(data.uploads) ? data.uploads : data;
+
+          EmisUploads.convertedItems = data.uploads || data;
           renderTable();
-        } catch (e) {
-          console.error("List error:", e);
-          tableBody.innerHTML = `<tr><td colspan="5" class="empty">Could not load uploads</td></tr>`;
+
+          if (showRefresh) {
+            setTimeout(() => {
+              refreshBtn.disabled = false;
+              refreshBtn.innerHTML = `<i class="fa-solid fa-rotate"></i>`;
+            }, 300);
+          }
+        } catch {
+          tableBody.innerHTML = `<tr><td colspan="4" class="empty">Failed to load.</td></tr>`;
         }
       }
 
+      refreshBtn.onclick = () => fetchConverted(true);
+
+      /* ------------------------------------------------------
+         RENDER TABLE
+      ------------------------------------------------------ */
       function renderTable() {
         tableBody.innerHTML = "";
-        const rows = convertedItems.map((it) => {
-          const name = it.filename || it.name || "";
-          const size = typeof it.size_kb === "number" ? it.size_kb : (it.size ? niceKB(it.size) : "");
-          const items = it.count || it.items || ""; // optional count if you add it later
-          return `
-            <tr data-filename="${name}">
-              <td class="truncate">${name}</td>
-              <td class="center">${items || "-"}</td>
-              <td class="center">${size || "-"}</td>
-              <td><span class="status success">Ready</span></td>
-              <td class="actions">
-                <button class="btn-secondary xsm act-preview" title="Quick preview"><i class="fa-solid fa-eye"></i> Preview</button>
-                <button class="btn-primary xsm act-view" title="View full JSON"><i class="fa-solid fa-magnifying-glass-plus"></i> View</button>
-                <button class="btn-secondary xsm act-delete" title="Delete"><i class="fa-solid fa-trash"></i> Delete</button>
-              </td>
-            </tr>
-          `;
-        });
 
-        if (!rows.length) {
-          tableBody.innerHTML = `<tr><td colspan="5" class="empty">No uploads yet</td></tr>`;
-        } else {
-          tableBody.innerHTML = rows.join("");
-        }
-
-        pushCountEl.textContent = convertedItems.length;
-      }
-
-      // ---------- Actions (delegated) ----------
-      tableBody?.addEventListener("click", async (e) => {
-        const btn = e.target.closest("button");
-        if (!btn) return;
-        const tr = e.target.closest("tr");
-        const filename = tr?.dataset?.filename;
-        if (!filename) return;
-
-        if (btn.classList.contains("act-view")) {
-          // Full content
-          try {
-            const res = await fetch(`/api/uploads/${encodeURIComponent(filename)}`);
-            if (!res.ok) throw new Error(`View failed (${res.status})`);
-            const data = await res.json();
-
-            // If backend returns {"filename":..., "questions":[...]} (our uploads.py),
-            // pretty print with some context
-            const printable = JSON.stringify(data, null, 2);
-            openModal(`View: ${filename}`, printable);
-          } catch (err) {
-            alert(`Unable to load ${filename}: ${err.message}`);
-          }
-        }
-
-        if (btn.classList.contains("act-preview")) {
-          // Show first ~5 questions quickly
-          try {
-            const res = await fetch(`/api/uploads/${encodeURIComponent(filename)}`);
-            if (!res.ok) throw new Error(`Preview failed (${res.status})`);
-            const data = await res.json();
-
-            let questions = data.questions || data; // backend might return array directly
-            if (!Array.isArray(questions)) {
-              // Sometimes biology.json format is an object with fields; normalize
-              if (Array.isArray(data)) questions = data;
-              else if (Array.isArray(data.questions)) questions = data.questions;
-              else questions = [];
-            }
-
-            const head = questions.slice(0, 5);
-            const printable = JSON.stringify(head, null, 2);
-            openModal(`Preview: ${filename} (first ${head.length})`, printable);
-          } catch (err) {
-            alert(`Unable to preview ${filename}: ${err.message}`);
-          }
-        }
-
-        if (btn.classList.contains("act-delete")) {
-          if (!confirm(`Delete ${filename}?`)) return;
-          try {
-            const res = await fetch(`/api/uploads/${encodeURIComponent(filename)}`, { method: "DELETE" });
-            if (!res.ok) throw new Error(`Delete failed (${res.status})`);
-            await fetchConverted();
-          } catch (err) {
-            alert(`Unable to delete ${filename}: ${err.message}`);
-          }
-        }
-      });
-
-      // ---------- Search ----------
-      searchBox?.addEventListener("input", () => {
-        const q = searchBox.value.trim().toLowerCase();
-        const rows = tableBody.querySelectorAll("tr");
-        rows.forEach((r) => {
-          const name = (r.dataset.filename || "").toLowerCase();
-          r.style.display = name.includes(q) || r.classList.contains("empty") ? "" : "none";
-        });
-      });
-
-      // ---------- Push + JSON preview (placeholder for later integration) ----------
-      pushBtn?.addEventListener("click", () => {
-        if (!convertedItems.length) return alert("No converted files to push.");
-        portalLog.innerHTML += `<p>✅ Queued ${convertedItems.length} item(s) for portal push (integration pending).</p>`;
-      });
-
-      jsonBtn?.addEventListener("click", async () => {
-        if (!convertedItems.length) {
-          portalLog.innerHTML = `<p>No items to preview.</p>`;
+        if (!EmisUploads.convertedItems.length) {
+          tableBody.innerHTML = `
+            <tr><td colspan="7" class="empty">No converted exams yet.</td></tr>`;
           return;
         }
-        // Show just the filenames for now
-        const list = convertedItems.map((x) => x.filename || x.name).filter(Boolean);
-        portalLog.innerHTML = `<pre>${JSON.stringify(list, null, 2)}</pre>`;
-      });
 
-      // ---------- Initial load ----------
+        tableBody.innerHTML = EmisUploads.convertedItems
+          .map(
+            (item) => `
+            <tr class="upload-row" data-filename="${item.filename}">
+              <td>
+                <input type="checkbox" class="row-select"
+                  ${EmisUploads.selectedFiles.has(item.filename) ? "checked" : ""}>
+              </td>
+
+              <td class="file-cell" data-clickable="true">
+                <div class="file-main">
+                  <span class="file-name">${item.filename}</span>
+                  <span class="file-meta">${item.subject} • ${item.class_category} • ${item.questions} questions</span>
+                </div>
+              </td>
+
+              <td>${item.subject}</td>
+              <td class="center">${item.questions}</td>
+            </tr>`
+          )
+          .join("");
+      }
+
+      /* ------------------------------------------------------
+         ROW ACTIONS: SELECT + PREVIEW
+      ------------------------------------------------------ */
+      tableBody.onclick = async (e) => {
+        const row = e.target.closest("tr.upload-row");
+        if (!row) return;
+        const fname = row.dataset.filename;
+
+        /* CASE 1 — CHECKBOX toggle */
+        if (e.target.classList.contains("row-select")) {
+          if (e.target.checked) EmisUploads.selectedFiles.add(fname);
+          else EmisUploads.selectedFiles.delete(fname);
+          return;
+        }
+
+        /* CASE 2 — CLICK filename → preview JSON */
+        if (e.target.closest("[data-clickable='true']")) {
+          try {
+            const res = await fetch(`/api/uploads/${fname}`);
+            const json = await res.json();
+            const meta = EmisUploads.getMeta(fname);
+
+            ConvertUI.setPreviewCard(fname, meta, json);
+            ConvertUI.openJsonModal(`Preview: ${fname}`, JSON.stringify(json, null, 2));
+          } catch {
+            alert("Preview failed.");
+          }
+        }
+      };
+
+      /* ------------------------------------------------------
+         SEARCH
+      ------------------------------------------------------ */
+      searchBox.oninput = () => {
+        const q = searchBox.value.toLowerCase();
+        const rows = tableBody.querySelectorAll("tr.upload-row");
+
+        rows.forEach((r) => {
+          const name = r.dataset.filename.toLowerCase();
+          r.style.display = name.includes(q) ? "" : "none";
+        });
+      };
+
+      /* INIT */
       renderStaged();
       fetchConverted();
     },
   };
 
-  // Auto-init whenever uploads.html gets injected
-  const autoInitObserver = new MutationObserver(() => {
-    const wrapper = document.querySelector(".uploads-wrapper");
-    if (wrapper) window.EmisUploads.initOnce(document);
-  });
-  autoInitObserver.observe(document.body, { childList: true, subtree: true });
+  /* AUTO INIT */
+  const autoInit = () => {
+    const wrap = document.querySelector(".uploads-wrapper");
+    if (wrap) window.EmisUploads.initOnce(document);
+  };
 
-  // If the page is already there (direct navigation)
-  if (document.readyState === "complete" || document.readyState === "interactive") {
-    const wrapper = document.querySelector(".uploads-wrapper");
-    if (wrapper) window.EmisUploads.initOnce(document);
-  } else {
-    document.addEventListener("DOMContentLoaded", () => {
-      const wrapper = document.querySelector(".uploads-wrapper");
-      if (wrapper) window.EmisUploads.initOnce(document);
-    });
-  }
+  if (["complete", "interactive"].includes(document.readyState)) autoInit();
+  else document.addEventListener("DOMContentLoaded", autoInit);
+
+  new MutationObserver(autoInit).observe(document.body, { childList: true, subtree: true });
 })();

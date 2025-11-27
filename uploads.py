@@ -1,18 +1,28 @@
-# uploads.py
+# uploads.py — CLEAN VERSION (Upload + Convert Only)
 import os
 import json
-import re
-from flask import jsonify
+from flask import Blueprint, jsonify, request
 from werkzeug.utils import secure_filename
-from docx import Document
+
+from convert import convert_exam, save_output, detect_version, detect_subject
+
+# ---------------------------------------------------------
+# BLUEPRINT
+# ---------------------------------------------------------
+uploads_bp = Blueprint("uploads_bp", __name__)
 
 # ---------------------------------------------------------
 # CONFIGURATION
 # ---------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-ALLOWED_EXTENSIONS = {"docx", "txt", "json"}
+
+SUBJECTS_JSON_FOLDER = os.path.join(BASE_DIR, "subjects-json")
+os.makedirs(SUBJECTS_JSON_FOLDER, exist_ok=True)
+
+ALLOWED_EXTENSIONS = {"docx", "json"}
 
 
 # ---------------------------------------------------------
@@ -26,91 +36,19 @@ def safe_filename(filename: str) -> str:
     return secure_filename(filename)
 
 
-# ---------------------------------------------------------
-# STEP 1 — Convert DOCX → TXT
-# ---------------------------------------------------------
-def convert_docx_to_txt(docx_path: str) -> str:
-    """Extract clean text lines from a .docx and save as .txt."""
-    txt_path = os.path.splitext(docx_path)[0] + ".txt"
-    try:
-        doc = Document(docx_path)
-        with open(txt_path, "w", encoding="utf-8") as f:
-            for p in doc.paragraphs:
-                line = p.text.strip()
-                if line:
-                    f.write(line + "\n")
-        return txt_path
-    except Exception as e:
-        print(f"⚠️ Error converting DOCX to TXT: {e}")
-        return ""
+def detect_class_category(filename: str) -> str:
+    """Detect SS1/SS2/SS3 from filename."""
+    name = filename.lower()
+    if "ss1" in name: return "SS1"
+    if "ss2" in name: return "SS2"
+    if "ss3" in name: return "SS3"
+    return "GENERAL"
 
 
 # ---------------------------------------------------------
-# STEP 2 — Parse TXT → biology.json-like structure
-# ---------------------------------------------------------
-def parse_txt_to_json(txt_path: str):
-    """Parse TXT file into biology.json structure — tuned for Epiconsult Biology style (colon before A)."""
-    try:
-        with open(txt_path, "r", encoding="utf-8") as f:
-            lines = [line.strip() for line in f if line.strip()]
-
-        # ------------------ Metadata ------------------
-        school = "EPITOME MODEL ISLAMIC SCHOOLS"
-        subject = "Biology"
-        exam_title = "BIOLOGY INTERVIEW QUESTIONS"
-        instructions = "Attempt all questions from this section"
-        time_allowed_minutes = 20
-        section = "SECTION A: MCQ"
-
-        questions = []
-        q_id = 0
-
-        for line in lines:
-            # skip metadata header lines
-            if any(word in line.lower() for word in ["school", "instruction", "section", "minute", "biology interview"]):
-                continue
-
-            # split question and options
-            if "A)" not in line:
-                continue
-
-            q_part, opts_part = line.split("A)", 1)
-            q_text = q_part.strip().rstrip(":").strip()
-
-            # extract options
-            opts = re.findall(r"[A-D]\)\s*([^A-D]+?)(?=\s*[A-D]\)|$)", "A)" + opts_part)
-            opts = [opt.strip() for opt in opts if opt.strip()]
-
-            if len(opts) >= 4:
-                q_id += 1
-                questions.append({
-                    "id": q_id,
-                    "question": q_text,
-                    "options": opts[:4],
-                    "answer": ""
-                })
-
-        return {
-            "school": school,
-            "subject": subject,
-            "exam_title": exam_title,
-            "instructions": instructions,
-            "time_allowed_minutes": time_allowed_minutes,
-            "section": section,
-            "questions": questions
-        }
-
-    except Exception as e:
-        print(f"⚠️ Error parsing TXT: {e}")
-        return {}
-
-
-
-# ---------------------------------------------------------
-# STEP 3 — Handle Upload
+# UPLOAD + CONVERT (DOCX → JSON)
 # ---------------------------------------------------------
 def handle_upload(request):
-    """Handles upload, converts DOCX → TXT → JSON."""
     if "file" not in request.files:
         return jsonify({"error": "No file part"}), 400
 
@@ -118,6 +56,7 @@ def handle_upload(request):
     if not files:
         return jsonify({"error": "No selected files"}), 400
 
+    overwrite_requested = request.form.get("overwrite") == "true"
     converted = []
 
     for file in files:
@@ -125,72 +64,155 @@ def handle_upload(request):
             continue
 
         filename = safe_filename(file.filename)
+        ext = filename.split(".")[-1].lower()
+
+        # Save temporarily
         save_path = os.path.join(UPLOAD_FOLDER, filename)
         file.save(save_path)
 
-        # If DOCX → convert to TXT
-        if filename.lower().endswith(".docx"):
-            txt_path = convert_docx_to_txt(save_path)
-        elif filename.lower().endswith(".txt"):
-            txt_path = save_path
-        else:
-            txt_path = ""
+        subject = detect_subject(filename)
+        class_cat = detect_class_category(filename)
+        version = detect_version(filename)
 
-        if txt_path:
-            data = parse_txt_to_json(txt_path)
-            json_name = os.path.splitext(filename)[0] + ".json"
-            json_path = os.path.join(UPLOAD_FOLDER, json_name)
-            with open(json_path, "w", encoding="utf-8") as f:
-                json.dump(data, f, indent=2, ensure_ascii=False)
+        # Prepare JSON output folder
+        folder = class_cat.upper()
+        os.makedirs(os.path.join(SUBJECTS_JSON_FOLDER, folder), exist_ok=True)
+
+        json_filename = f"{subject.lower().replace(' ', '_')}_{class_cat.lower()}.json"
+        json_path = os.path.join(SUBJECTS_JSON_FOLDER, folder, json_filename)
+
+        # Already exists?
+        if os.path.exists(json_path) and not overwrite_requested:
             converted.append({
                 "source": filename,
-                "converted": json_name,
-                "count": len(data.get("questions", []))
+                "status": "exists",
+                "json_filename": json_filename,
+                "subject": subject,
+                "class_category": class_cat
             })
-        else:
-            converted.append({
-                "source": filename,
-                "converted": None,
-                "count": 0
-            })
+            continue
+
+        # DOCX → Convert
+        if ext == "docx":
+            try:
+                subject, data, final_class = convert_exam(save_path)
+                json_path = save_output(subject, data, final_class)
+
+                converted.append({
+                    "source": filename,
+                    "status": "overwritten" if overwrite_requested else "converted",
+                    "subject": subject,
+                    "class_category": final_class,
+                    "json_filename": json_filename,
+                    "json_path": json_path,
+                    "question_count": len(data.get("questions", [])),
+                })
+
+            except Exception as e:
+                print("⚠️ Conversion error:", e)
+                converted.append({"source": filename, "error": "conversion_failed"})
+
+        # JSON upload
+        elif ext == "json":
+            try:
+                file.stream.seek(0)
+                payload = json.load(file.stream)
+                subject = payload.get("subject") or subject
+                final_class = class_cat
+
+                json_path = save_output(subject, payload, final_class)
+
+                converted.append({
+                    "source": filename,
+                    "status": "overwritten" if overwrite_requested else "saved",
+                    "subject": subject,
+                    "class_category": final_class,
+                    "json_filename": json_filename,
+                    "json_path": json_path,
+                    "question_count": len(payload.get("questions", [])),
+                })
+
+            except Exception:
+                converted.append({"source": filename, "error": "invalid_json"})
 
     return jsonify({"success": True, "converted": converted})
 
 
 # ---------------------------------------------------------
-# STEP 4 — File management utilities
+# LIST JSON FILES
 # ---------------------------------------------------------
 def list_converted_files():
-    files = [f for f in os.listdir(UPLOAD_FOLDER) if f.endswith(".json")]
-    return [
-        {
-            "filename": f,
-            "path": os.path.join(UPLOAD_FOLDER, f),
-            "size_kb": round(os.path.getsize(os.path.join(UPLOAD_FOLDER, f)) / 1024, 1)
-        }
-        for f in sorted(files)
-    ]
+    result = []
+
+    for class_cat in ["SS1", "SS2", "SS3", "GENERAL"]:
+        folder = os.path.join(SUBJECTS_JSON_FOLDER, class_cat)
+        if not os.path.isdir(folder):
+            continue
+
+        for f in sorted(os.listdir(folder)):
+            if not f.endswith(".json"):
+                continue
+
+            full = os.path.join(folder, f)
+            size_kb = round(os.path.getsize(full) / 1024, 1)
+
+            subject = detect_subject(f)
+            version = detect_version(f)
+            q_count = 0
+
+            try:
+                with open(full, "r", encoding="utf-8") as jf:
+                    data = json.load(jf)
+                    subject = data.get("subject", subject)
+                    q_count = len(data.get("questions", []))
+            except:
+                pass
+
+            result.append({
+                "filename": f,
+                "subject": subject,
+                "class_category": class_cat,
+                "version": version,
+                "questions": q_count,
+                "size_kb": size_kb,
+                "path": full,
+                "last_modified": os.path.getmtime(full)
+            })
+
+    return result
 
 
+def list_subject_jsons():
+    return list_converted_files()
+
+
+# ---------------------------------------------------------
+# PREVIEW JSON
+# ---------------------------------------------------------
 def get_converted_json(filename: str):
-    path = os.path.join(UPLOAD_FOLDER, filename)
-    if not os.path.exists(path):
-        return jsonify({"error": "File not found"}), 404
-    try:
-        with open(path, "r", encoding="utf-8") as f:
-            return jsonify(json.load(f))
-    except Exception as e:
-        print(f"⚠️ Error reading JSON: {e}")
-        return jsonify({"error": "Failed to read JSON"}), 500
+    for class_cat in ["SS1", "SS2", "SS3", "GENERAL"]:
+        path = os.path.join(SUBJECTS_JSON_FOLDER, class_cat, filename)
+        if os.path.exists(path):
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    return jsonify(json.load(f))
+            except:
+                return jsonify({"error": "Failed to read JSON"}), 500
+
+    return jsonify({"error": "File not found"}), 404
 
 
+# ---------------------------------------------------------
+# DELETE JSON
+# ---------------------------------------------------------
 def delete_converted_file(filename: str):
-    path = os.path.join(UPLOAD_FOLDER, filename)
-    if not os.path.exists(path):
-        return jsonify({"error": "File not found"}), 404
-    try:
-        os.remove(path)
-        return jsonify({"success": True, "deleted": filename})
-    except Exception as e:
-        print(f"⚠️ Error deleting file: {e}")
-        return jsonify({"error": "Failed to delete file"}), 500
+    for class_cat in ["SS1", "SS2", "SS3", "GENERAL"]:
+        path = os.path.join(SUBJECTS_JSON_FOLDER, class_cat, filename)
+        if os.path.exists(path):
+            try:
+                os.remove(path)
+                return jsonify({"success": True, "deleted": filename})
+            except:
+                return jsonify({"error": "Failed to delete file"}), 500
+
+    return jsonify({"error": "File not found"}), 404

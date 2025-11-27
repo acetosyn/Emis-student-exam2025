@@ -131,3 +131,15 @@
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/user_portal.js') }}"></script>
 {% endblock %}
+
+
+
+        <ul class="checklist">
+          <li>📶 Ensure strong internet (4G/5G or Wi-Fi).</li>
+          <li>🔋 Keep your device charged or plugged in.</li>
+          <li>🖥️ Use Chrome, Safari, or Edge.</li>
+          <li>🚫 Avoid switching tabs during the exam.</li>
+          <li>📵 Close background apps.</li>
+          <li>⏲️ Timer cannot be paused.</li>
+          <li>💾 Auto-save after every question.</li>
+        </ul>

@@ -3,131 +3,421 @@
 
 <div class="uploads-wrapper fade-in">
 
-  <!-- HEADER -->
+  
+  <!-- ===================== HEADER ===================== -->
   <div class="uploads-header">
-    <div class="flex justify-between items-start flex-wrap gap-3">
-      <div>
-        <h3><i class="fa-solid fa-cloud-arrow-up text-accent"></i> Exam & Past Questions Uploads</h3>
-        <p class="sub-text">Manage your teaching materials, upload exams (DOCX), and auto-convert to JSON for the student portal.</p>
+    <div class="uploads-header-main">
+      <div class="uploads-header-left">
+        <h3>
+          <i class="fa-solid fa-cloud-arrow-up text-accent"></i>
+          Exam & Past Questions Uploads
+        </h3>
+        <p class="sub-text">
+          Upload WAEC-style exam DOCX files, auto-convert them to JSON with the LLM, and manage what gets pushed to the student portal.
+        </p>
       </div>
 
-      <!-- Role Ribbon -->
-      <div class="role-banner" data-role="{{ user_type|default('admin') }}">
-        {% if user_type == 'teacher' %}
-          <i class="fa-solid fa-chalkboard-user text-green-600"></i> Teacher Mode
-        {% else %}
-          <i class="fa-solid fa-shield-halved text-accent"></i> Admin Mode
-        {% endif %}
+      <div class="uploads-header-right">
+        <!-- Role Ribbon -->
+        <div class="role-banner" data-role="{{ user_type|default('admin') }}">
+          {% if user_type == 'teacher' %}
+            <i class="fa-solid fa-chalkboard-user text-green-600"></i>
+            Teacher Mode
+          {% else %}
+            <i class="fa-solid fa-shield-halved text-accent"></i>
+            Admin Mode
+          {% endif %}
+        </div>
+
+        <!-- View Subjects Button -->
+        <div class="header-actions">
+          <button id="btnViewSubjects" class="btn-ghost small">
+            <i class="fa-solid fa-book-open-reader"></i>
+            View Subjects
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
-
+  <!-- ===================== 3-COLUMN LAYOUT ===================== -->
   <div class="uploads-grid">
-    <!-- ========== LEFT: UPLOAD ========== -->
-    <section class="upload-panel">
-      <h4><i class="fa-solid fa-upload"></i> Upload Files</h4>
-      <p>Select or drag files to upload. DOCX will be auto-converted to JSON. (Also supports JSON/CSV/XLSX.)</p>
+    <!-- ========== LEFT: UPLOAD & CONVERT PANEL ========== -->
+    <section class="upload-panel card">
+      <header class="panel-header">
+        <h4>
+          <i class="fa-solid fa-upload"></i>
+          Upload & Convert Exams
+        </h4>
+        <p class="panel-subtitle">
+          Upload your subject DOCX files (Maths, English, Chemistry, etc.). The LLM will extract all MCQs and answers into JSON.
+        </p>
+      </header>
 
+      <!-- Drop Zone -->
       <div class="drop-box" id="uploadDropZone">
-        <!-- Hidden file inputs -->
-        <input type="file" id="uploadInputSingle" accept=".docx,.json,.csv,.xlsx" hidden />
-        <input type="file" id="uploadInputMulti" accept=".docx,.json,.csv,.xlsx" multiple hidden />
+        <!-- Hidden inputs -->
+        <input type="file" id="uploadInputSingle" accept=".docx" hidden />
+        <input type="file" id="uploadInputMulti" accept=".docx" multiple hidden />
 
         <div class="drop-content">
           <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
-          <p><strong>Drag & Drop</strong> or use the buttons below</p>
-          <div class="flex gap-2 justify-center">
-            <button id="chooseSingle" class="btn-primary small">Choose File</button>
-            <button id="chooseMulti" class="btn-secondary small">Choose Multiple</button>
+          <p><strong>Drag & Drop</strong> DOCX here</p>
+          <p class="hint-text">or use the buttons below</p>
+          <div class="btn-row">
+            <button id="chooseSingle" class="btn-primary small">
+              <i class="fa-solid fa-file-import"></i>
+              Choose One
+            </button>
+            <button id="chooseMulti" class="btn-secondary small">
+              <i class="fa-solid fa-layer-group"></i>
+              Choose Multiple
+            </button>
           </div>
         </div>
       </div>
 
-      <!-- Selected list + tiny previews -->
-      <ul id="fileList" class="file-list"></ul>
-      <div id="filePreview" class="file-preview"></div>
+      <!-- Selected Files List -->
+      <div class="selected-files-block">
+        <div class="block-header">
+          <span class="block-title">
+            <i class="fa-solid fa-list-check"></i>
+            Selected Files
+          </span>
+          <span id="selectedCount" class="badge badge-soft">0 selected</span>
+        </div>
+        <ul id="fileList" class="file-list"></ul>
+      </div>
 
+      <!-- Upload Controls -->
       <div class="upload-actions">
-        <button id="startUpload" class="btn-primary small">
-          <i class="fa-solid fa-cloud-arrow-up"></i> Upload & Convert
+        <button id="startUpload" class="btn-primary">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          Upload & Convert (LLM)
         </button>
-        <button id="clearUploads" class="btn-secondary small">
-          <i class="fa-solid fa-trash"></i> Clear
+        <button id="clearUploads" class="btn-secondary">
+          <i class="fa-solid fa-trash-can"></i>
+          Clear Selection
         </button>
       </div>
 
+      <!-- Progress Bar -->
       <div id="uploadProgress" class="progress hidden">
-        <div class="progress-bar"></div>
+        <div class="progress-bar" id="uploadProgressBar"></div>
+        <span id="uploadProgressLabel" class="progress-label">Converting…</span>
       </div>
     </section>
 
-    <!-- ========== MIDDLE: TABLE ========== -->
-    <section class="dashboard-panel">
-      <h4><i class="fa-solid fa-table-list"></i> Converted/Uploaded Files</h4>
-
-      <div class="search-bar">
-        <input type="text" id="searchUploads" class="form-input" placeholder="🔍 Search by filename…">
-      </div>
+    <!-- ========== MIDDLE: CONVERTED FILES TABLE ========== -->
+    <section class="dashboard-panel card">
+      <header class="panel-header">
+        <div class="panel-header-main">
+          <h4>
+            <i class="fa-solid fa-table-list"></i>
+            Converted / Uploaded Files
+          </h4>
+          <p class="panel-subtitle">
+            These are the JSON exam files already available on the server (including freshly converted ones).
+          </p>
+        </div>
+        <div class="panel-header-actions">
+          <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input
+              type="text"
+              id="searchUploads"
+              class="form-input"
+              placeholder="Search by filename or subject…"
+            />
+          </div>
+          <button id="refreshUploads" class="btn-ghost small" title="Refresh table">
+            <i class="fa-solid fa-rotate"></i>
+            Refresh
+          </button>
+        </div>
+      </header>
 
       <div class="table-wrapper">
-        <table>
+        <table class="uploads-table">
           <thead>
             <tr>
               <th>Filename</th>
-              <th>Items</th>
+              <th>Subject</th>
+              <th>Version</th>
+              <th>Questions</th>
               <th>Size (KB)</th>
               <th>Status</th>
-              <th style="min-width: 210px;">Action</th>
+              <th style="min-width: 220px;">Actions</th>
             </tr>
           </thead>
           <tbody id="uploadedTable">
-            <tr><td colspan="5" class="empty">No uploads yet</td></tr>
+            <tr>
+              <td colspan="7" class="empty">
+                <span>No converted exams yet. Upload a DOCX on the left to begin.</span>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
     </section>
 
-    <!-- ========== RIGHT: PUSH ========== -->
-    <section class="push-panel">
-      <h4><i class="fa-solid fa-paper-plane"></i> Push to Student Portal</h4>
-      <p>When ready, push selected converted JSON to the student portal (integration to be wired later).</p>
+    <!-- ========== RIGHT: PUSH + LIVE PREVIEW PANEL ========== -->
+    <section class="push-panel card">
+      <header class="panel-header">
+        <h4>
+          <i class="fa-solid fa-paper-plane"></i>
+          Push to Student Portal
+        </h4>
+        <p class="panel-subtitle">
+          Select which converted JSON exams you want to expose to the student portal. Integration will be wired to backend later.
+        </p>
+      </header>
 
-      <div class="portal-preview">
-        <i class="fa-solid fa-database db-icon"></i>
-        <p class="text-sm text-gray">Ready to push <span id="pushCount">0</span> item(s) to database</p>
+      <!-- Portal Summary -->
+      <div class="portal-summary">
+        <div class="portal-icon">
+          <i class="fa-solid fa-database"></i>
+        </div>
+        <div class="portal-meta">
+          <p class="summary-title">Ready for Portal Sync</p>
+          <p class="summary-sub">
+            <span id="pushCount">0</span> selected file(s) queued for push.
+          </p>
+        </div>
       </div>
 
+      <!-- Push Controls -->
       <div class="push-actions">
-        <button id="pushToPortal" class="btn-primary small">
-          <i class="fa-solid fa-cloud-arrow-right"></i> Push to Portal
-        </button>
-        <button id="viewPortalJSON" class="btn-secondary small">
-          <i class="fa-solid fa-code"></i> View JSON Preview
+        <div class="push-actions-row">
+          <button id="pushSelectedToPortal" class="btn-primary">
+            <i class="fa-solid fa-cloud-arrow-right"></i>
+            Push Selected
+          </button>
+          <button id="viewPortalJSON" class="btn-secondary">
+            <i class="fa-solid fa-code"></i>
+            View JSON
+          </button>
+        </div>
+
+        <button id="clearPortalSubjects" class="btn-danger small">
+  <i class="fa-solid fa-trash"></i> Clear Subjects
+</button>
+
+
+        <!-- Tiny Clear Queue button (only shown when there is a selection) -->
+        <button id="clearQueue" class="btn-ghost tiny hidden">
+          <i class="fa-solid fa-broom"></i>
+          Clear Queue
         </button>
       </div>
 
-      <div id="portalLog" class="log-box"></div>
-    </section>
-  </div>
-</div>
+      <!-- Live Conversion Preview Card -->
+      <div class="preview-card">
+        <div class="preview-card-header">
+          <div>
+            <h5>
+              <i class="fa-solid fa-eye"></i>
+              Latest Conversion Preview
+            </h5>
+            <p class="preview-subtitle">
+              After “Upload & Convert”, a quick preview of the resulting JSON appears here.
+            </p>
+          </div>
+          <button id="openFullPreviewModal" class="btn-ghost tiny">
+            <i class="fa-solid fa-up-right-from-square"></i>
+            Full View
+          </button>
+        </div>
 
-<!-- ====== Modal (used for both View & Preview) ====== -->
-<div id="jsonModal" class="modal hidden">
+        <div id="latestPreviewMeta" class="preview-meta">
+          <span class="preview-pill" id="previewSubjectPill">Subject: —</span>
+          <span class="preview-pill" id="previewVersionPill">Version: —</span>
+          <span class="preview-pill" id="previewQuestionCountPill">Questions: —</span>
+        </div>
+
+        <div id="latestPreviewBody" class="preview-body pretty-scroll">
+          <p class="preview-placeholder">
+            No preview yet. Upload & convert an exam to see the JSON structure here.
+          </p>
+        </div>
+      </div>
+
+      <!-- Portal Log -->
+      <div class="log-box" id="portalLog">
+        <div class="log-header">
+          <span class="log-title">
+            <i class="fa-solid fa-notes-medical"></i>
+            Activity Log
+          </span>
+          <button id="clearPortalLog" class="btn-ghost tiny">
+            <i class="fa-solid fa-eraser"></i>
+            Clear
+          </button>
+        </div>
+        <div id="portalLogBody" class="log-body pretty-scroll">
+          <p class="log-placeholder">No portal actions yet.</p>
+        </div>
+      </div>
+    </section>
+
+<!-- ===================== SUBJECTS MODAL (VIEW SUBJECTS) ===================== -->
+<div id="subjectsModal" class="modal hidden">
   <div class="modal-backdrop" data-close="true"></div>
-  <div class="modal-card">
+
+  <div class="modal-card modal-large">
     <div class="modal-header">
-      <h3 id="jsonModalTitle">Preview</h3>
-      <button class="modal-close" data-close="true"><i class="fa-solid fa-xmark"></i></button>
+      <div class="modal-header-main">
+        <h3>
+          <i class="fa-solid fa-book-open-reader"></i>
+          Subjects in Repository
+        </h3>
+        <p class="modal-subtitle">
+          These JSON files are loaded from <code>/subjects-json</code>. Use “Refresh” to re-scan for new conversions.
+        </p>
+      </div>
+      <div class="modal-header-actions">
+        <button id="btnRefreshSubjects" class="btn-secondary small">
+          <i class="fa-solid fa-rotate"></i>
+          Refresh Subjects
+        </button>
+        <button id="btnPushAllSubjects" class="btn-primary small">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          Push ALL to Portal
+        </button>
+        <button class="modal-close" data-close="true" aria-label="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
     </div>
-    <div class="modal-body">
-      <pre id="jsonModalBody" class="json-pre pretty-scroll"></pre>
+
+    <div class="modal-body subjects-modal-body">
+      <!-- Dynamic Subjects Cards Container -->
+      <div id="subjectsCardsContainer" class="subjects-grid">
+        <!-- Example subject card (will be rendered via JS):
+        <article class="subject-card">
+          <header>
+            <span class="subject-name">Mathematics</span>
+            <span class="subject-version-pill">Version 1</span>
+          </header>
+          <p class="subject-filename">mathematics1.json</p>
+          <p class="subject-meta">Questions: 50 • Last updated: 2025-11-22</p>
+          <div class="subject-actions">
+            <button class="btn-primary tiny">Push to Portal</button>
+            <button class="btn-secondary tiny">Preview JSON</button>
+          </div>
+        </article>
+        -->
+      </div>
+
+      <div id="subjectsEmptyState" class="empty-state hidden">
+        <i class="fa-solid fa-folder-open"></i>
+        <p>No subject JSON files found yet.</p>
+        <p class="hint-text">Upload and convert exams, then click “Refresh Subjects”.</p>
+      </div>
     </div>
+
     <div class="modal-footer">
       <button class="btn-secondary small" data-close="true">Close</button>
     </div>
   </div>
 </div>
 
-<!-- The router re-attaches external scripts; this keeps the module self-contained -->
-<script src="{{ url_for('static', filename='js/uploads.js') }}"></script>
+
+<!-- ===================== PUSH CLASS MODAL ===================== -->
+<div id="pushClassModal" class="modal hidden">
+  <div class="modal-backdrop" data-close="true"></div>
+
+  <div class="modal-card small">
+    <div class="modal-header">
+      <h3>
+        <i class="fa-solid fa-paper-plane"></i>
+        Push to Student Portal
+      </h3>
+      <button class="modal-close" data-close="true">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <p class="warning-text">
+        <strong>Important:</strong> Select the correct class category.
+        If you choose incorrectly, students will see the wrong subject.
+      </p>
+
+      <div class="class-options">
+        <button class="class-btn" data-class="SS1">SS1</button>
+        <button class="class-btn" data-class="SS2">SS2</button>
+        <button class="class-btn" data-class="SS3">SS3</button>
+      </div>
+
+      <p id="chosenPushClass" class="chosen-class hidden"></p>
+    </div>
+
+    <div class="modal-footer">
+      <button id="btnConfirmPush" class="btn-primary disabled" disabled>
+        Confirm Push
+      </button>
+      <button class="btn-secondary" data-close="true">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== CLEAR SUBJECTS MODAL ===================== -->
+<div id="clearPortalModal" class="modal hidden">
+  <div class="modal-backdrop" data-close="true"></div>
+
+  <div class="modal-card small">
+    <div class="modal-header">
+      <h3>
+        <i class="fa-solid fa-trash"></i>
+        Clear Subjects From Portal
+      </h3>
+      <button class="modal-close" data-close="true">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <p>Select which class you want to clear:</p>
+
+      <div class="class-options">
+        <button class="clear-btn" data-class="SS1">Clear SS1</button>
+        <button class="clear-btn" data-class="SS2">Clear SS2</button>
+        <button class="clear-btn" data-class="SS3">Clear SS3</button>
+        <button class="clear-btn danger" data-class="ALL">Clear ALL Classes</button>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary" data-close="true">Close</button>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- ===================== JSON PREVIEW MODAL (FULL VIEW) ===================== -->
+<div id="jsonPreviewModal" class="modal hidden">
+  <div class="modal-backdrop" data-close="true"></div>
+
+  <div class="modal-card modal-code">
+    <div class="modal-header">
+      <h3 id="jsonPreviewTitle">
+        <i class="fa-solid fa-code"></i>
+        JSON Preview
+      </h3>
+      <button class="modal-close" data-close="true" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <pre id="jsonPreviewBody" class="json-pre pretty-scroll"></pre>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-secondary small" data-close="true">Close</button>
+    </div>
+  </div>
+</div>
+
