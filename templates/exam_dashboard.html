@@ -58,8 +58,7 @@
          4-CARD GRID
     ================================ -->
     <div class="exdash-grid">
-
-    <!-- ===============================
+<!-- ===============================
      CARD 1 — CANDIDATE INFO
 ================================ -->
 <section class="exdash-card ex-card-light">
@@ -71,28 +70,27 @@
 
     <div>
       <span>Full Name:</span>
-      <strong>{{ full_name }}</strong>
+      <strong>{{ student.full_name }}</strong>
     </div>
 
     <div>
       <span>Admission:</span>
-      <strong>{{ admission_number }}</strong>
+      <strong>{{ student.admission_number }}</strong>
     </div>
 
     <div>
       <span>Class:</span>
-      <strong>{{ class_name }}</strong>
+      <strong>{{ student.class }}</strong>
     </div>
 
-    <!-- ⭐ NEW ADDED -->
     <div>
       <span>Class Category:</span>
-      <strong>{{ class_category }}</strong>
+      <strong>{{ student.class_category }}</strong>
     </div>
 
     <div>
       <span>System ID:</span>
-      <strong>{{ system_id }}</strong>
+      <strong>{{ student.id }}</strong>
     </div>
 
     <div>
@@ -100,7 +98,6 @@
       <strong>{{ subject }}</strong>
     </div>
 
-    <!-- ⭐ Recent Status -->
     <div>
       <span>Recent Status:</span>
       <strong>
@@ -115,6 +112,7 @@
     </div>
 
   </div>
+
 
   <!-- STATUS PILL BELOW -->
   <div class="status-pill 
@@ -154,22 +152,22 @@
           <li><span>Subject</span><strong>{{ subject }}</strong></li>
         </ul>
 
-        <div class="cta">
-          {% if not exam_started and not exam_submitted %}
-           <button type="button" id="openExamModal" class="btn-primary btn-viewexam">
-            View Exam
-          </button>
+       <div class="cta">
+  {% if not exam_started and not exam_submitted %}
+    <button type="button" id="openExamModal" class="btn-primary btn-viewexam">
+      Proceed
+    </button>
 
+  {% elif exam_submitted %}
+    <a href="{{ url_for('student_portal_bp.result') }}"
+       class="btn-success">View Results</a>
 
-          {% elif exam_submitted %}
-            <a href="{{ url_for('student_portal_bp.result') }}"
-               class="btn-success">View Results</a>
-
-          {% else %}
-            <a href="{{ url_for('student_portal_bp.exam') }}"
-               class="btn-warning">Resume Exam</a>
-          {% endif %}
-        </div>
+  {% else %}
+    <a href="{{ url_for('student_portal_bp.exam') }}"
+       class="btn-warning">Resume Exam</a>
+  {% endif %}
+</div>
+  
       </section>
 
 
@@ -216,7 +214,7 @@
 
 
 <!-- ============================================================
-     EXAM START CONFIRMATION MODAL — PREMIUM STEPPED VERSION
+     EXAM PRE START PAGE MODAL
 ============================================================ -->
 <div id="examStartModal" class="exam-modal hidden">
 
@@ -267,10 +265,10 @@
 
     </div>
     <!-- START BUTTON -->
-    <a href="{{ url_for('student_portal_bp.exam', subject=subject) }}"
-       class="exam-modal-startbtn">
-       Start Exam
-    </a>
+ <a href="{{ url_for('student_portal_bp.exam') }}"
+   class="exam-modal-startbtn">
+   Proceed
+</a>
 
   </div>
 </div>

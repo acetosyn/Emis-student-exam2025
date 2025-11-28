@@ -1,475 +1,554 @@
-/* exam_gen.css
-   Base variables, layout, shared components.
-   Keep this file as the skeleton used by many pages.
-*/
+/* ============================================================
+   EXAM PORTAL — exam_gen.css (2025 Premium Modern Redesign)
+   ============================================================ */
 
 :root{
-  --bg: linear-gradient(180deg,#f6f8fb,#eef2ff);
+  --bg: linear-gradient(180deg,#f7f9fc,#eef2ff);
   --card-bg: #ffffff;
-  --muted: #64748b;
+  --glass: rgba(255,255,255,0.8);
+  --glass-strong: rgba(255,255,255,0.95);
+
   --text: #0f172a;
+  --muted: #64748b;
   --accent: #1e3a8a;
-  --accent-2: #2563eb;
-  --success: #16a34a;
+  --accent2: #2563eb;
   --danger: #dc2626;
-  --glass: rgba(255,255,255,0.85);
-  --border: rgba(15,23,42,0.06);
-  --radius: 12px;
-  --small-radius: 8px;
-  --shadow-sm: 0 6px 18px rgba(16,24,40,0.06);
-  --shadow-lg: 0 18px 48px rgba(16,24,40,0.12);
-  --font-sans: "Inter", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial;
+  --success: #16a34a;
+
+  --navy-dark: #0e1b33;
+
+  --radius: 16px;
+  --r-sm: 10px;
+
+  --shadow-sm: 0 4px 14px rgba(0,0,0,.06);
+  --shadow-md: 0 10px 28px rgba(0,0,0,.08);
+  --shadow-lg: 0 18px 48px rgba(0,0,0,.12);
+
+  --font-sans: "Inter", "Segoe UI", system-ui, Arial;
 }
 
-/* Global page shell */
+/* ============================================================
+   MAIN LAYOUT
+   ============================================================ */
+
 .exam-shell{
   min-height: calc(100vh - 80px);
-  display: grid;
-  grid-template-columns: 340px 1fr;
-  gap: 28px;
-  padding: 28px;
-  background: var(--bg);
-  font-family: var(--font-sans);
-  color: var(--text);
-  align-items: start;
+  display:grid;
+  grid-template-columns: 260px 1fr;
+  gap:22px;
+  padding:22px;
+  background:var(--bg);
+  font-family:var(--font-sans);
 }
 
-/* Responsive fallback */
-@media (max-width: 980px){
+@media(max-width:990px){
   .exam-shell{
-    grid-template-columns: 1fr;
-    padding: 18px;
+    grid-template-columns:1fr;
   }
 }
 
-/* Sidebar */
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
 .exam-sidebar{
-  background: linear-gradient(180deg, rgba(255,255,255,0.9), rgba(250,250,255,0.9));
-  border-radius: calc(var(--radius) + 6px);
-  padding: 18px;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--border);
-  position: sticky;
-  top: 18px;
-  height: fit-content;
+  background:var(--glass-strong);
+  backdrop-filter:blur(10px);
+  border-radius:var(--radius);
+  padding:16px;
+  border:1px solid rgba(0,0,0,.05);
+  box-shadow:var(--shadow-sm);
+  position:sticky;
+  top:20px;
+  height:fit-content;
 }
 
-/* Main area */
-.exam-main{
-  background: transparent;
-  min-height: 520px;
+/* ============================================================
+   PROGRESS CARDS
+   ============================================================ */
+
+.progress-overview{
+  padding:8px 6px 14px;
 }
 
-/* Header row inside main */
-.question-header{
+.counts{
   display:flex;
   justify-content:space-between;
-  align-items:center;
-  margin-bottom: 18px;
+  gap:6px;
 }
-.q-h2{
-  font-size:1.4rem;
+
+.count-block{
+  flex:1;
+  background:var(--glass);
+  padding:14px 6px;
+  border-radius:var(--r-sm);
+  text-align:center;
+  border:1px solid rgba(0,0,0,.05);
+  box-shadow:var(--shadow-sm);
+}
+
+.count-num{
+  font-size:1.3rem;
   font-weight:800;
-  margin:0;
-  color:var(--text);
+  color:var(--accent2);
 }
-.muted{ color:var(--muted); font-size:0.95rem; }
 
-
-
-/* Modal base */
-.modal-backdrop{
-  position:fixed;
-  inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: rgba(7,10,25,0.45);
-  z-index:1000;
-  padding:20px;
+.count-block span{
+  font-size:0.78rem;
+  color:var(--muted);
+  margin-top:3px;
+  display:block;
 }
-.modal-card{
-  background:var(--card-bg);
-  border-radius:14px;
+
+/* Progress bar */
+.progress-line{
   width:100%;
-  max-width:860px;
-  box-shadow:var(--shadow-lg);
-  border:1px solid var(--border);
+  height:8px;
+  margin-top:10px;
+  border-radius:999px;
+  background:#e2e8f0;
   overflow:hidden;
 }
-.modal-card.small{ max-width:560px; }
-.modal-head, .modal-foot{ padding:18px; display:flex; align-items:center; justify-content:space-between; }
-.modal-body{ padding:18px; border-top:1px solid rgba(15,23,42,0.03); border-bottom:1px solid rgba(15,23,42,0.03); }
-.modal-head h2{ margin:0; font-size:1.2rem; font-weight:800; }
-.modal-meta{ color:var(--muted); font-weight:600; }
 
-/* Buttons (shared style) */
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  transition:width .3s ease;
+}
+
+.progress-text{
+  margin-top:8px;
+  font-size:0.85rem;
+  color:var(--muted);
+  text-align:center;
+}
+
+/* ============================================================
+   QUESTION NAV GRID — compact
+   ============================================================ */
+
+#questionGridWrap{
+  max-height:360px;
+  overflow-y:auto;
+  margin-top:16px;
+  padding-right:6px;
+}
+
+.question-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill, minmax(28px,1fr));
+  gap:6px;
+}
+
+.question-nav-btn{
+  background:#edf1f5;
+  border:none;
+  border-radius:8px;
+  font-size:0.7rem;
+  padding:6px 0;
+  cursor:pointer;
+  transition:.15s ease;
+  font-weight:600;
+}
+
+.question-nav-btn:hover{
+  background:#d9e0ea;
+  transform:translateY(-2px);
+}
+
+.question-nav-btn.active{
+  background:var(--accent2);
+  color:#fff;
+  transform:translateY(-2px);
+  box-shadow:0 6px 18px rgba(37,99,235,.22);
+}
+
+.question-nav-btn.answered{
+  background:var(--success);
+  color:#fff;
+}
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
 .btn-primary,
 .btn-secondary,
 .btn-danger,
 .btn-success,
-.btn-ghost {
-  padding: 10px 16px;
-  border-radius: 12px;
-  font-weight:700;
+.btn-ghost{
+  padding:10px 18px;
+  border-radius:var(--r-sm);
   cursor:pointer;
-  border: none;
-  transition: transform .18s ease, box-shadow .18s ease;
-  display:inline-flex;
+  border:none;
+  font-weight:700;
+  transition:.18s;
+  display:flex;
   align-items:center;
   gap:8px;
 }
+
+/* Primary */
 .btn-primary{
-  background: linear-gradient(90deg,var(--accent),var(--accent-2));
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
   color:#fff;
-  box-shadow: 0 8px 26px rgba(37,99,235,0.12);
+  box-shadow:0 6px 24px rgba(37,99,235,.22);
 }
-.btn-primary:active{ transform: translateY(1px) scale(.998); }
+.btn-primary:hover{ transform:translateY(-2px); }
+
+/* Secondary */
 .btn-secondary{
-  background: linear-gradient(90deg,#f8fafc,#eef2ff);
-  border:1px solid rgba(37,99,235,0.06);
-  color:var(--accent-2);
+  background:#eef2ff;
+  color:var(--accent2);
+  border:1px solid rgba(37,99,235,.12);
 }
-.btn-danger{ background: linear-gradient(90deg,#ef4444,#dc2626); color:#fff; }
-.btn-success{ background: linear-gradient(90deg,#16a34a,#34d399); color:#fff; }
+.btn-secondary:hover{ background:#e0e7ff; }
+
+/* Danger */
+.btn-danger{
+  background:linear-gradient(90deg,#ef4444,#dc2626);
+  color:#fff;
+}
+.btn-danger:hover{
+  transform:translateY(-2px);
+}
+
+/* Ghost */
 .btn-ghost{
   background:transparent;
-  border:1px solid rgba(15,23,42,0.06);
+  border:1px solid rgba(0,0,0,.08);
   color:var(--muted);
 }
+.btn-ghost:hover{ background:#f1f5f9; }
 
-/* small buttons */
-.btn-secondary.small, .btn-danger.small { padding:8px 10px; border-radius:10px; font-size:0.95rem; width:48%; }
+/* ============================================================
+   TOP BAR — SUBJECT + TIMER
+   ============================================================ */
 
-/* Progress overview */
-.progress-overview{ padding:6px 6px 14px 6px; }
-.counts{ display:flex; gap:8px; justify-content:space-between; margin-bottom:10px; }
-.count-block{ text-align:center; min-width:86px; background:linear-gradient(180deg,#fff,#fbfdff); padding:10px; border-radius:10px; border:1px solid var(--border); box-shadow: var(--shadow-sm); }
-.count-num{ font-size:1.35rem; font-weight:800; color:var(--accent-2); }
-.count-label{ font-size:0.85rem; color:var(--muted); margin-top:4px; }
+.exam-topbar{
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:10px 20px;
 
-/* progress bar */
-.progress-line{ width:100%; height:10px; background: #f1f5f9; border-radius:999px; overflow:hidden; border:1px solid rgba(15,23,42,0.02); }
-.progress-fill{ height:100%; width:0%; background: linear-gradient(90deg,var(--accent),var(--accent-2)); transition: width .35s ease; border-radius:inherit; }
+  /* ⭐ NEW — slightly darker translucent background */
+  background: rgba(14, 27, 51, 0.08);
+  border-radius: 14px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  backdrop-filter: blur(6px);
+}
 
-/* Question stage base */
-.question-stage{ background:transparent; }
-.question-slider{ position:relative; overflow:hidden; min-height:260px; border-radius:12px; }
+
+/* Subject card */
+.exam-topbar-subject{
+  background:#fff;
+  padding:10px 16px;
+  border-radius:var(--r-sm);
+  font-size:1rem;
+  font-weight:800;
+  color:var(--accent2);
+  box-shadow:var(--shadow-sm);
+  border:1px solid rgba(0,0,0,.06);
+}
+
+
+
+/* ============================================================
+   QUESTION PANEL
+   ============================================================ */
+
+.exam-main{
+  padding-right:40px;
+}
+
+.question-header{
+  margin-bottom:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.q-h2{
+  margin:0;
+  font-size:1.7rem;
+  font-weight:900;
+  color:#0e1b33;
+}
+
+/* ============================================================
+   QUESTION CARD — BIGGER, CLEANER, PREMIUM
+   ============================================================ */
+
 .question-card{
-  background:var(--card-bg);
-  border-radius:12px;
-  padding:20px;
-  box-shadow: var(--shadow-sm);
-  border:1px solid var(--border);
-  max-width: 900px;
+  background:#fff;
+  border-radius:var(--radius);
+  padding:30px 34px;
+  border:1px solid rgba(0,0,0,.05);
+  box-shadow:var(--shadow-md);
+  max-width:1000px;
+  min-height:380px;
 }
 
-/* Question foot */
-.question-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:16px; gap:10px; }
-.kbd{ padding:4px 6px; border-radius:6px; background:#f1f5f9; border:1px solid rgba(15,23,42,0.03); }
+/* Question text */
+#questionContent h3{
+  font-size:1.35rem;
+  font-weight:800;
+  margin-bottom:18px;
+  line-height:1.45;
+}
 
-/* Answer list base */
-.answers-list{ margin:18px 0 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:12px; }
+/* Option buttons */
+.option-btn{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  background:#f4f6fa;
+  border:1px solid #d9dee8;
+  padding:12px 16px;
+  border-radius:var(--r-sm);
+  cursor:pointer;
+  margin-bottom:12px;
+  transition:.18s ease;
+}
 
-/* small helper */
-.hidden{ display:none!important; }
-.small{ font-size:0.92rem; }
+.option-btn:hover{
+  background:#eef2f8;
+  transform:translateY(-2px);
+}
 
-/* Loading overlay */
-.loading-overlay{ position:fixed; inset:0; display:flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.5); z-index:1200; }
-.loader-card{ background:var(--card-bg); padding:18px 22px; border-radius:12px; display:flex; gap:12px; align-items:center; box-shadow:var(--shadow-sm); }
-.spinner{ width:36px; height:36px; border-radius:50%; border:4px solid rgba(0,0,0,0.08); border-top-color:var(--accent-2); animation:spin 1s linear infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
+.option-letter{
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  background:#e2e5eb;
+  font-weight:800;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
 
-/* Utility */
+.option-btn.selected{
+  background:#e8fcf0;
+  border-color:var(--success);
+}
+
+.option-btn.selected .option-letter{
+  background:var(--success);
+  color:white;
+}
+
+/* ============================================================
+   PREVIOUS & NEXT BUTTONS — opposite sides
+   ============================================================ */
+
+.question-foot{
+  display:flex;
+  justify-content:space-between;
+  margin-top:26px;
+}
+
+#prevBtn{
+  margin-right:auto;
+}
+
+#nextBtn{
+  margin-left:auto;
+}
+
+/* ============================================================
+   MISC
+   ============================================================ */
+
+.hidden{ display:none !important; }
+.small{ font-size:0.85rem; }
 .w-full{ width:100%; }
-.muted-note{ font-size:0.9rem; color:var(--muted); margin-top:10px; }
 
-/* Question grid wrapper to allow scrolling when many questions */
-/* Question grid wrapper - increased height so all 40 questions are visible */
-#questionGridWrap {
-  max-height: 480px;   /* was 320px */
-  overflow: auto;
-  padding-right: 6px;
-  margin-bottom: 18px;
+/* Scrollbar */
+#questionGridWrap::-webkit-scrollbar{ width:6px; }
+#questionGridWrap::-webkit-scrollbar-thumb{
+  background:#cbd5e1;
+  border-radius:6px;
 }
 
 
-/* kbd element */
-kbd{ background:#0f172a10; border-radius:6px; padding:4px 6px; font-weight:700; font-size:0.9rem; }
+/* ============================================================
+   FIXED — CENTERED INSTRUCTION MODAL (Medium Size)
+   ============================================================ */
 
-
-
-/* =============================
-   QUESTION CARD & OPTION STYLES
-   ============================= */
-.exam-container {
-  display: flex;
-  gap: 1.5rem;
-  padding: 1rem;
-}
-
-#questionArea {
-  flex: 1;
-}
-
-.question-card {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
-  padding: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.question-card h3 {
-  font-size: 1.25rem;
-  margin-bottom: 1rem;
-  line-height: 1.4;
-  color: #333;
-}
-
-/* Option bubbles */
-.option-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.option-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  background: #f9f9f9;
-  padding: 0.65rem 0.9rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.option-btn:hover {
-  background: #f1f1f1;
-  border-color: #bbb;
-}
-
-.option-letter {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 28px;
-  height: 28px;
-  font-weight: 600;
-  border-radius: 50%;
-  background: #e5e7eb;
-  color: #333;
-}
-
-.option-btn.selected .option-letter {
-  background: #4caf50;
-  color: white;
-}
-
-.option-btn.selected {
-  border-color: #4caf50;
-  background: #e8f5e9;
-}
-
-/* =============================
-   NAVIGATION BUTTON GRID
-   ============================= */
-.question-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(38px, 1fr));
-  gap: 0.5rem;
-}
-
-.question-nav-btn {
-  background: #e5e7eb;
-  border: none;
-  border-radius: 6px;
-  padding: 0.4rem 0;
-  cursor: pointer;
-  font-size: 0.9rem;
-  transition: all 0.2s;
-}
-
-.question-nav-btn:hover {
-  background: #d1d5db;
-}
-
-.question-nav-btn.active {
-  background: #2196f3;
-  color: #fff;
-  font-weight: 600;
-}
-
-.question-nav-btn.answered {
-  background: #4caf50;
-  color: #fff;
-}
-
-
-
-/* ===================== INSTRUCTIONS MODAL ===================== */
-
-.instructions-body {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  max-height: 380px;
-  overflow-y: auto;
-  padding-right: 6px;
-}
-
-.instruction-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.9rem;
-  background: #f9fafb;
-  border: 1px solid rgba(15,23,42,0.05);
-  padding: 0.9rem 1rem;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.instruction-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+#instructionsModal .modern-instr-card {
+  max-width: 720px;          /* ⭐ Not wide anymore */
+  width: 100%;
+  margin: auto;
+  border-radius: 18px;
+  padding: 0;
   background: #ffffff;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+  position: relative;
 }
 
-.instr-icon {
-  font-size: 1.6rem;
-  flex-shrink: 0;
+/* Header */
+#instructionsModal .instr-head {
+  padding: 22px 26px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
 }
-
-.instruction-card p {
-  margin: 0;
-  font-size: 1rem;
-  color: #1e293b;
-  line-height: 1.4;
+#instructionsModal .instr-head h2 {
+  font-size: 1.45rem;
+  font-weight: 800;
+}
+#instructionsModal .instr-head .subtitle {
+  margin-top: 4px;
+  font-size: 0.92rem;
+  color: #64748b;
 }
 
 /* Duration badge */
-.exam-duration-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: linear-gradient(90deg, #1e3a8a, #2563eb);
-  color: #fff;
-  font-weight: 600;
+#instructionsModal .exam-duration-badge {
   padding: 6px 12px;
-  border-radius: 999px;
-  font-size: 0.9rem;
-  box-shadow: 0 2px 8px rgba(37,99,235,0.25);
+  font-size: 0.85rem;
 }
 
-.exam-duration-badge i {
-  font-size: 1rem;
+/* Make icons smaller */
+#instructionsModal .instr-icon {
+  font-size: 1.25rem;
+  color: #2563eb;
 }
 
-/* Scrollbar styling for instructions */
-.instructions-body::-webkit-scrollbar {
-  width: 8px;
+/* ============================================================
+   INSTRUCTION GRID — Smaller & Centered
+   ============================================================ */
+#instructionsModal .instructions-grid {
+  padding: 20px 22px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); /* ⭐ Reduced width */
+  gap: 14px;
 }
-.instructions-body::-webkit-scrollbar-thumb {
-  background: rgba(30,58,138,0.25);
+
+/* Instruction card */
+#instructionsModal .instruction-card {
+  padding: 14px 16px;              /* Smaller */
+  border-radius: 14px;
+  background: #fafbfc;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.06);
+  display: flex;
+  gap: 12px;
+  transition: all .25s ease;
+}
+#instructionsModal .instruction-card p {
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.4;
+}
+#instructionsModal .instruction-card.danger {
+  background: #fff1f1;
+  border-color: #fca5a5;
+}
+
+/* ============================================================
+   FOOTER BUTTONS — Smaller & centered
+   ============================================================ */
+#instructionsModal .modal-foot {
+  padding: 18px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid rgba(0,0,0,0.06);
+}
+
+#instructionsModal .btn-primary,
+#instructionsModal .btn-secondary {
+  padding: 10px 16px;
+  font-size: 0.95rem;
   border-radius: 10px;
 }
-.instructions-body::-webkit-scrollbar-track {
-  background: transparent;
+
+/* Close button */
+#instructionsModal .modern-close {
+  width: 34px;
+  height: 34px;
+  top: 10px;
+  right: 10px;
+  font-size: 0.9rem;
 }
 
-@media (max-width: 640px) {
-  .instruction-card {
-    padding: 0.8rem;
-    font-size: 0.95rem;
-  }
-  .instr-icon {
-    font-size: 1.4rem;
-  }
-  .exam-duration-badge {
-    font-size: 0.8rem;
-    padding: 4px 10px;
-  }
+/* Prevent modal push-jump on hide */
+#instructionsModal {
+  position: fixed !important;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
 }
 
 
 
-
-/* Modern Instructions Layout */
-.instructions-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1rem;
-  padding: 1.2rem;
-}
-
-.instruction-card {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.8rem;
-  background: rgba(255,255,255,0.85);
-  border: 1px solid rgba(15,23,42,0.08);
-  padding: 1rem;
-  border-radius: 14px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.06);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-.instruction-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.1);
-}
-
-.instruction-card.danger {
-  background: linear-gradient(180deg, #fee2e2, #fff5f5);
-  border: 1px solid #fca5a5;
-}
-
-.instr-icon {
-  font-size: 1.4rem;
-  color: #2563eb;
-  flex-shrink: 0;
-}
-.instruction-card.danger .instr-icon {
-  color: #dc2626;
-}
-.instruction-card p {
-  margin: 0;
-  font-size: 0.95rem;
-  color: #1e293b;
-  line-height: 1.5;
-}
-
-/* Floating Close Button */
-.modern-close {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  background: #f3f4f6;
-  border: none;
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
+/* ============================================
+   TOPBAR RIGHT GROUP (Clock + Timer + Profile)
+   ============================================ */
+.topbar-right {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: #64748b;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-.modern-close:hover {
-  background: #dc2626;
-  color: #fff;
-  box-shadow: 0 4px 12px rgba(220,38,38,0.3);
+  gap: 18px;
+
+  margin-left: 40px !important;  /* ⭐ shift entire clock+timer group LEFT */
+  margin-right: auto !important; /* push student name fully right */
 }
 
-/* Header subtitle */
-.instr-head .subtitle {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #6b7280;
-  margin-top: 4px;
+/* --------------------------------------------
+   ANALOG CLOCK — hidden until exam begins
+--------------------------------------------- */
+.analog-clock-wrapper {
+  display: none;          /* Hidden by default */
+  align-items: center;
+  justify-content: center;
+  width: 82px;
+  height: 82px;
+}
+
+.exam-started .analog-clock-wrapper {
+  display: flex !important;  /* Visible only after exam starts */
+}
+
+.analog-clock-wrapper iframe {
+  transform: scale(1.03);
+  pointer-events: none;      /* Prevent iframe border click ghosting */
+}
+
+/* --------------------------------------------
+   TIMER CARD — fixed width, NO SHIFTING
+--------------------------------------------- */
+.exam-topbar-timer {
+  background: var(--navy-dark);
+  color: #fff;
+
+  padding: 12px 22px;
+  font-size: 1.42rem;
+
+  border-radius: var(--radius);
+  box-shadow: 0 8px 24px rgba(14,27,51,.28);
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 850;
+  letter-spacing: 0.75px;
+  border: 2px solid rgba(255,255,255,.15);
+
+  width: 150px;             /* ⭐ FIXED WIDTH = no movement */
+  justify-content: center;  /* Centers icon + numbers */
+}
+
+.exam-topbar-timer i {
+  font-size: 1.42rem;
+  color: #ff5252;
+}
+
+/* Prevent timer digits from shifting layout */
+#timerDisplay {
+  display: inline-block;
+  width: 85px;              /* fixed width */
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  font-family: "Roboto Mono", monospace;
 }
