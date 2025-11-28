@@ -1,0 +1,1550 @@
+{
+  "school": "EPITOME MODEL ISLAMIC SCHOOLS",
+  "subject": "English Language",
+  "exam_title": "1st Term Examination",
+  "instructions": "Answer all questions.",
+  "time_allowed_minutes": 60,
+  "questions": [
+    {
+      "id": 1,
+      "question": "Many youths migrate to urban areas as there are not enough jobs in …..areas.",
+      "options": [
+        "A. bush",
+        "B. local",
+        "C. rural",
+        "D. underdeveloped"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 2,
+      "question": "It is surprising that Ngozi is non-challant about her studies, while her younger brother Obinna is",
+      "options": [
+        "A. smart",
+        "B. serious",
+        "C. brave",
+        "D. intelligent"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 3,
+      "question": "The politician gave an equivocal answer rather than a …….one.",
+      "options": [
+        "A. pleasing",
+        "B. clear",
+        "C. carefree",
+        "D. confusing"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 4,
+      "question": "The drug exacerbated his illness rather than …..it.",
+      "options": [
+        "A. cure",
+        "B. lessen",
+        "C. aggravate",
+        "D. solve"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 5,
+      "question": "I prefer extroverts to",
+      "options": [
+        "A. bullies",
+        "B. rascals",
+        "C. extremists",
+        "D. introverts"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 6,
+      "question": "Cooperation facilitates an action rather than .....it.",
+      "options": [
+        "A. retards",
+        "B. quickens",
+        "C. stops",
+        "D. hastens"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 7,
+      "question": "As a result of a family feud, Bisi and Ayo could not cultivate good",
+      "options": [
+        "A. relationship",
+        "B. companionship",
+        "C. acquaintanceship",
+        "D. friendship"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 8,
+      "question": "It is no use being in a fret, try to",
+      "options": [
+        "A. play",
+        "B. dance",
+        "C. relax",
+        "D. laugh"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 9,
+      "question": "Joy needs talking to, not",
+      "options": [
+        "A. flogging",
+        "B. pampering",
+        "C. scolding",
+        "D. laughing at"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 10,
+      "question": "Ema keeps to herself and does not …….much.",
+      "options": [
+        "A. laugh",
+        "B. care",
+        "C. quarrel",
+        "D. socialize"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 11,
+      "question": "The principal expressed his ….at the unruly behavior of the students.",
+      "options": [
+        "A. indignity",
+        "B. indiscretion",
+        "C. indignation",
+        "D. indiscipline"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 12,
+      "question": "The magistrate …….the accused to one year imprisonment.",
+      "options": [
+        "A. sentenced",
+        "B. pronounced",
+        "C. condemned",
+        "D. charged"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 13,
+      "question": "I hate discussing with Fred. He is always",
+      "options": [
+        "A. notorious",
+        "B. giddy",
+        "C. gibberish",
+        "D. juxtaposing"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 14,
+      "question": "The lecturer condemned his ideas as",
+      "options": [
+        "A. unsoothing",
+        "B. unpleasing",
+        "C. unrewarding",
+        "D. nebulous"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 15,
+      "question": "With determination, we shall ……the problem.",
+      "options": [
+        "A. surmount",
+        "B. subsume",
+        "C. surprise",
+        "D. surcharge"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 16,
+      "question": "Bimbo ran ……..her old friend.",
+      "options": [
+        "A. upon",
+        "B. into",
+        "C. across",
+        "D. unto"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 17,
+      "question": "The young lady is such a ….beauty to behold.",
+      "options": [
+        "A. ravenous",
+        "B. ravishing",
+        "C. ravaging",
+        "D. raging"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 18,
+      "question": "After his election, the government took over the ………of power.",
+      "options": [
+        "A. realms",
+        "B. reigns",
+        "C. reins",
+        "D. rains"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 19,
+      "question": "The visit of the president to the players boosted their",
+      "options": [
+        "A. morale",
+        "B. performance",
+        "C. action",
+        "D. play"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 20,
+      "question": "It is time we ……the intruders from our school.",
+      "options": [
+        "A. drove away",
+        "B. drive away",
+        "C. shall drive away",
+        "D. should drive away"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 21,
+      "question": "She put up an appearance despite all oppositions.  This means",
+      "options": [
+        "A. she came and was opposed",
+        "B. she came with opposition",
+        "C. she came even though forces opposed it",
+        "D. inspite of putting up appearance, there were oppositions"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 22,
+      "question": "Our arrival took her unaware.  This means that she was",
+      "options": [
+        "A. prepared for our arrival",
+        "B. unprepared for our arrival",
+        "C. shocked at our arrival",
+        "D. pleased at our arrival"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 23,
+      "question": "Jona was advised to stop crying over spilt milk.  This means that Jona was advised to stop",
+      "options": [
+        "A. worrying over what has no remedy",
+        "B. weeping because of the waisted milk",
+        "C. crying as a result of spoilt milk",
+        "D. worrying over milk that poured away"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 24,
+      "question": "The plan to give the villages a borehole did not materialized. This means the plan",
+      "options": [
+        "A. was not successful",
+        "B. did not include materials",
+        "C. did not please the villagers",
+        "D. was not well carried out"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 25,
+      "question": "Mother advised us not to fish in troubled waters.  This means that we should",
+      "options": [
+        "A. not fish in polluted waters",
+        "B. not go fishing when it is raining",
+        "C. not fish while there is trouble",
+        "D. stay away from trouble"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 26,
+      "question": "It became necessary to remind Mr. Ojo that those who live in glass houses should not throw stones.  This means that Mr. Ojo",
+      "options": [
+        "A. should not throw stones at glass houses",
+        "B. should not accuse others of offences he is equally quilt of",
+        "C. should not throw stones from his glass house",
+        "D. was reminded that stones could damage his glass house"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 27,
+      "question": "I received a priceless gift from my father at my last birthday.  This means that I received",
+      "options": [
+        "A. highly valued gift",
+        "B. worthless gift",
+        "C. valueless gift",
+        "D. gift without any price on it"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 28,
+      "question": "The super Eagles supporters were in full cry at Nigeria’s World cup match against Argentina.  This means that",
+      "options": [
+        "A. they were crying",
+        "B. they were fully enjoying themselves",
+        "C. they shouted with enthusiasm",
+        "D. tears streamed down their cheeks"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 29,
+      "question": "The quarrel between the two friends turned out to be a storm in a tea-pot.  This means that the quarrel between the two friends",
+      "options": [
+        "A. is over an unimportant issue",
+        "B. increased their anger",
+        "C. is over a dirty teapot",
+        "D. was inflamed by people present"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 30,
+      "question": "After the investigation, many of the workers were giving the marching orders.  This means that the workers",
+      "options": [
+        "A. were given orders to march",
+        "B. received fresh instructions",
+        "C. were dismissed",
+        "D. were ordered to do a march past"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 31,
+      "question": "Nnenna was sweating profusely as she entered the examination hall.",
+      "options": [
+        "A. excessively",
+        "B. wrecklessly",
+        "C. apologetically",
+        "D. greatly"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 32,
+      "question": "Emmanuel is genuinely interested in Jane.",
+      "options": [
+        "A. stubbornly",
+        "B. questionably",
+        "C. probably",
+        "D. truly"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 33,
+      "question": "She was cautioned not to deviate from the main issue.",
+      "options": [
+        "A. run away",
+        "B. derail",
+        "C. stand out",
+        "D. attack"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 34,
+      "question": "The congregation was reminded that life is ephemeral.",
+      "options": [
+        "A. transient",
+        "B. sweet",
+        "C. fulfilling",
+        "D. glorious"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 35,
+      "question": "Ada rarely disobeys her seniors.",
+      "options": [
+        "A. often",
+        "B. seldom",
+        "C. frequently",
+        "D. stubbornly"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 36,
+      "question": "The use of vernacular was prohibited during English classes.",
+      "options": [
+        "A. mother tongue",
+        "B. foreign language",
+        "C. second language",
+        "D. strange language"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 37,
+      "question": "The teacher’s nefarious activities led to his dismissal.",
+      "options": [
+        "A. mischievous",
+        "B. unprecedented",
+        "C. wicked",
+        "D. planless"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 38,
+      "question": "It was a tortuous way of negotiating peace, but we went through it.",
+      "options": [
+        "A. an argumentative",
+        "B. a frustrating way",
+        "C. a disappointing way",
+        "D. a complicated and difficult"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 39,
+      "question": "The reporter refused to divulge the source of his information.",
+      "options": [
+        "A. share",
+        "B. disclose",
+        "C. discuss",
+        "D. write"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 40,
+      "question": "She is a garrulous young woman.",
+      "options": [
+        "A. beautiful",
+        "B. happy",
+        "C. chic",
+        "D. talkative"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 41,
+      "question": "You have not done the work",
+      "options": [
+        "A. isn’t it?",
+        "B. do you?",
+        "C. have you?",
+        "D. is it?"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 42,
+      "question": "I searched for it in all the ……….of the room",
+      "options": [
+        "A. nooks and corner",
+        "B. nooks and crannies",
+        "C. nooks and corners",
+        "D. corners and crannies"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 43,
+      "question": "He arrived just ……..time to catch the plane",
+      "options": [
+        "A. on",
+        "B. at",
+        "C. in",
+        "D. after"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 44,
+      "question": "It is high time you ……me the bully.",
+      "options": [
+        "A. show",
+        "B. showed",
+        "C. will show",
+        "D. are showing"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 45,
+      "question": "The principal with some teachers, ……in the hall",
+      "options": [
+        "A. are",
+        "B. is",
+        "C. were",
+        "D. have been"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 46,
+      "question": "Bola is one of the girls who ..….the classroom every morning.",
+      "options": [
+        "A. would sweep",
+        "B. sweeps",
+        "C. sweep",
+        "D. has swept"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 47,
+      "question": "With the scolding, she retired ……her shell.",
+      "options": [
+        "A. unto",
+        "B. into",
+        "C. from",
+        "D. under"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 48,
+      "question": "Once bitten, twice",
+      "options": [
+        "A. embarrassed",
+        "B. furious",
+        "C. stubborn",
+        "D. shy"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 49,
+      "question": "He stood ………the rain for two hours.",
+      "options": [
+        "A. in",
+        "B. under",
+        "C. outside",
+        "D. inside"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 50,
+      "question": "Ugochukwu is good ……….Mathematics",
+      "options": [
+        "A. on",
+        "B. in",
+        "C. at",
+        "D. upon"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 51,
+      "question": "Kunle is a chip ………..the old block",
+      "options": [
+        "A. of",
+        "B. off",
+        "C. on",
+        "D. at"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 52,
+      "question": "We live in a …………….building.",
+      "options": [
+        "A. two-stories",
+        "B. two-story",
+        "C. two-storey",
+        "D. two-storied"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 53,
+      "question": "That artist is really good ………..his hands.",
+      "options": [
+        "A. with",
+        "B. on",
+        "C. at",
+        "D. in"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 54,
+      "question": "The plane will touch ……..in ten minutes time.",
+      "options": [
+        "A. in",
+        "B. up",
+        "C. under",
+        "D. down"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 55,
+      "question": "She was operated ………at the catholic hospital.",
+      "options": [
+        "A. for",
+        "B. in",
+        "C. on",
+        "D. into"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 56,
+      "question": "The accused was ……….to two years jail term.",
+      "options": [
+        "A. sentenced",
+        "B. condemned",
+        "C. punished",
+        "D. put"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 57,
+      "question": "Abubakar is taller than...",
+      "options": [
+        "A. her",
+        "B. she",
+        "C. them",
+        "D. him"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 58,
+      "question": "In ……..account was the money deposited?",
+      "options": [
+        "A. who’s",
+        "B. whom",
+        "C. whose",
+        "D. whom’s"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 59,
+      "question": "Ifeoma passed her examinations",
+      "options": [
+        "A. in flying colours",
+        "B. under flying colours",
+        "C. into flying colours",
+        "D. with flying colours"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 60,
+      "question": "Yusuf and Kunle went fishing today,",
+      "options": [
+        "A. isn’t it?",
+        "B. didn’t they?",
+        "C. haven’t they?",
+        "D. had they?"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 61,
+      "question": "Neither Idiat nor Kafayat ………..here.",
+      "options": [
+        "A. is",
+        "B. are",
+        "C. has been",
+        "D. have been"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 62,
+      "question": "I am tired of ………..unending complaints.",
+      "options": [
+        "A. there",
+        "B. there are",
+        "C. their",
+        "D. they’re"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 63,
+      "question": "The two boys were abusing",
+      "options": [
+        "A. one another",
+        "B. themselves",
+        "C. each other",
+        "D. themselves"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 64,
+      "question": "I’m ………sincerely, Emeka.",
+      "options": [
+        "A. your’s",
+        "B. yours’",
+        "C. your",
+        "D. yours"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 65,
+      "question": "The secret is between",
+      "options": [
+        "A. you and me",
+        "B. you and I",
+        "C. me and you",
+        "D. I and you"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 66,
+      "question": "He turned ……………my peace offer.",
+      "options": [
+        "A. off",
+        "B. down",
+        "C. out",
+        "D. in"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 67,
+      "question": "Give me   the biro ………mine.",
+      "options": [
+        "A. its",
+        "B. it’s",
+        "C. its’",
+        "D. it"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 68,
+      "question": "……….his apology, he was punished.",
+      "options": [
+        "A. However",
+        "B. As a result of",
+        "C. Despite",
+        "D. Notwithstanding"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 69,
+      "question": "The price of ready-made dresses ……..gone up.",
+      "options": [
+        "A. have",
+        "B. has",
+        "C. are",
+        "D. were"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 70,
+      "question": "I prefer oranges …..…..bananas.",
+      "options": [
+        "A. to",
+        "B. than",
+        "C. more to",
+        "D. more than"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 71,
+      "question": "The Stock Exchange deals with the buying and --71-- of long term –73-- financial assets known as --72--.",
+      "options": [
+        "A. trading",
+        "B. selling",
+        "C. disposing",
+        "D. purchasing"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 72,
+      "question": "The Stock Exchange deals with the buying and selling of long term –73-- financial assets known as --72--.",
+      "options": [
+        "A. securities",
+        "B. bonds",
+        "C. currencies",
+        "D. dividends"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 73,
+      "question": "The Stock Exchange deals with the buying and selling of long term –73-- financial assets known as securities.",
+      "options": [
+        "A. bonds",
+        "B. profits",
+        "C. deals",
+        "D. shares"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 74,
+      "question": "The --74-- is an agent who buys and sells securities on behalf of his clients.",
+      "options": [
+        "A. stockman",
+        "B. sharesman",
+        "C. stockbroker",
+        "D. exchange man"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 75,
+      "question": "On every transaction that he undertakes, he charges --75--.",
+      "options": [
+        "A. interest",
+        "B. commission",
+        "C. money",
+        "D. profit"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 76,
+      "question": "When one buys the shares of a company, one has become a --76--.",
+      "options": [
+        "A. shareholder",
+        "B. manager",
+        "C. director",
+        "D. co-owner"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 77,
+      "question": "Under normal circumstances, every year, the company --77-- a profit.",
+      "options": [
+        "A. makes",
+        "B. announces",
+        "C. declares",
+        "D. gives"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 78,
+      "question": "This is shared among the shareholders as --78--.",
+      "options": [
+        "A. gains",
+        "B. dividends",
+        "C. interest",
+        "D. bonuses"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 79,
+      "question": "Many times --79-- buys shares in a company hoping to sell them at a later date.",
+      "options": [
+        "A. a client",
+        "B. a buyer",
+        "C. a speculator",
+        "D. an investor"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 80,
+      "question": "This is very risky as the company may declare --80-.",
+      "options": [
+        "A. liquidation",
+        "B. shortage",
+        "C. loss",
+        "D. bankruptcy"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 81,
+      "question": "From the words lettered A – D, choose the word that has the same vowel sound as the one represented by the letter(s) underlined foal",
+      "options": [
+        "A. pull",
+        "B. pool",
+        "C. pail",
+        "D. pole"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 82,
+      "question": "From the words lettered A – D, choose the word that has the same vowel sound as the one represented by the letter(s) underlined awe",
+      "options": [
+        "A. bale",
+        "B. bore",
+        "C. low",
+        "D. bough"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 83,
+      "question": "From the words lettered A – D, choose the word that has the same vowel sound as the one represented by the letter(s) underlined won",
+      "options": [
+        "A. one",
+        "B. con",
+        "C. wan",
+        "D. clone"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 84,
+      "question": "From the words lettered A – D, choose the word that has the same vowel sound as the one represented by the letter(s) underlined base",
+      "options": [
+        "A. reign",
+        "B. bust",
+        "C. chastity",
+        "D. bassoon"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 85,
+      "question": "From the words lettered A – D, choose the word that has the same vowel sound as the one represented by the letter(s) underlined wanted",
+      "options": [
+        "A. elder",
+        "B. kid",
+        "C. showed",
+        "D. fed"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 86,
+      "question": "From the words lettered A – D, choose the word that has the same vowel sound as the one represented by the letter(s) underlined jealous",
+      "options": [
+        "A. admit",
+        "B. outside",
+        "C. mousse",
+        "D. pout"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 87,
+      "question": "From the words lettered A – D, choose the word that has the same vowel sound as the one represented by the letter(s) underlined pier",
+      "options": [
+        "A. liar",
+        "B. pie",
+        "C. peer",
+        "D. pears"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 88,
+      "question": "From the words lettered A – D, choose the word that has the same vowel sound as the one represented by the letter(s) underlined lie",
+      "options": [
+        "A. lion",
+        "B. python",
+        "C. patheon",
+        "D. sieve"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 89,
+      "question": "From the words lettered A – D, choose the word that has the same vowel sound as the one represented by the letter(s) underlined class",
+      "options": [
+        "A. chat",
+        "B. curse",
+        "C. last",
+        "D. claims"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 90,
+      "question": "From the words lettered A – D, choose the word that has the same vowel sound as the one represented by the letter(s) underlined tourism",
+      "options": [
+        "A. poor",
+        "B. bare",
+        "C. doer",
+        "D. dear"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 91,
+      "question": "From the words lettered A – D, choose the word that has the same vowel sound as the one represented by the letter(s) underlined west",
+      "options": [
+        "A. mist",
+        "B. feast",
+        "C. bait",
+        "D. jest"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 92,
+      "question": "From the words lettered A – D, choose the word that has the same vowel sound as the one represented by the letter(s) underlined mirth",
+      "options": [
+        "A. much",
+        "B. word",
+        "C. myth",
+        "D. weird"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 93,
+      "question": "From the words lettered A – D, choose the word that has the same vowel sound as the one represented by the letter(s) underlined cord",
+      "options": [
+        "A. fond",
+        "B. quote",
+        "C. gaunt",
+        "D. quaint"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 94,
+      "question": "From the words lettered A – D, choose the word that has the same vowel sound as the one represented by the letter(s) underlined vary",
+      "options": [
+        "A. very",
+        "B. veil",
+        "C. scarce",
+        "D. lazy"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 95,
+      "question": "From the words lettered A – D, choose the word that has the same vowel sound as the one represented by the letter(s) underlined queue",
+      "options": [
+        "A. quit",
+        "B. chew",
+        "C. quest",
+        "D. church"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 96,
+      "question": "From the words lettered A-D, choose the word that has the same consonant sound(s) as the one represented by the letter(s) underlined wives",
+      "options": [
+        "A. chose",
+        "B. chokes",
+        "C. verse",
+        "D. noose"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 97,
+      "question": "From the words lettered A-D, choose the word that has the same consonant sound(s) as the one represented by the letter(s) underlined chic",
+      "options": [
+        "A. chick",
+        "B. machine",
+        "C. chemist",
+        "D. champion"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 98,
+      "question": "From the words lettered A-D, choose the word that has the same consonant sound(s) as the one represented by the letter(s) underlined chiefs",
+      "options": [
+        "A. bags",
+        "B. kites",
+        "C. moves",
+        "D. thieves"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 99,
+      "question": "From the words lettered A-D, choose the word that has the same consonant sound(s) as the one represented by the letter(s) underlined mate",
+      "options": [
+        "A. stand",
+        "B. dawn",
+        "C. punt",
+        "D. pawn"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 100,
+      "question": "From the words lettered A-D, choose the word that has the same consonant sound(s) as the one represented by the letter(s) underlined smith",
+      "options": [
+        "A. both",
+        "B. boot",
+        "C. clothe",
+        "D. smooth"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 101,
+      "question": "From the words lettered A-D, choose the word that has the same consonant sound(s) as the one represented by the letter(s) underlined red",
+      "options": [
+        "A. erred",
+        "B. arid",
+        "C. aired",
+        "D. are"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 102,
+      "question": "From the words lettered A-D, choose the word that has the same consonant sound(s) as the one represented by the letter(s) underlined wings",
+      "options": [
+        "A. pins",
+        "B. winds",
+        "C. wigs",
+        "D. lungs"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 103,
+      "question": "From the words lettered A-D, choose the word that has the same consonant sound(s) as the one represented by the letter(s) underlined quiet",
+      "options": [
+        "A. scud",
+        "B. quay",
+        "C. scow",
+        "D. queasy"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 104,
+      "question": "From the words lettered A-D, choose the word that has the same consonant sound(s) as the one represented by the letter(s) underlined oxen",
+      "options": [
+        "A. buzz",
+        "B. dusk",
+        "C. books",
+        "D. toss"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 105,
+      "question": "From the words lettered A-D, choose the word that has the same consonant sound(s) as the one represented by the letter(s) underlined balcony",
+      "options": [
+        "A. talk",
+        "B. local",
+        "C. sulk",
+        "D. colt"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 106,
+      "question": "From the words lettered A-D, choose the word that has the same consonant sound(s) as the one represented by the letter(s) underlined examine",
+      "options": [
+        "A. assume",
+        "B. excess",
+        "C. axle",
+        "D. exhaust"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 107,
+      "question": "From the words lettered A-D, choose the word that has the same consonant sound(s) as the one represented by the letter(s) underlined guitar",
+      "options": [
+        "A. gem",
+        "B. gnarl",
+        "C. naught",
+        "D. get"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 108,
+      "question": "From the words lettered A-D, choose the word that has the same consonant sound(s) as the one represented by the letter(s) underlined satched",
+      "options": [
+        "A. sachet",
+        "B. cheer",
+        "C. sack",
+        "D. mash"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 109,
+      "question": "From the words lettered A-D, choose the word that has the same consonant sound(s) as the one represented by the letter(s) underlined whom",
+      "options": [
+        "A. when",
+        "B. ahoy",
+        "C. dawn",
+        "D. war"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 110,
+      "question": "From the words lettered A-D, choose the word that has the same consonant sound(s) as the one represented by the letter(s) underlined carve",
+      "options": [
+        "A. laugh",
+        "B. half",
+        "C. new",
+        "D. vein"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 111,
+      "question": "From the words lettered A-D, choose the word that rhymes with the given word owe",
+      "options": [
+        "A. awe",
+        "B. dough",
+        "C. won",
+        "D. how"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 112,
+      "question": "From the words lettered A-D, choose the word that rhymes with the given word caught",
+      "options": [
+        "A. found",
+        "B. laugh",
+        "C. count",
+        "D. cough"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 113,
+      "question": "From the words lettered A-D, choose the word that rhymes with the given word leapt",
+      "options": [
+        "A. left",
+        "B. jumped",
+        "C. pumped",
+        "D. kept"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 114,
+      "question": "From the words lettered A-D, choose the word that rhymes with the given word write",
+      "options": [
+        "A. bright",
+        "B. writ",
+        "C. write",
+        "D. brat"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 115,
+      "question": "From the words lettered A-D, choose the word that rhymes with the given word first",
+      "options": [
+        "A. pest",
+        "B. worst",
+        "C. next",
+        "D. birds"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 116,
+      "question": "From the words lettered A-D, choose the word that has the correct stress",
+      "options": [
+        "A. MAN-ner-i-sm",
+        "B. man-NER-i-sm",
+        "C. man-ner-I-sm",
+        "D. man-ner-i-SM"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 117,
+      "question": "From the words lettered A-D, choose the word that has the correct stress",
+      "options": [
+        "A. IN-ti-mete-ly",
+        "B. in-TI-mate-ly",
+        "C. in-ti-MATE-ly",
+        "D. in-ti-mate-LY"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 118,
+      "question": "From the words lettered A-D, choose the word that has the correct stress",
+      "options": [
+        "A. MAN-u-fac-ture",
+        "B. man-U-fac-ture",
+        "C. man-u-FAC-ture",
+        "D. man-u-fac-TURE"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 119,
+      "question": "From the words lettered A-D, choose the word that has the correct stress",
+      "options": [
+        "A. AC-ci-den-tal",
+        "B. ac-CI-den-tal",
+        "C. ac-ci-DEN-tal",
+        "D. ac-ci-den-TAL"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 120,
+      "question": "From the words lettered A-D, choose the word that has the correct stress",
+      "options": [
+        "A. DI-rec-tor-ate",
+        "B. di-REC-tor-ate",
+        "C. di-rec-TOR-ate",
+        "D. di-rec-tor-ATE"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 121,
+      "question": "From the options lettered A-D, all the words except one have the same stress pattern.  Identify the one with the different stress pattern",
+      "options": [
+        "A. dinner",
+        "B. cardboard",
+        "C. postage",
+        "D. advice"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 122,
+      "question": "From the options lettered A-D, all the words except one have the same stress pattern.  Identify the one with the different stress pattern",
+      "options": [
+        "A. picture",
+        "B. doctor",
+        "C. pattern",
+        "D. receive"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 123,
+      "question": "From the options lettered A-D, all the words except one have the same stress pattern.  Identify the one with the different stress pattern",
+      "options": [
+        "A. special",
+        "B. revise",
+        "C. molest",
+        "D. sincere"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 124,
+      "question": "From the options lettered A-D, all the words except one have the same stress pattern.  Identify the one with the different stress pattern",
+      "options": [
+        "A. invitation",
+        "B. graduation",
+        "C. photography",
+        "D. photographic"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 125,
+      "question": "From the options lettered A-D, all the words except one have the same stress pattern.  Identify the one with the different stress pattern",
+      "options": [
+        "A. mosquito",
+        "B. recorder",
+        "C. possible",
+        "D. laconic"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 126,
+      "question": "Lyn SUCCEEDED in her ambitions business",
+      "options": [
+        "A. Did Jane succeed in her ambitious business?",
+        "B. Did Lyn succeed in her modest business?",
+        "C. Did Lyn fail in her ambitious business?",
+        "D. Did Lyn succeed in her ambitious studies?"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 127,
+      "question": "Some DECENTLY dressed men are dishonest",
+      "options": [
+        "A. Are some decently dressed women dishonest?",
+        "B. Are all decently dressed men dishonest?",
+        "C. Are some decently dressed men honest?",
+        "D. Are some shabbly dressed men dishonest?"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 128,
+      "question": "My favourite AUNT sings like a nightingale",
+      "options": [
+        "A. Does my favourite aunt sing like an owl?",
+        "B. Does my favourite uncle sing like a nightingale?",
+        "C. Does my favourite aunt talk like a nightingale?",
+        "D. Does his favourite aunt sing like a nightingale?"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 129,
+      "question": "Hardworking students usually PASS their examinations",
+      "options": [
+        "A. Do lazy students usually pass their examination?",
+        "B. Do hardworking students usually fail their examination?",
+        "C. Do hardworking students rarely pass their examination?",
+        "D. Do hardworking students usually pass their interviews?"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 130,
+      "question": "A fox is better than a WILD dog",
+      "options": [
+        "A. Is a cat better than a wild dog?",
+        "B. Is a fox better than a wild dog?",
+        "C. Is a fox better than a domesticated dog?",
+        "D. Is a fox better than a wild cat"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 131,
+      "question": "From the words lettered A-D, choose the word that contain the sound represented by the given phonetic symbol /ð /",
+      "options": [
+        "A. bother",
+        "B. broader",
+        "C. udder",
+        "D. author"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 132,
+      "question": "From the words lettered A-D, choose the word that contain the sound represented by the given phonetic symbol / æ/",
+      "options": [
+        "A. but",
+        "B. apt",
+        "C. jump",
+        "D. mace"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 133,
+      "question": "From the words lettered A-D, choose the word that contain the sound represented by the given phonetic symbol /ɔ /",
+      "options": [
+        "A. rot",
+        "B. wrap",
+        "C. wrought",
+        "D. wraith"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 134,
+      "question": "From the words lettered A-D, choose the word that contain the sound represented by the given phonetic symbol /ŋ /",
+      "options": [
+        "A. one",
+        "B. punk",
+        "C. none",
+        "D. pawn"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 135,
+      "question": "From the words lettered A-D, choose the word that contain the sound represented by the given phonetic symbol /j/",
+      "options": [
+        "A. cut",
+        "B. pay",
+        "C. cute",
+        "D. wire"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 136,
+      "question": "From the words lettered A-D, choose the word that contain the sound represented by the given phonetic symbol /tʃ/",
+      "options": [
+        "A. watch",
+        "B. wedge",
+        "C. leash",
+        "D. purge"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 137,
+      "question": "From the words lettered A-D, choose the word that contain the sound represented by the given phonetic symbol /l /",
+      "options": [
+        "A. calm",
+        "B. could",
+        "C. talk",
+        "D. vale"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 138,
+      "question": "From the words lettered A-D, choose the word that contain the sound represented by the given phonetic symbol / əu/",
+      "options": [
+        "A. hot",
+        "B. goat",
+        "C. fund",
+        "D. laid"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 139,
+      "question": "From the words lettered A-D, choose the word that contain the sound represented by the given phonetic symbol /ai/",
+      "options": [
+        "A. buy",
+        "B. power",
+        "C. tear",
+        "D. sail"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 140,
+      "question": "From the words lettered A-D, choose the word that contain the sound represented by the given phonetic symbol /au/",
+      "options": [
+        "A. laugh",
+        "B. many",
+        "C. tough",
+        "D. plough"
+      ],
+      "correctOption": "A"
+    }
+  ],
+  "class_category": "SS3"
+}

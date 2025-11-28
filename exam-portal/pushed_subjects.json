@@ -1,7 +1,8 @@
 {
     "SS1": [
         "chemistry_ss1.json",
-        "mathematics_ss1.json"
+        "mathematics_ss1.json",
+        "english_ss1.json"
     ],
     "SS2": [],
     "SS3": []
