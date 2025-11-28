@@ -48,17 +48,29 @@ def exam_dashboard():
     if not student:
         return redirect(url_for('user_bp.student_login'))
 
-    subject = request.args.get('subject', '').strip()
+    # FIX: ensure subject casing is uniform
+    subject = request.args.get('subject', '').strip().upper()
+
     if not subject:
         return redirect(url_for('student_portal_bp.student_portal'))
 
-    # Save the selected subject
+    # Save selected subject to session
     session['selected_subject'] = subject
 
     return render_template(
         'exam_dashboard.html',
+
+        # full student object
         student=student,
         subject=subject,
+
+        # pass individual fields (optional but useful)
+        full_name=student.get("full_name"),
+        admission_number=student.get("admission_number"),
+        class_name=student.get("class"),
+        class_category=student.get("class_category"),
+        system_id=student.get("id"),
+
         exam_started=session.get('exam_started', False),
         exam_submitted=session.get('exam_submitted', False)
     )
@@ -90,12 +102,13 @@ def exam():
         return redirect(url_for('user_bp.student_login'))
 
     subject = session.get('selected_subject')
+
     if not subject:
         return redirect(url_for('student_portal_bp.student_portal'))
 
     return render_template(
         'exam.html',
-        student=student,                # ⭐ FULL STUDENT OBJECT
+        student=student,
         subject=subject,
         exam_started=session.get('exam_started', False)
     )

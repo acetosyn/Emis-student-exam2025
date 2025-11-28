@@ -144,49 +144,54 @@ window.loadExamData = async function(){
     alert("Unable to load exam. Check if JSON exists in your class folder.");
   }
 };
-
 // ------------------------------------------------------
-// LOAD SINGLE QUESTION
+// LOAD SINGLE QUESTION  (UPDATED WITH .qa-slide FIX)
 // ------------------------------------------------------
 window.loadQuestion = function(i){
   if (!window.examData) return;
-  if (i<0 || i>=window.examData.questions.length) return;
+  if (i < 0 || i >= window.examData.questions.length) return;
 
   window.currentQuestionIndex = i;
   const q = window.examData.questions[i];
   const qid = q.id ?? i;
 
-  $("#currentQuestionNumber").textContent = i+1;
+  $("#currentQuestionNumber").textContent = i + 1;
 
   const prev = window.userAnswers[qid]?.index;
   const locked = window.lockedQuestions.has(qid);
 
-  const html = q.options.map((opt,idx)=>{
-    const selected = prev===idx ? "selected":"";
-    const dis = locked ? "disabled":"";
+  const html = q.options.map((opt, idx) => {
+    const selected = prev === idx ? "selected" : "";
+    const dis = locked ? "disabled" : "";
     return `
       <button class="option-btn ${selected}" data-option-index="${idx}" ${dis}>
-        <span class="option-letter">${String.fromCharCode(65+idx)}</span>${opt}
+        <span class="option-letter">${String.fromCharCode(65 + idx)}</span>${opt}
       </button>`;
   }).join("");
 
+  // ✔ FIX: Add .qa-slide wrapper so exam-features.js works correctly
   $("#questionContent").innerHTML = `
-    <div class="fade-in-up">
+    <div class="qa-slide fade-in-up">
       <h3 class="text-xl font-medium mb-4">${q.question}</h3>
-      <div class="space-y-3">${html}</div>
+      <div class="space-y-3">
+        ${html}
+      </div>
     </div>
   `;
 
-  $$(".option-btn").forEach(btn=>{
-    btn.onclick=()=>selectOption(Number(btn.dataset.optionIndex));
+  // Attach click handlers
+  $$(".option-btn").forEach(btn => {
+    btn.onclick = () => selectOption(Number(btn.dataset.optionIndex));
   });
 
   updateNavigationButtons();
   updateQuestionNavigation();
 };
 
+
+
 // ------------------------------------------------------
-// SELECT OPTION
+// SELECT OPTION (UNCHANGED — COMPATIBLE WITH FEATURES)
 // ------------------------------------------------------
 window.selectOption = function(idx){
   const q = window.examData.questions[window.currentQuestionIndex];
@@ -195,27 +200,28 @@ window.selectOption = function(idx){
   if (window.lockedQuestions.has(qid)) return;
 
   const correct = q.correctIndex;
-  const isCorrect = (idx===correct);
+  const isCorrect = (idx === correct);
 
-  window.userAnswers[qid] = {index:idx,correct:isCorrect};
+  window.userAnswers[qid] = { index: idx, correct: isCorrect };
   window.lockedQuestions.add(qid);
 
-  $$(".option-btn").forEach(btn=>{
-    btn.disabled=true;
-    btn.classList.toggle("selected", Number(btn.dataset.optionIndex)===idx);
+  $$(".option-btn").forEach(btn => {
+    btn.disabled = true;
+    btn.classList.toggle("selected", Number(btn.dataset.optionIndex) === idx);
   });
 
   updateProgress();
   updateQuestionNavigation();
 
-  setTimeout(()=>{
-    if(window.currentQuestionIndex < window.examData.questions.length-1){
+  setTimeout(() => {
+    if (window.currentQuestionIndex < window.examData.questions.length - 1) {
       nextQuestion();
-    }else{
+    } else {
       $("#nextBtn").click();
     }
-  },650);
+  }, 650);
 };
+
 
 // ------------------------------------------------------
 // NAVIGATION
@@ -302,60 +308,94 @@ window.toggleFullscreen = function(){
 };
 
 // ------------------------------------------------------
-// START EXAM
+// START EXAM  (NO JUMP VERSION - STABLE LAYOUT)
 // ------------------------------------------------------
-window.startExam = async function(){
-  if(window.examStarted) return;
-  window.examStarted=true;
+window.startExam = async function () {
+  if (window.examStarted) return;
+  window.examStarted = true;
 
-  try{
+  try {
+    // 1️⃣ Mark body as "exam-started" so topbar layout is stable from the start
+    document.body.classList.add("exam-started");
+
+    // 2️⃣ Instantly hide instructions modal (no visual jump)
+    const modal = $("#instructionsModal");
+    if (modal) {
+      modal.classList.add("hidden");
+      modal.style.display = "none";
+    }
+
+    // 3️⃣ Show the main exam interface immediately
+    $("#examInterface").classList.remove("hidden");
+
+    // 4️⃣ Resolve subject + class and JSON URL
     const subjectMeta = $('meta[name="exam-subject"]');
     const classMeta   = $('meta[name="student-class"]');
-
-    const subject = subjectMeta.content;
+    const subject     = subjectMeta.content;
     const classCategory = classMeta.content;
 
     const jsonURL = resolveExamJSON(subject, classCategory);
-
     console.log("🚀 startExam → JSON:", jsonURL);
 
-    const res = await fetch(jsonURL,{cache:"no-store"});
-    if(!res.ok) throw new Error("JSON missing");
+    const res = await fetch(jsonURL, { cache: "no-store" });
+    if (!res.ok) throw new Error("JSON missing");
 
     let rawData = await res.json();
 
-    rawData.questions = rawData.questions.map(q=>{
-      let idx=-1;
-      if(q.correctOption){
-        idx=q.correctOption.trim().toUpperCase().charCodeAt(0)-65;
+    // 5️⃣ Normalise / detect correct answer letter
+    rawData.questions = rawData.questions.map(q => {
+      let rawCorrect = q.correctOption || q.correct_option || q.answer || null;
+      let idx = -1;
+
+      if (rawCorrect) {
+        const letter = rawCorrect.toString().trim().toUpperCase(); // A/B/C/D
+        idx = letter.charCodeAt(0) - 65; // A=0
       }
-      return {id:q.id,question:q.question,options:q.options,correctIndex:idx};
+
+      return {
+        id: q.id,
+        question: q.question,
+        options: q.options,
+        correctIndex: idx
+      };
     });
 
+    // 6️⃣ Shuffle questions
     window.examData = shuffleQuestions(rawData);
 
+    // 7️⃣ Timer setup
     window.examStartTime = Date.now();
-    window.timeRemaining = (rawData.time_allowed_minutes||60)*60;
+    window.timeRemaining = (rawData.time_allowed_minutes || 60) * 60;
 
+    // 8️⃣ Update "Question 1 / N"
+    $("#totalQuestions").textContent = window.examData.questions.length;
+
+    // 9️⃣ Load first question + start countdown
     loadQuestion(0);
     startTimer();
 
-    $("#instructionsModal").classList.add("hidden");
-    $("#examInterface").classList.remove("hidden");
+    // 🔟 Show top-right controls
     $("#examTimer").classList.remove("hidden");
     $("#fullscreenBtn").classList.remove("hidden");
+    const studentBlock = $(".exam-topbar-student");
+    if (studentBlock) studentBlock.classList.remove("hidden");
 
+    // 1️⃣1️⃣ Show subject title + question count
     const st = $("#examSubjectTitle");
-    if(st){
-      st.innerHTML = `<span style="color:#E30613">${subject.toUpperCase()}</span> — ${window.examData.questions.length} QUESTIONS`;
+    if (st) {
+      st.innerHTML = `
+        <span style="color:#E30613">${subject.toUpperCase()}</span>
+        — ${window.examData.questions.length} QUESTIONS
+      `;
       st.classList.remove("hidden");
     }
 
-  }catch(err){
-    console.error("❌ startExam:",err);
+  } catch (err) {
+    console.error("❌ startExam:", err);
     alert("Unable to start exam. Contact admin.");
   }
 };
+
 
 // ------------------------------------------------------
 // END EXAM
@@ -411,6 +451,19 @@ window.submitExam = async function(timeUp=false){
   location.replace("/result");
 };
 
+
 // ------------------------------------------------------
 // DOM READY
-// ----------------------------------------------
+// ------------------------------------------------------
+document.addEventListener("DOMContentLoaded", () => {
+
+  // attach startExam button
+  const startBtn = document.getElementById("startExamBtn");
+  if (startBtn) {
+    startBtn.addEventListener("click", () => {
+      window.startExam();
+    });
+  }
+
+});
+// ======================================

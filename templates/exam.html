@@ -18,7 +18,6 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/exam_gen.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/exam_spec.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/hour-glass.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/exam_interface.css') }}">
 
   <!-- Optional: student header styling -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/students.css') }}" />
@@ -52,31 +51,43 @@
   </header>
 
 
+<div class="exam-topbar">
 
-
-
-  <!-- ======================================================
-      MINIMAL PROFESSIONAL TOP BAR
-  ======================================================= -->
-  <div class="exam-topbar">
+    <!-- SUBJECT TITLE -->
     <div id="examSubjectTitle" class="exam-topbar-subject hidden"></div>
 
-    <div id="examTimer" class="exam-topbar-timer {% if not exam_started %}hidden{% endif %}">
-      <i class="fa-solid fa-clock"></i>
-      <span id="timerDisplay">00:00</span>
+    <!-- RIGHT GROUP -->
+    <div class="topbar-right">
+
+        <!-- Analog Clock -->
+        <div class="analog-clock-wrapper">
+            <iframe 
+                src="https://free.timeanddate.com/clock/ia61sc8v/n125/szw80/szh80/hoc00f/hbw0/hfc000/cf100/hgr0/facf90/mqcfff/mqs2/mql5/mqw2/mqd74/mhcfff/mhl6/mhw1/mhd74/mmcf90/mml4/mmw1/mmd74/hhcfff/hmcfff"
+                frameborder="0" width="80" height="80">
+            </iframe>
+        </div>
+
+        <!-- Timer -->
+        <div id="examTimer"
+             class="exam-topbar-timer {% if not exam_started %}hidden{% endif %}">
+            <i class="fa-solid fa-clock"></i>
+            <span id="timerDisplay">00:00</span>
+        </div>
+
+        <!-- Username -->
+        <div class="exam-topbar-student {% if not exam_started %}hidden{% endif %}">
+            <i class="fa-solid fa-user"></i>
+            <span>{{ student.full_name }}</span>
+        </div>
+
+        <!-- Fullscreen -->
+        <button id="fullscreenBtn"
+                class="exam-topbar-fullscreen {% if not exam_started %}hidden{% endif %}">
+            <i class="fa-solid fa-expand"></i>
+        </button>
+
     </div>
-
-    <div class="exam-topbar-student {% if not exam_started %}hidden{% endif %}">
-      <i class="fa-solid fa-user"></i>
-      <span>{{ student.full_name }}</span>
-    </div>
-
-    <button id="fullscreenBtn"
-            class="exam-topbar-fullscreen {% if not exam_started %}hidden{% endif %}">
-      <i class="fa-solid fa-expand"></i>
-    </button>
-  </div>
-
+</div>
 
 
 
@@ -108,7 +119,7 @@
 
         <div class="instruction-card">
           <i class="fas fa-book-open instr-icon"></i>
-          <p>This exam contains <b>multiple-choice questions</b>.</p>
+          <p>This exam contains<b> 50 multiple-choice questions</b>.</p>
         </div>
 
         <div class="instruction-card danger">
