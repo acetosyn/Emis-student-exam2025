@@ -1,175 +1,233 @@
-// ======================================
-// exam-core.js — FINAL FULL BUILD (2025)
-// ======================================
+// ======================================================
+// exam-core.js — MERGED FINAL CBT ENGINE (2025 v11)
+// - Pure CBT engine (no anti-cheat; handled by exam-realtime.js)
+// - Restores clocks/hourglass/topbar
+// - Modern subject title with question count
+// - Timer warnings (20, 10, 5 mins) + blinking < 60s
+// - No internal shuffling (shuffle.js handles that)
+// ======================================================
 
-console.log("[exam-core] FINAL CLASS-BASED CBT ENGINE LOADED");
+console.log("[exam-core] MERGED CBT ENGINE LOADED");
 
 // ------------------------------------------------------
 // GLOBAL STATE
 // ------------------------------------------------------
-window.examData = null;
+window.examData            = null;
 window.currentQuestionIndex = 0;
-window.userAnswers = {};
-window.lockedQuestions = new Set();
-window.flaggedQuestions = new Set();
-window.examTimer = null;
-window.timeRemaining = 0;
-window.examStarted = false;
-window.examStartTime = null;
-window.__examFinished = false;
-window.__timeExpired = false;
-window.__reviewBlocked = false;
+window.userAnswers         = {};
+window.lockedQuestions     = new Set();
+window.flaggedQuestions    = new Set();
+window.examTimer           = null;
+window.timeRemaining       = 0;
+window.initialTimeAllowed  = 0;    // for warning thresholds
+window.examStarted         = false;
+window.examStartTime       = null;
+window.__examFinished      = false;
+window.__timeExpired       = false;
+window.__reviewBlocked     = false;
 
 const SS_KEY       = "emis_exam_progress";
 const LS_RELOADS   = "emis_exam_reload_count";
 const LS_EXAM_LOCK = "emis_exam_lock_active";
 
-// helpers
-function $(s,r=document){return r.querySelector(s);}
-function $$(s,r=document){return [...r.querySelectorAll(s)];}
-function formatTime(sec){ const m=Math.floor(sec/60).toString().padStart(2,"0"); const s=(sec%60).toString().padStart(2,"0"); return `${m}:${s}`;}
-function safeJSONParse(s,f=null){try{return JSON.parse(s);}catch{return f;}}
+// Timer warning flags (20, 10, 5 mins)
+let __warn20Shown = false;
+let __warn10Shown = false;
+let __warn5Shown  = false;
 
-// correct index resolver
+// ------------------------------------------------------
+// HELPERS
+// ------------------------------------------------------
+function $(s, r = document) { return r.querySelector(s); }
+function $$(s, r = document) { return [...r.querySelectorAll(s)]; }
+
+function formatTime(sec){
+  const safe = Math.max(0, sec | 0);
+  const m = Math.floor(safe / 60).toString().padStart(2, "0");
+  const s = (safe % 60).toString().padStart(2, "0");
+  return `${m}:${s}`;
+}
+
+// Optional flash helper (uses #examFlash or #flashMessage if present)
+function examFlash(message, type = "info") {
+  const flashEl =
+    document.getElementById("examFlashMessage") ||
+    document.getElementById("examFlash") ||
+    document.getElementById("flashMessage");
+
+  if (flashEl) {
+    flashEl.textContent = message;
+    flashEl.classList.add("show");
+    flashEl.dataset.type = type;
+    setTimeout(() => {
+      flashEl.classList.remove("show");
+    }, 5000);
+  } else {
+    // Fallback to alert if no flash container exists
+    alert(message);
+  }
+}
+
+// For future use if needed
 function getCorrectIndex(q){
   if (typeof q.correctIndex === "number") return q.correctIndex;
-  if (q.correctOption) {
+  if (q.correctOption){
     return q.correctOption.trim().toUpperCase().charCodeAt(0) - 65;
   }
   return -1;
 }
 
-// shuffle
-function shuffleQuestions(data){
-  try{
-    if (!data || !Array.isArray(data.questions)) return data;
-    const arr=[...data.questions];
-    for(let i=arr.length-1;i>0;i--){
-      const j=Math.floor(Math.random()*(i+1));
-      [arr[i],arr[j]]=[arr[j],arr[i]];
-    }
-    return {...data,questions:arr};
-  }catch{
-    return data;
-  }
-}
-
 // ------------------------------------------------------
-// NORMALIZE SUBJECT NAME
+// NORMALIZE SUBJECT NAME (ROBUST MAP)
 // ------------------------------------------------------
 function normalizeSubjectName(subject){
-  subject=subject.toLowerCase().trim();
-  const map={
-    "financial accounting":"accounts",
-    "accounting":"accounts",
-    "english language":"english",
-    "english":"english",
-    "mathematics":"mathematics",
-    "maths":"mathematics",
-    "literature-in-english":"literature",
-    "literature":"literature",
-    "chemistry":"chemistry",
-    "physics":"physics",
-    "economics":"economics",
-    "government":"government",
-    "technical drawing":"technical",
-    "computer studies":"computer",
-    "biology":"biology"
+  subject = subject.toLowerCase().trim();
+  const map = {
+    "financial accounting": "accounts",
+    "accounting":          "accounts",
+    "english language":    "english",
+    "english":             "english",
+    "mathematics":         "mathematics",
+    "maths":               "mathematics",
+    "literature-in-english": "literature",
+    "literature":          "literature",
+    "chemistry":           "chemistry",
+    "physics":             "physics",
+    "economics":           "economics",
+    "government":          "government",
+    "technical drawing":   "technical",
+    "computer studies":    "computer",
+    "biology":             "biology"
   };
-  return map[subject] || subject.replace(/\s+/g,"");
+  return map[subject] || subject.replace(/\s+/g, "");
 }
 
 // ------------------------------------------------------
-// RESOLVE JSON PATH (FIXED: MUST INCLUDE /static)
+// RESOLVE JSON PATH (INCLUDES /static)
 // ------------------------------------------------------
 function resolveExamJSON(subject, classCategory){
-  const subjectKey = normalizeSubjectName(subject);     // english
-  const cls = classCategory.toUpperCase();              // SS1
-  const clsLower = classCategory.toLowerCase();         // ss1
+  const subjectKey = normalizeSubjectName(subject); // english
+  const cls       = classCategory.toUpperCase();   // SS1
+  const clsLower  = classCategory.toLowerCase();   // ss1
 
-  // 🔥 THIS IS THE CORRECT WORKING PATH
   return `/static/subjects/subjects-json/${cls}/${subjectKey}_${clsLower}.json`;
 }
 
 // ------------------------------------------------------
-// LOAD EXAM DATA
+// LOAD EXAM DATA (QUIET MODE FOR startExam)
 // ------------------------------------------------------
-window.loadExamData = async function(){
+window.loadExamData = async function(quiet = false){
   try{
     const subjectMeta = $('meta[name="exam-subject"]');
     const classMeta   = $('meta[name="student-class"]');
 
-    if (!subjectMeta || !classMeta){
-      alert("Missing subject/class metadata.");
-      return;
+    if (!subjectMeta || !classMeta) {
+      throw new Error("Missing subject/class metadata.");
     }
 
-    const subject = subjectMeta.content;
+    const subject       = subjectMeta.content;
     const classCategory = classMeta.content;
+    const jsonURL       = resolveExamJSON(subject, classCategory);
 
-    const jsonURL = resolveExamJSON(subject, classCategory);
     console.log("📥 Loading Exam JSON:", jsonURL);
 
-    const res = await fetch(jsonURL, {cache:"no-store"});
-    if (!res.ok) throw new Error("File not found");
+    const res = await fetch(jsonURL, { cache: "no-store" });
+    if (!res.ok) throw new Error("Exam JSON not found");
 
     let rawData = await res.json();
 
-    // standardize data
-    rawData.questions = rawData.questions.map(q=>{
-      let idx=-1;
-      if(q.correctOption){
-        idx=q.correctOption.trim().toUpperCase().charCodeAt(0)-65;
+    // Standardize questions
+    rawData.questions = (rawData.questions || []).map((q, idx) => {
+      let rawCorrect =
+        q.correctOption ||
+        q.correct_option ||
+        q.answer ||
+        null;
+
+      let ci = -1;
+      if (rawCorrect) {
+        const letter = rawCorrect.toString().trim().toUpperCase(); // A/B/C/D
+        ci = letter.charCodeAt(0) - 65; // A=0
       }
+
       return {
-        id:q.id,
-        question:q.question,
-        options:q.options,
-        correctIndex:idx
+        id:        q.id ?? idx,
+        question:  q.question,
+        options:   q.options,
+        correctIndex: ci
       };
     });
 
-    window.examData = shuffleQuestions(rawData);
-    window.timeRemaining = (rawData.time_allowed_minutes || 60) * 60;
+    // ❗ NO internal shuffling here — shuffle.js will handle if needed
+    window.examData = rawData;
 
-    $("#timerDisplay").textContent = formatTime(window.timeRemaining);
-    $("#totalQuestions").textContent = window.examData.questions.length;
+    // Timer setup
+    window.timeRemaining      = (rawData.time_allowed_minutes || 60) * 60;
+    window.initialTimeAllowed = window.timeRemaining;
 
+    // Reset timer warnings
+    __warn20Shown = __warn10Shown = __warn5Shown = false;
+
+    // Timer display
+    const td = $("#timerDisplay");
+    if (td) td.textContent = formatTime(window.timeRemaining);
+
+    // Subject title: SUBJECT — N QUESTIONS (modernized)
+    const st = $("#examSubjectTitle");
+    if (st) {
+      const totalQ = window.examData.questions.length;
+      st.innerHTML = `
+        <span class="exam-subject-pill">${subject.toUpperCase()}</span>
+        <span class="exam-question-count">• ${totalQ} QUESTION${totalQ === 1 ? "" : "S"}</span>
+      `;
+      st.classList.remove("hidden");
+    }
+
+    // Total questions
+    const totalQEl = $("#totalQuestions");
+    if (totalQEl) totalQEl.textContent = window.examData.questions.length;
+
+    // Load first question + nav/progress
     loadQuestion(0);
     updateProgress();
     updateQuestionNavigation();
 
-  }catch(err){
+  } catch (err) {
     console.error("❌ loadExamData error:", err);
-    alert("Unable to load exam. Check if JSON exists in your class folder.");
+    if (!quiet) {
+      alert("Unable to load exam. Check if the subject file exists for your class.");
+    }
+    throw err;
   }
 };
+
 // ------------------------------------------------------
-// LOAD SINGLE QUESTION  (UPDATED WITH .qa-slide FIX)
+// LOAD SINGLE QUESTION  (with .qa-slide + fade-in)
 // ------------------------------------------------------
 window.loadQuestion = function(i){
   if (!window.examData) return;
   if (i < 0 || i >= window.examData.questions.length) return;
 
   window.currentQuestionIndex = i;
-  const q = window.examData.questions[i];
+  const q   = window.examData.questions[i];
   const qid = q.id ?? i;
 
   $("#currentQuestionNumber").textContent = i + 1;
 
-  const prev = window.userAnswers[qid]?.index;
+  const prev   = window.userAnswers[qid]?.index;
   const locked = window.lockedQuestions.has(qid);
 
-  const html = q.options.map((opt, idx) => {
+  const html = (q.options || []).map((opt, idx) => {
     const selected = prev === idx ? "selected" : "";
-    const dis = locked ? "disabled" : "";
+    const dis      = locked ? "disabled" : "";
     return `
       <button class="option-btn ${selected}" data-option-index="${idx}" ${dis}>
-        <span class="option-letter">${String.fromCharCode(65 + idx)}</span>${opt}
-      </button>`;
+        <span class="option-letter">${String.fromCharCode(65 + idx)}</span>
+        ${opt}
+      </button>
+    `;
   }).join("");
 
-  // ✔ FIX: Add .qa-slide wrapper so exam-features.js works correctly
   $("#questionContent").innerHTML = `
     <div class="qa-slide fade-in-up">
       <h3 class="text-xl font-medium mb-4">${q.question}</h3>
@@ -179,7 +237,6 @@ window.loadQuestion = function(i){
     </div>
   `;
 
-  // Attach click handlers
   $$(".option-btn").forEach(btn => {
     btn.onclick = () => selectOption(Number(btn.dataset.optionIndex));
   });
@@ -188,18 +245,16 @@ window.loadQuestion = function(i){
   updateQuestionNavigation();
 };
 
-
-
 // ------------------------------------------------------
-// SELECT OPTION (UNCHANGED — COMPATIBLE WITH FEATURES)
+// SELECT OPTION
 // ------------------------------------------------------
 window.selectOption = function(idx){
-  const q = window.examData.questions[window.currentQuestionIndex];
+  const q   = window.examData.questions[window.currentQuestionIndex];
   const qid = q.id ?? window.currentQuestionIndex;
 
   if (window.lockedQuestions.has(qid)) return;
 
-  const correct = q.correctIndex;
+  const correct   = q.correctIndex;
   const isCorrect = (idx === correct);
 
   window.userAnswers[qid] = { index: idx, correct: isCorrect };
@@ -207,7 +262,10 @@ window.selectOption = function(idx){
 
   $$(".option-btn").forEach(btn => {
     btn.disabled = true;
-    btn.classList.toggle("selected", Number(btn.dataset.optionIndex) === idx);
+    btn.classList.toggle(
+      "selected",
+      Number(btn.dataset.optionIndex) === idx
+    );
   });
 
   updateProgress();
@@ -217,21 +275,26 @@ window.selectOption = function(idx){
     if (window.currentQuestionIndex < window.examData.questions.length - 1) {
       nextQuestion();
     } else {
-      $("#nextBtn").click();
+      // Last question → trigger submit via button
+      const nextBtn = $("#nextBtn");
+      if (nextBtn) nextBtn.click();
+      else submitExam(false);
     }
   }, 650);
 };
-
 
 // ------------------------------------------------------
 // NAVIGATION
 // ------------------------------------------------------
 window.previousQuestion = function(){
-  if (window.currentQuestionIndex>0) loadQuestion(window.currentQuestionIndex-1);
+  if (window.currentQuestionIndex > 0) {
+    loadQuestion(window.currentQuestionIndex - 1);
+  }
 };
+
 window.nextQuestion = function(){
-  if (window.currentQuestionIndex < window.examData.questions.length-1){
-    loadQuestion(window.currentQuestionIndex+1);
+  if (window.currentQuestionIndex < window.examData.questions.length - 1) {
+    loadQuestion(window.currentQuestionIndex + 1);
   } else {
     submitExam(false);
   }
@@ -241,229 +304,239 @@ window.nextQuestion = function(){
 // PROGRESS
 // ------------------------------------------------------
 window.updateProgress = function(){
-  const total = window.examData.questions.length;
+  const total    = window.examData?.questions?.length || 0;
   const answered = Object.keys(window.userAnswers).length;
-  const pct = total ? (answered/total)*100 : 0;
+  const pct      = total ? (answered / total) * 100 : 0;
 
-  $("#answeredCount").textContent = answered;
-  $("#remainingCount").textContent = total-answered;
-  $("#progressBar").style.width = `${pct}%`;
-  $("#progressText").textContent = `${Math.round(pct)}% Complete`;
+  const ansEl  = $("#answeredCount");
+  const remEl  = $("#remainingCount");
+  const barEl  = $("#progressBar");
+  const textEl = $("#progressText");
+
+  if (ansEl)  ansEl.textContent  = answered;
+  if (remEl)  remEl.textContent  = total - answered;
+  if (barEl)  barEl.style.width  = `${pct}%`;
+  if (textEl) textEl.textContent = `${Math.round(pct)}% Complete`;
 };
 
 window.updateNavigationButtons = function(){
-  const prev=$("#prevBtn"), next=$("#nextBtn");
-  if(prev) prev.disabled = window.currentQuestionIndex===0;
-  if(next){
-    const last = window.currentQuestionIndex===window.examData.questions.length-1;
+  const prev = $("#prevBtn");
+  const next = $("#nextBtn");
+
+  if (prev) {
+    prev.disabled = (window.currentQuestionIndex === 0);
+  }
+
+  if (next) {
+    const last = (window.currentQuestionIndex === window.examData.questions.length - 1);
     next.textContent = last ? "Submit" : "Next →";
   }
 };
 
 window.updateQuestionNavigation = function(){
   const grid = $("#questionGrid");
-  if (!grid) return;
+  if (!grid || !window.examData) return;
 
-  let html="";
-  for(let i=0;i<window.examData.questions.length;i++){
-    const q = window.examData.questions[i];
+  let html = "";
+  for (let i = 0; i < window.examData.questions.length; i++) {
+    const q   = window.examData.questions[i];
     const qid = q.id ?? i;
-    const active = i===window.currentQuestionIndex ? "active":"";
-    const answered = window.userAnswers[qid] ? "answered":"";
-    html += `<button class="question-nav-btn ${active} ${answered}" data-q-index="${i}">${i+1}</button>`;
+
+    const active   = (i === window.currentQuestionIndex) ? "active"    : "";
+    const answered = window.userAnswers[qid]            ? "answered"  : "";
+
+    html += `
+      <button class="question-nav-btn ${active} ${answered}" data-q-index="${i}">
+        ${i + 1}
+      </button>
+    `;
   }
+
   grid.innerHTML = html;
 
-  $$(".question-nav-btn",grid).forEach(btn=>{
-    btn.onclick=()=>loadQuestion(Number(btn.dataset.qIndex));
+  $$(".question-nav-btn", grid).forEach(btn => {
+    btn.onclick = () => loadQuestion(Number(btn.dataset.qIndex));
   });
 };
 
 // ------------------------------------------------------
-// TIMER
+// TIMER — with warnings & blinking < 60s
 // ------------------------------------------------------
 window.startTimer = function(){
-  if(window.examTimer) clearInterval(window.examTimer);
+  if (window.examTimer) clearInterval(window.examTimer);
 
-  window.examTimer=setInterval(()=>{
+  const timerDisplay = $("#timerDisplay");
+  const timerWrapper = $("#examTimer");
+
+  window.examTimer = setInterval(() => {
     window.timeRemaining--;
-    $("#timerDisplay").textContent = formatTime(Math.max(0,window.timeRemaining));
-    if(window.timeRemaining<=0){
-      clearInterval(window.examTimer);
-      lockUIForTimeout();
-      setTimeout(()=>submitExam(true),1500);
+
+    // clamp
+    if (window.timeRemaining < 0) window.timeRemaining = 0;
+
+    // Update display
+    if (timerDisplay) {
+      timerDisplay.textContent = formatTime(window.timeRemaining);
+
+      // Blinking when less than 60 seconds
+      if (window.timeRemaining <= 60) {
+        timerDisplay.classList.add("timer-critical"); // CSS should handle blink
+      } else {
+        timerDisplay.classList.remove("timer-critical");
+      }
     }
-  },1000);
+
+    // Threshold warnings: 20, 10, 5 minutes left
+    const t = window.timeRemaining;
+    const init = window.initialTimeAllowed || t;
+
+    if (!__warn20Shown && init >= 20 * 60 && t <= 20 * 60 && t > 19 * 60) {
+      examFlash("⏰ You have 20 minutes left.", "warning");
+      __warn20Shown = true;
+    }
+    if (!__warn10Shown && init >= 10 * 60 && t <= 10 * 60 && t > 9 * 60) {
+      examFlash("⏰ You have 10 minutes left.", "warning");
+      __warn10Shown = true;
+    }
+    if (!__warn5Shown && init >= 5 * 60 && t <= 5 * 60 && t > 4 * 60) {
+      examFlash("⚠️ Only 5 minutes left. Review and submit!", "danger");
+      __warn5Shown = true;
+    }
+
+    // Time up
+    if (t <= 0) {
+      clearInterval(window.examTimer);
+      window.__timeExpired = true;
+      submitExam(true);
+    }
+  }, 1000);
 };
 
 // ------------------------------------------------------
-// FULLSCREEN
+// START EXAM  — Stable layout + clocks/hourglass visible
 // ------------------------------------------------------
-window.toggleFullscreen = function(){
-  if(!document.fullscreenElement){
-    document.documentElement.requestFullscreen?.();
-  }else{
-    document.exitFullscreen?.();
-  }
-};
-
-// ------------------------------------------------------
-// START EXAM  (NO JUMP VERSION - STABLE LAYOUT)
-// ------------------------------------------------------
-window.startExam = async function () {
+window.startExam = async function(){
   if (window.examStarted) return;
   window.examStarted = true;
 
   try {
-    // 1️⃣ Mark body as "exam-started" so topbar layout is stable from the start
+    // 1️⃣ Avoid layout jumps: mark body as exam-started early
     document.body.classList.add("exam-started");
 
-    // 2️⃣ Instantly hide instructions modal (no visual jump)
+    // 2️⃣ Hide instructions modal instantly
     const modal = $("#instructionsModal");
     if (modal) {
       modal.classList.add("hidden");
       modal.style.display = "none";
     }
 
-    // 3️⃣ Show the main exam interface immediately
-    $("#examInterface").classList.remove("hidden");
+    // 3️⃣ Show main exam interface
+    const iface = $("#examInterface");
+    if (iface) iface.classList.remove("hidden");
 
-    // 4️⃣ Resolve subject + class and JSON URL
-    const subjectMeta = $('meta[name="exam-subject"]');
-    const classMeta   = $('meta[name="student-class"]');
-    const subject     = subjectMeta.content;
-    const classCategory = classMeta.content;
+    // 4️⃣ Load exam data (quiet mode to avoid double alerts)
+    await loadExamData(true);
 
-    const jsonURL = resolveExamJSON(subject, classCategory);
-    console.log("🚀 startExam → JSON:", jsonURL);
-
-    const res = await fetch(jsonURL, { cache: "no-store" });
-    if (!res.ok) throw new Error("JSON missing");
-
-    let rawData = await res.json();
-
-    // 5️⃣ Normalise / detect correct answer letter
-    rawData.questions = rawData.questions.map(q => {
-      let rawCorrect = q.correctOption || q.correct_option || q.answer || null;
-      let idx = -1;
-
-      if (rawCorrect) {
-        const letter = rawCorrect.toString().trim().toUpperCase(); // A/B/C/D
-        idx = letter.charCodeAt(0) - 65; // A=0
-      }
-
-      return {
-        id: q.id,
-        question: q.question,
-        options: q.options,
-        correctIndex: idx
-      };
-    });
-
-    // 6️⃣ Shuffle questions
-    window.examData = shuffleQuestions(rawData);
-
-    // 7️⃣ Timer setup
+    // 5️⃣ Start timer
     window.examStartTime = Date.now();
-    window.timeRemaining = (rawData.time_allowed_minutes || 60) * 60;
-
-    // 8️⃣ Update "Question 1 / N"
-    $("#totalQuestions").textContent = window.examData.questions.length;
-
-    // 9️⃣ Load first question + start countdown
-    loadQuestion(0);
     startTimer();
 
-    // 🔟 Show top-right controls
-    $("#examTimer").classList.remove("hidden");
-    $("#fullscreenBtn").classList.remove("hidden");
+    // 6️⃣ Show timer + fullscreen + student info block
+    const timerBlock = $("#examTimer");
+    if (timerBlock) timerBlock.classList.remove("hidden");
+
+    const fullscreenBtn = $("#fullscreenBtn");
+    if (fullscreenBtn) fullscreenBtn.classList.remove("hidden");
+
     const studentBlock = $(".exam-topbar-student");
     if (studentBlock) studentBlock.classList.remove("hidden");
 
-    // 1️⃣1️⃣ Show subject title + question count
-    const st = $("#examSubjectTitle");
-    if (st) {
-      st.innerHTML = `
-        <span style="color:#E30613">${subject.toUpperCase()}</span>
-        — ${window.examData.questions.length} QUESTIONS
-      `;
-      st.classList.remove("hidden");
-    }
-
   } catch (err) {
-    console.error("❌ startExam:", err);
+    console.error("❌ startExam error:", err);
     alert("Unable to start exam. Contact admin.");
   }
 };
-
 
 // ------------------------------------------------------
 // END EXAM
 // ------------------------------------------------------
 window.endExam = function(){
-  const total = window.examData.questions.length;
+  if (!window.examData) return;
+
+  const total    = window.examData.questions.length;
   const answered = Object.keys(window.userAnswers).length;
 
-  $("#endExamMessage").innerHTML = `
-    You answered <b>${answered}</b> out of <b>${total}</b>.<br>
-    Unanswered will be marked incorrect.<br><br>
-    Are you sure you want to end?
-  `;
-  $("#endExamModal").classList.remove("hidden");
+  const msgEl = $("#endExamMessage");
+  if (msgEl) {
+    msgEl.innerHTML = `
+      You answered <b>${answered}</b> out of <b>${total}</b>.<br>
+      Unanswered will be marked incorrect.<br><br>
+      Are you sure you want to end?
+    `;
+  }
+
+  const modal = $("#endExamModal");
+  if (modal) modal.classList.remove("hidden");
 };
-window.closeEndExam = ()=>$("#endExamModal").classList.add("hidden");
+
+window.closeEndExam = () => {
+  const modal = $("#endExamModal");
+  if (modal) modal.classList.add("hidden");
+};
 
 // ------------------------------------------------------
 // SUBMIT EXAM
 // ------------------------------------------------------
-window.submitExam = async function(timeUp=false){
-  if(window.__examFinished) return;
-  window.__examFinished=true;
+window.submitExam = async function(timeUp = false){
+  if (window.__examFinished) return;
+  window.__examFinished = true;
 
-  if(window.examTimer) clearInterval(window.examTimer);
+  if (window.examTimer) clearInterval(window.examTimer);
 
-  const total=window.examData.questions.length;
-  let correct=0;
-  window.examData.questions.forEach((q,i)=>{
-    const qid=q.id??i;
-    const ua=window.userAnswers[qid];
-    if(ua && ua.index===q.correctIndex) correct++;
-  });
+  const total = window.examData?.questions?.length || 0;
+  let correct = 0;
 
-  const payload={
-    score: Math.round((correct/total)*100),
+  if (window.examData && Array.isArray(window.examData.questions)) {
+    window.examData.questions.forEach((q, i) => {
+      const qid = q.id ?? i;
+      const ua  = window.userAnswers[qid];
+      if (ua && ua.index === q.correctIndex) correct++;
+    });
+  }
+
+  const payload = {
+    score:      total ? Math.round((correct / total) * 100) : 0,
     correct,
     total,
-    answered:Object.keys(window.userAnswers).length,
-    timeTaken:Math.round((Date.now()-window.examStartTime)/1000),
-    submittedAt:new Date().toISOString(),
-    status:timeUp?"timeout":"completed"
+    answered:   Object.keys(window.userAnswers).length,
+    timeTaken:  window.examStartTime
+                  ? Math.round((Date.now() - window.examStartTime) / 1000)
+                  : 0,
+    submittedAt: new Date().toISOString(),
+    status:      timeUp ? "timeout" : "completed"
   };
 
-  try{
-    await fetch("/api/exam/submit",{
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify(payload)
+  try {
+    await fetch("/api/exam/submit", {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body:    JSON.stringify(payload)
     });
-  }catch(e){ console.error(e); }
+  } catch (e) {
+    console.error("submitExam error:", e);
+  }
 
   location.replace("/result");
 };
-
 
 // ------------------------------------------------------
 // DOM READY
 // ------------------------------------------------------
 document.addEventListener("DOMContentLoaded", () => {
-
-  // attach startExam button
-  const startBtn = document.getElementById("startExamBtn");
+  const startBtn = $("#startExamBtn");
   if (startBtn) {
     startBtn.addEventListener("click", () => {
       window.startExam();
     });
   }
-
 });
-// ======================================
