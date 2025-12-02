@@ -1,183 +1,476 @@
-/* ===== Result Page Styles ===== */
-.result-container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: #f9fafb;
-  padding: 2rem;
+/* ============================================================
+   EMIS — Exam Result Styles (result.css, 2025 LIGHT MODE)
+   → Same layout as old file, but with light colors
+   → Reduced spacing between cards
+   → Smaller side cards (1 and 3)
+============================================================ */
+
+/* Base Page Setup */
+.result-body {
+    min-height: 100vh;
+    font-family: "Inter", sans-serif;
+    overflow-x: hidden;
+    background: #eef3ff; /* soft light background */
+    color: #1e293b;
 }
 
-.result-card {
-  background: #fff;
-  padding: 2rem 2.2rem;
-  border-radius: 18px;
-  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
-  max-width: 800px;
-  width: 100%;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
+/* Main Wrapper */
+.result-wrapper {
+    max-width: 1280px;
+    margin: 0 auto 2rem;
+    padding-bottom: 2rem;
 }
 
-/* Confetti */
-#confetti-container {
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 50;
+/* ============================================================
+   TOP BAR
+============================================================ */
+.result-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.8rem 0 0.3rem;
+    margin: 0 2rem;
 }
 
-.result-header h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-top: 0.25rem;
-}
-.result-header p {
-  color: #374151;
-  margin-top: 0.3rem;
-  font-size: 0.95rem;
+.result-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #1e40af;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
 }
 
-.icon-success {
-  width: 4.5rem;
-  height: 4.5rem;
-  border-radius: 50%;
-  background: #dcfce7;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1rem;
+.result-title i {
+    font-size: 1.5rem;
 }
 
-/* Score Circle */
-.score-wrapper {
-  position: relative;
-  width: 300px;   /* larger circle */
-  height: 300px;
-  margin: 1.5rem auto;
+.result-topbar-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
 }
-.score-ring { width: 100%; height: 100%; transform: rotate(-90deg); }
-.score-bg { stroke: #e5e7eb; stroke-width: 12; fill: none; }
+
+/* Accent bar under topbar */
+.result-accent-bar {
+    margin: 0.5rem 2rem 1.2rem;
+    height: 5px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #3b82f6, #6366f1, #a855f7);
+    box-shadow: 0 4px 14px rgba(99,102,241,0.35);
+}
+
+/* ============================================================
+   MAIN GRID — SAME AS OLD, SPACING REDUCED
+============================================================ */
+.result-main-grid {
+    display: grid;
+    grid-template-columns: 240px minmax(360px, 1.2fr) 240px; /* smaller side cards */
+    gap: 1.2rem; /* reduced from 1.75rem */
+    margin: 0 2rem;
+}
+
+.result-col {
+    display: flex;
+}
+
+/* Responsive collapse */
+@media (max-width: 1024px) {
+    .result-main-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ============================================================
+   LEFT — STUDENT INFO CARD (LIGHT VERSION)
+============================================================ */
+.student-info-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 1.6rem 1.4rem 1.7rem;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+    text-align: center;
+    width: 100%;
+    border: 1px solid #dbeafe;
+}
+
+.info-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1rem;
+    border: 3px solid #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59,130,246,0.2);
+}
+
+.student-info-card h2 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+}
+
+.muted-small {
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.info-grid {
+    margin-top: 1.3rem;
+    display: grid;
+    gap: 0.7rem;
+    font-size: 0.9rem;
+}
+
+.info-grid div span {
+    color: #475569;
+    font-size: 0.78rem;
+}
+
+.info-grid div strong {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+/* ============================================================
+   CENTER — CORE RESULT CARD (LIGHT VERSION)
+============================================================ */
+.core-col {
+    justify-content: center;
+}
+
+.core-result-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 1.8rem 1.8rem 2rem;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.08);
+    border: 1px solid #dbeafe;
+    width: 100%;
+    position: relative;
+}
+
+/* Badge bar */
+.result-badge-bar {
+    margin-bottom: 0.7rem;
+}
+
+/* Badge */
+.result-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: white;
+    background: #3b82f6;
+}
+
+/* Score Ring */
+.score-ring-card {
+    position: relative;
+    width: 190px;
+    height: 190px;
+    margin: 0 auto 1.1rem;
+}
+
+.score-ring {
+    width: 190px;
+    height: 190px;
+    transform: rotate(-90deg);
+}
+
+.score-bg {
+    fill: none;
+    stroke: #d1d5db;
+    stroke-width: 10;
+}
+
 .score-progress {
-  stroke: #38bdf8;
-  stroke-width: 12;
-  fill: none;
-  stroke-linecap: round;
-  stroke-dasharray: 565; /* circumference for r=90 */
-  stroke-dashoffset: 565;
-  transition: stroke-dashoffset 1.6s ease-out, stroke 0.4s ease-out;
+    fill: none;
+    stroke: #22c55e;
+    stroke-width: 10;
+    stroke-linecap: round;
+    stroke-dasharray: 251.2;
+    stroke-dashoffset: 251.2;
+    transition: stroke-dashoffset 0.9s ease-out;
 }
+
 .score-text {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.score-text #scoreDisplay {
-  font-size: 3.2rem;
-  font-weight: 800;
-  color: #111827;
-}
-.score-text .fraction {
-  margin-top: 0.35rem;
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #374151;
-  display: flex;
-  align-items: center;
-}
-.score-text .fraction .line { margin: 0 0.25rem; }
-#passFail {
-  margin-top: 0.8rem;
-  font-size: 1.3rem;
-  font-weight: 700;
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Stats */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(140px,1fr));
-  gap: 0.8rem;
-  margin-bottom: 1.2rem;
-}
-.stat {
-  padding: 0.8rem;
-  border-radius: 12px;
-  font-weight: 600;
-}
-.stat span {
-  font-size: 1.3rem;
-  display: block;
-  margin-bottom: 0.2rem;
-}
-.stat.green { background:#ecfdf5; color:#16a34a; }
-.stat.blue { background:#eff6ff; color:#2563eb; }
-.stat.purple { background:#f5f3ff; color:#7c3aed; }
-
-/* Performance */
-.performance-box {
-  padding: 0.9rem;
-  border-radius: 12px;
-  margin-bottom: 1rem;
-  font-weight: 500;
-  font-size: 0.95rem;
-  animation: fadeIn 0.6s ease-out;
+#scoreDisplay {
+    font-size: 2.4rem;
+    font-weight: 900;
+    color: #1e293b;
 }
 
-/* Breakdown */
-.breakdown { margin-bottom: 1.5rem; text-align: left; }
-.breakdown h3 {
-  text-align: center;
-  margin-bottom: 0.75rem;
-  font-weight: 700;
-  font-size: 1rem;
-}
-.breakdown-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem 1rem;
-  background:#f9fafb;
-  padding:0.8rem 1rem;
-  border-radius:12px;
-}
-.breakdown-grid p {
-  font-size:0.9rem;
-  margin:0.25rem 0;
-  color:#374151;
+.fraction {
+    display: flex;
+    gap: 0.2rem;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #1e293b;
 }
 
-/* Actions */
-.actions {
-  display:flex;
-  justify-content:center;
-  gap:1rem;
-  margin: 0.8rem 0;
-}
-.btn-primary, .btn-secondary {
-  padding:0.65rem 1.4rem;
-  border-radius:10px;
-  font-weight:600;
-  cursor:pointer;
-  transition: all .2s ease;
-}
-.btn-primary { background:#2563eb; color:#fff; }
-.btn-primary:hover { background:#1e40af; }
-.btn-secondary { background:#f3f4f6; color:#374151; }
-.btn-secondary:hover { background:#e5e7eb; }
-
-/* Footer */
-.footer-note {
-  font-size:0.8rem;
-  color:#6b7280;
-  margin-top:0.8rem;
+.score-label {
+    margin-top: 0.1rem;
+    color: #475569;
+    font-size: 0.8rem;
 }
 
-/* Animations */
-@keyframes fadeIn { from {opacity:0} to {opacity:1} }
+.passfail-text {
+    margin-top: 0.4rem;
+    font-size: 0.95rem;
+    font-weight: 800;
+}
+
+/* Raw score */
+.raw-score-box {
+    margin: 1rem auto 1.2rem;
+    padding: 0.8rem 1.4rem;
+    background: rgba(96,165,250,0.12);
+    border-radius: 12px;
+    text-align: center;
+    width: fit-content;
+}
+
+#rawScoreText {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+/* ============================================================
+   STAT BOXES
+============================================================ */
+.stats-box-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.7rem; /* reduced */
+    margin-bottom: 1rem;
+}
+
+.stat-box {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 0.8rem 0.7rem 0.95rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border: 1px solid #dbeafe;
+}
+
+.stat-box span {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.stat-box small {
+    font-size: 0.7rem;
+    color: #475569;
+}
+
+/* stat bar */
+.stat-bar {
+    margin-top: 0.45rem;
+    width: 100%;
+    height: 4px;
+    border-radius: 999px;
+    background: #dbeafe;
+    overflow: hidden;
+}
+
+.stat-bar-fill {
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #22c55e, #f59e0b, #ef4444);
+    transition: width 0.65s ease-out;
+}
+
+/* ============================================================
+   SUBJECT SUMMARY
+============================================================ */
+.subject-status-box {
+    background: #ffffff;
+    padding: 1rem 1.1rem;
+    border-radius: 18px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    border: 1px solid #dbeafe;
+    margin-top: 0.5rem;
+}
+
+.subject-status-box h3 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.subject-status-box p {
+    color: #475569;
+    margin-top: 0.35rem;
+    font-size: 0.9rem;
+}
+
+/* ============================================================
+   RIGHT — DETAIL CARD (LIGHT VERSION)
+============================================================ */
+.result-detail-card {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 1.4rem 1.3rem 1.5rem;
+    box-shadow: 0 10px 26px rgba(0,0,0,0.08);
+    width: 100%;
+    border: 1px solid #dbeafe;
+    color: #1e293b;
+}
+
+.detail-header {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detail-header i {
+    color: #3b82f6;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.detail-item p {
+    font-size: 0.86rem;
+    margin-bottom: 0.3rem;
+    color: #475569;
+}
+
+.detail-item strong {
+    color: #1e293b;
+}
+
+/* ============================================================
+   BUTTONS
+============================================================ */
+.btn-primary {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 0.6rem 1.4rem;
+    border-radius: 999px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background: #1e40af;
+}
+
+.btn-secondary,
+.btn-light {
+    border-radius: 999px;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.btn-secondary {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.btn-light {
+    background: #f8fafc;
+    color: #1e293b;
+}
+
+/* ============================================================
+   CONFETTI
+============================================================ */
+.confetti-piece {
+    position: fixed;
+    top: -10px;
+    width: 8px;
+    height: 14px;
+    border-radius: 3px;
+    opacity: 0.9;
+    z-index: 9999;
+    animation-name: confetti-fall;
+    animation-timing-function: linear;
+    animation-iteration-count: 1;
+}
+
 @keyframes confetti-fall {
-  0% { transform: translateY(-100vh) rotate(0deg); opacity:1; }
-  100% { transform: translateY(100vh) rotate(360deg); opacity:0; }
+    0% {
+        transform: translateY(-10px) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(120vh) rotate(360deg);
+        opacity: 0;
+    }
 }
+
+
+
+/* ============================================================
+   PRINT ONLY SUMMARY VIEW
+============================================================ */
+.print-summary {
+    display: none;
+}
+
+@media print {
+
+    /* Hide everything */
+    body * {
+        visibility: hidden !important;
+    }
+
+    /* Show only summary */
+    .print-summary, .print-summary * {
+        visibility: visible !important;
+    }
+
+    .print-summary {
+        display: block !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 2rem;
+        background: #fff;
+        color: #000;
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+
+    /* Remove page number footer */
+    @page {
+        margin: 1cm;
+    }
+}
+
