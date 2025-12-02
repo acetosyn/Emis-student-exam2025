@@ -485,49 +485,67 @@ window.closeEndExam = () => {
 };
 
 // ------------------------------------------------------
-// SUBMIT EXAM
+// SUBMIT EXAM  — Perfectly aligned with backend fields
 // ------------------------------------------------------
-window.submitExam = async function(timeUp = false){
-  if (window.__examFinished) return;
-  window.__examFinished = true;
+window.submitExam = async function(timeUp = false) {
+    if (window.__examFinished) return;
+    window.__examFinished = true;
 
-  if (window.examTimer) clearInterval(window.examTimer);
+    if (window.examTimer) clearInterval(window.examTimer);
 
-  const total = window.examData?.questions?.length || 0;
-  let correct = 0;
+    const total = window.examData?.questions?.length || 0;
+    let correct = 0;
 
-  if (window.examData && Array.isArray(window.examData.questions)) {
-    window.examData.questions.forEach((q, i) => {
-      const qid = q.id ?? i;
-      const ua  = window.userAnswers[qid];
-      if (ua && ua.index === q.correctIndex) correct++;
-    });
-  }
+    if (Array.isArray(window.examData?.questions)) {
+        window.examData.questions.forEach((q, i) => {
+            const qid = q.id ?? i;
+            const ua = window.userAnswers[qid];
+            if (ua && ua.index === q.correctIndex) correct++;
+        });
+    }
 
-  const payload = {
-    score:      total ? Math.round((correct / total) * 100) : 0,
-    correct,
-    total,
-    answered:   Object.keys(window.userAnswers).length,
-    timeTaken:  window.examStartTime
-                  ? Math.round((Date.now() - window.examStartTime) / 1000)
-                  : 0,
-    submittedAt: new Date().toISOString(),
-    status:      timeUp ? "timeout" : "completed"
-  };
+    const incorrect = total - correct;
+    const answered  = Object.keys(window.userAnswers).length;
+    const skipped   = total - answered;
 
-  try {
-    await fetch("/api/exam/submit", {
-      method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify(payload)
-    });
-  } catch (e) {
-    console.error("submitExam error:", e);
-  }
+    // -----------------------------
+    // FINAL PAYLOAD (100% backend-aligned)
+    // -----------------------------
+    const payload = {
+        subject: $('meta[name="exam-subject"]').content,
 
-  location.replace("/result");
+        score: total ? Math.round((correct / total) * 100) : 0,
+        correct: correct,
+        incorrect: incorrect,
+        total: total,
+        answered: answered,
+        skipped: skipped,
+
+        flagged: window.flaggedQuestions.size,
+        tabSwitches: window.__TAB_STRIKES || 0,
+
+        time_taken: window.examStartTime
+            ? Math.round((Date.now() - window.examStartTime) / 1000)
+            : 0,
+
+        submitted_at: new Date().toISOString(),
+
+        status: timeUp ? "timeout" : "completed"
+    };
+
+    try {
+        await fetch("/submit_exam", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+    } catch (e) {
+        console.error("submitExam error:", e);
+    }
+
+    location.replace("/result");
 };
+
 
 // ------------------------------------------------------
 // DOM READY

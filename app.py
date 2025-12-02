@@ -13,11 +13,11 @@ from modules.api_routes import api_bp
 from modules.document_routes import document_bp
 from uploads import uploads_bp
 from push import push_bp
+from modules import student_results
 
 
 # Other system modules
 import user_credentials
-import user_exam
 
 # Load environment variables
 load_dotenv()
@@ -47,5 +47,5 @@ def home():
 
 if __name__ == '__main__':
     user_credentials.init_db()
-    user_exam.init_db()
+    student_results.init_db()
     app.run(host='0.0.0.0', port=5000, debug=True)
