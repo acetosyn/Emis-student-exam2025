@@ -133,12 +133,6 @@ def admin_mock_exam():
     return render_template('mock_exam.html', user_type=session.get('user_type'))
 
 
-@admin_bp.route('/admin/results')
-@teacher_allowed
-def admin_results():
-    return render_template('result.html', user_type=session.get('user_type'))
-
-
 # ------- ADMIN-ONLY SECTIONS -------
 @admin_bp.route('/admin/ids')
 @admin_only
