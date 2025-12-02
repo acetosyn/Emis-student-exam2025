@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block title %}EMIS — Results Console{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin_results.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="results-container fade-in">
+
+    <!-- =========================================================
+        CARD 1 — TITLE + SUBTITLE
+    ========================================================== -->
+    <div class="card title-card">
+        <h1 class="results-title"><i class="fa-solid fa-chart-line"></i> Results Management Console</h1>
+        <p class="results-subtitle">View • Filter • Export • Manage</p>
+    </div>
+
+    <!-- =========================================================
+        CARD 2 — ANALYTICS OVERVIEW
+    ========================================================== -->
+    <div class="card analytics-card">
+        <div class="analytics-grid">
+
+            <div class="analytic-box">
+                <h3>Total Results</h3>
+                <p id="statTotalResults">0</p>
+            </div>
+
+            <div class="analytic-box">
+                <h3>Pass Rate</h3>
+                <p id="statPassRate">0%</p>
+            </div>
+
+            <div class="analytic-box">
+                <h3>Average Score</h3>
+                <p id="statAvgScore">0%</p>
+            </div>
+
+            <div class="analytic-box">
+                <h3>Subjects Loaded</h3>
+                <p id="statSubjects">0</p>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- =========================================================
+        CARD 3 — CLASS + SUBJECT + SEARCH
+    ========================================================== -->
+    <div class="card filter-card">
+
+        <div class="filter-row">
+            <div class="filter-item">
+                <label>Class Category</label>
+                <select id="classSelector" class="form-input">
+                    <option value="">-- Select Class --</option>
+                    <option value="SS1">SS1</option>
+                    <option value="SS2">SS2</option>
+                    <option value="SS3">SS3</option>
+                </select>
+            </div>
+
+            <div class="filter-item">
+                <label>Subject</label>
+                <select id="subjectSelector" class="form-input">
+                    <option value="">-- Select Subject --</option>
+                    {% for sub in [
+                        "BIOLOGY","CHEMISTRY","COMPUTER STUDIES","ECONOMICS","ENGLISH LANGUAGE",
+                        "GEOGRAPHY","GOVERNMENT","MATHEMATICS","PHYSICS","TECHNICAL DRAWING",
+                        "FINANCIAL ACCOUNTING","LITERATURE-IN-ENGLISH"
+                    ] %}
+                    <option value="{{ sub }}">{{ sub }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-item full">
+                <label>Search</label>
+                <div class="search-section">
+                    <i class="fa-solid fa-search search-icon"></i>
+                    <input id="globalSearch" type="text" placeholder="Search by name, subject, class, score…">
+                </div>
+            </div>
+        </div>
+
+        <button id="loadClassResultsBtn" class="btn-primary load-btn">
+            <i class="fa-solid fa-download"></i> Load Results
+        </button>
+
+    </div>
+
+
+
+    <!-- =========================================================
+        CARD 4 — EXPORT BUTTONS
+    ========================================================== -->
+    <div class="card export-card">
+
+        <div class="export-buttons">
+            <button id="exportExcelBtn" class="btn-light">
+                <i class="fa-solid fa-file-excel"></i> Excel
+            </button>
+
+            <button id="exportCsvBtn" class="btn-light">
+                <i class="fa-solid fa-file-csv"></i> CSV
+            </button>
+
+            <button id="printTableBtn" class="btn-light">
+                <i class="fa-solid fa-print"></i> Print
+            </button>
+
+            <button id="reloadTableBtn" class="btn-light">
+                <i class="fa-solid fa-rotate"></i> Refresh
+            </button>
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+        CARD 5 — TABLE
+    ========================================================== -->
+    <div class="card table-card">
+
+        <div class="table-toolbar">
+            <button id="deleteSelectedBtn" class="btn-danger">
+                <i class="fa-solid fa-trash"></i> Delete Selected
+            </button>
+        </div>
+
+        <div class="table-wrapper">
+            <table class="results-table">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="selectAllRows"></th>
+                        <th>Student</th>
+                        <th>Admission</th>
+                        <th>Class</th>
+                        <th>Subject</th>
+                        <th>Score</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody id="resultsBody">
+                    <tr><td colspan="9" class="no-data">Select class & subject to load results</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div id="pagination" class="pagination"></div>
+
+    </div>
+
+
+    <!-- =========================================================
+        DELETE CONFIRMATION MODAL
+    ========================================================== -->
+    <div id="deleteModal" class="modal-backdrop hidden">
+        <div class="modal-card small">
+
+            <h3>Delete Selected Results?</h3>
+            <p>This action cannot be undone.</p>
+
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button id="confirmDeleteBtn" class="btn-danger">Delete</button>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/admin_results.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,427 @@
+/* ============================================================================
+   EMIS — ADMIN RESULTS CONSOLE (v2.0)
+   Professional, enterprise-grade results management interface
+   Inspired by prototype.css tokens + dashboard aesthetic
+============================================================================ */
+
+:root {
+  --primary: #0f2b46;
+  --accent: #e11d48;
+  --secondary: #0d9488;
+
+  --light: #ffffff;
+  --dark: #0f172a;
+  --bg-soft: #f1f5f9;
+  --muted: #64748b;
+
+  --radius: 16px;
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.07);
+  --shadow-md: 0 6px 16px rgba(0,0,0,0.12);
+  --shadow-lg: 0 12px 26px rgba(0,0,0,0.15);
+
+  --transition: all 0.25s ease;
+}
+
+/* ============================================================================
+   MAIN WRAPPER
+============================================================================ */
+.results-container {
+  padding: 2rem 1.8rem;
+  background: var(--bg-soft);
+}
+
+.fade-in {
+  animation: fadeIn 0.45s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================================
+   GENERIC CARD STYLE (Matches prototype.css)
+============================================================================ */
+.card {
+  background: var(--light);
+  border-radius: var(--radius);
+  padding: 1.4rem 1.6rem;
+  margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* ============================================================================
+   TITLE CARD
+============================================================================ */
+.title-card .results-title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.title-card .results-title i {
+  color: var(--accent);
+  font-size: 1.9rem;
+}
+
+.results-subtitle {
+  font-size: 0.92rem;
+  color: var(--muted);
+  margin-top: 6px;
+  letter-spacing: 0.3px;
+}
+
+/* ============================================================================
+   ANALYTICS CARD
+============================================================================ */
+.analytics-card {
+  padding-top: 1.8rem;
+}
+
+.analytics-grid {
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.analytic-box {
+  background: #f8fafc;
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+  border-left: 5px solid var(--primary);
+}
+
+.analytic-box:hover {
+  background: #fff;
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+.analytic-box h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.analytic-box p {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--primary);
+  margin: 0;
+}
+
+/* ============================================================================
+   FILTER CARD — Class + Subject + Search
+============================================================================ */
+.filter-card {
+  padding-bottom: 1rem;
+}
+
+.filter-row {
+  display: grid;
+  grid-template-columns: 200px 200px 1fr;
+  gap: 1.2rem;
+  align-items: end;
+}
+
+.filter-item label {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: var(--radius);
+  font-size: 0.9rem;
+  background: #fff;
+  transition: var(--transition);
+}
+
+.form-input:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(15,43,70,0.15);
+}
+
+.full {
+  grid-column: span 1;
+}
+
+/* Search Section */
+.search-section {
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius);
+  box-shadow: inset 0 0 0 1px #d1d5db;
+}
+
+.search-section input {
+  border: none;
+  background: none;
+  width: 100%;
+  font-size: 0.92rem;
+}
+
+.search-section input:focus {
+  outline: none;
+}
+
+.search-icon {
+  color: #475569;
+  font-size: 1rem;
+}
+
+/* Load Button */
+.load-btn {
+  margin-top: 1.2rem;
+  padding: 0.85rem 1.2rem;
+  border-radius: var(--radius);
+  background: #2563eb;
+  color: white;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  transition: var(--transition);
+}
+
+.load-btn:hover {
+  background: #1e3a8a;
+  transform: translateY(-3px);
+}
+
+/* ============================================================================
+   EXPORT CARD
+============================================================================ */
+.export-card {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.export-buttons {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.export-buttons .btn-light {
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius);
+  background: #fff;
+  border: 1px solid #d8dee9;
+  box-shadow: var(--shadow-sm);
+  font-weight: 700;
+  color: var(--primary);
+  transition: var(--transition);
+}
+
+.export-buttons .btn-light:hover {
+  background: #f1f5f9;
+  transform: translateY(-3px);
+}
+
+/* ============================================================================
+   TABLE CARD
+============================================================================ */
+.table-card {
+  padding-top: 1.4rem;
+}
+
+.table-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.7rem;
+}
+
+.btn-danger {
+  padding: 0.7rem 1.1rem;
+  border-radius: var(--radius);
+  background: #dc2626;
+  color: white;
+  font-weight: 700;
+  border: none;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.btn-danger:hover {
+  background: #b91c1c;
+  transform: translateY(-3px);
+}
+
+.table-wrapper {
+  max-height: 600px;
+  overflow-y: auto;
+  border-radius: var(--radius);
+  border: 1px solid #e5e7eb;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.results-table thead {
+  background: #f8fafc;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.results-table th,
+.results-table td {
+  padding: 0.85rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.results-table tbody tr:hover {
+  background: #f1f5f9;
+}
+
+.status-pass {
+  font-weight: 700;
+  color: #16a34a;
+}
+
+.status-fail {
+  font-weight: 700;
+  color: #dc2626;
+}
+
+.no-data {
+  text-align: center;
+  padding: 2.2rem 0;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* ============================================================================
+   PAGINATION
+============================================================================ */
+.pagination {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.pagination button {
+  padding: 0.45rem 1rem;
+  background: #e5e7eb;
+  border: none;
+  color: #0f172a;
+  border-radius: 6px;
+  margin: 0 0.25rem;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.pagination button:hover {
+  background: #cbd5e1;
+}
+
+.pagination .active {
+  background: #2563eb;
+  color: white;
+}
+
+/* ============================================================================
+   DELETE MODAL
+============================================================================ */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-card {
+  background: white;
+  padding: 1.6rem;
+  border-radius: var(--radius);
+  width: 420px;
+  text-align: center;
+  animation: fadeUp 0.3s ease;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-card.small {
+  width: 360px;
+}
+
+.modal-card h3 {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 0.4rem;
+  color: var(--primary);
+}
+
+.modal-card p {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.btn-secondary {
+  background: #e5e7eb;
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius);
+  color: var(--dark);
+  font-weight: 700;
+  border: none;
+}
+
+.btn-secondary:hover {
+  background: #cbd5e1;
+}
+
+/* ============================================================================
+   RESPONSIVE
+============================================================================ */
+@media (max-width: 900px) {
+  .filter-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .filter-row {
+    grid-template-columns: 1fr;
+  }
+
+  .export-buttons {
+    flex-direction: column;
+  }
+
+  .results-container {
+    padding: 1rem;
+  }
+}

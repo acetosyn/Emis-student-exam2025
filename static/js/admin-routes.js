@@ -142,3 +142,10 @@ document.addEventListener("DOMContentLoaded", () => {
     defaultPanel.classList.add("is-active");
   }
 });
+
+
+document.querySelectorAll("a[href$='/admin/results']").forEach(a => {
+    a.addEventListener("click", () => {
+        window.location.href = "/admin/results";
+    });
+});
