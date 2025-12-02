@@ -193,7 +193,13 @@
     <li><a href="{{ url_for('admin_bp.admin_ids') }}"><i class="fa-solid fa-id-card"></i><span>IDs</span></a></li>
     <li><a href="{{ url_for('admin_bp.admin_past_questions') }}"><i class="fa-solid fa-clock-rotate-left"></i><span>Past Questions</span></a></li>
     <li><a href="{{ url_for('admin_bp.admin_mock_exam') }}"><i class="fa-solid fa-pen-to-square"></i><span>Mock Exam</span></a></li>
-    <li><a href="{{ url_for('admin_bp.admin_results') }}"><i class="fa-solid fa-chart-line"></i><span>Results</span></a></li>
+
+   <li><a href="{{ url_for('admin_bp.admin_results') }}">
+    <i class="fa-solid fa-chart-line"></i>
+    <span>Results</span>
+</a></li>
+
+
     <li><a href="{{ url_for('admin_bp.admin_third_party') }}"><i class="fa-solid fa-network-wired"></i><span>Third Party</span></a></li>
     <li><a href="{{ url_for('admin_bp.admin_activities') }}"><i class="fa-solid fa-list-check"></i><span>Activities</span></a></li>
     <li><a href="{{ url_for('admin_bp.admin_settings') }}"><i class="fa-solid fa-gear"></i><span>Settings</span></a></li>
@@ -201,9 +207,10 @@
   </ul>
 
   <div class="border-t border-white/20 mt-4 pt-3 px-3">
-    <a href="{{ url_for('user_bp.logout') }}" class="btn-logout flex items-center justify-center gap-2 py-2.5 text-sm bg-accent hover:bg-accent/90 rounded-md transition-all duration-200 shadow-md">
-      <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
-    </a>
+  <a href="{{ url_for('admin_bp.logout') }}" class="btn-logout flex items-center justify-center gap-2 py-2.5 text-sm bg-accent hover:bg-accent/90 rounded-md transition-all duration-200 shadow-md">
+    <i class="fa-solid fa-right-from-bracket"></i><span>Logout</span>
+</a>
+
   </div>
 </aside>
 

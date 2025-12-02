@@ -49,12 +49,15 @@ def init_db():
 
 
 # ============================================================
-#   SAVE RESULT  — FINAL FIXED VERSION
+#   SAVE RESULT  — FINAL VERSION (SQLite + Excel)
 # ============================================================
+from modules.excel_manager import append_result_to_excel
+
 def save_result(data: dict):
     """
-    Saves a student's exam result.
-    Expects a fully structured exam result dict from the frontend.
+    Saves a student's exam result into:
+    - SQLite database
+    - Excel folder structure (CLASS/SS1/Subject/results.xlsx)
     """
 
     init_db()
@@ -62,17 +65,20 @@ def save_result(data: dict):
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # Use the submittedAt from frontend, fallback to now()
+    # Timestamp
     submitted_at = data.get("submittedAt") or datetime.now().isoformat()
 
-    # Compute missing fields safely
-    total = data.get("total") or 0
-    correct = data.get("correct") or 0
-    answered = data.get("answered") or 0
+    # Defensive extraction
+    total = int(data.get("total") or 0)
+    correct = int(data.get("correct") or 0)
+    answered = int(data.get("answered") or 0)
 
     incorrect = total - correct
     skipped = total - answered
 
+    # ================================
+    # 1️⃣ SAVE TO SQLITE
+    # ================================
     cursor.execute("""
         INSERT INTO student_results (
             student_id, full_name, admission_number,
@@ -91,23 +97,43 @@ def save_result(data: dict):
         data.get("class_category"),
 
         data.get("subject"),
-        data.get("score"),              # percentage score
-        correct,                        # correct answers
-        incorrect,                      # computed
+        data.get("score"),               # percent
+        correct,
+        incorrect,
         total,
         answered,
-        skipped,                        # computed
+        skipped,
 
         data.get("flagged", 0),
         data.get("tabSwitches", 0),
 
-        data.get("timeTaken", 0),        # FIXED: was time_taken
-        submitted_at,                    # FIXED: was overwritten
+        data.get("time_taken") or data.get("timeTaken", 0),
+        submitted_at,
         data.get("status", "completed")
     ))
 
     conn.commit()
     conn.close()
+
+    # ================================
+    # 2️⃣ SAVE TO EXCEL
+    # ================================
+    excel_payload = {
+        "full_name": data.get("full_name"),
+        "admission_number": data.get("admission_number"),
+        "class_name": data.get("class_name"),
+        "class_category": data.get("class_category"),
+        "subject": data.get("subject"),
+
+        "score": data.get("score") or 0,
+        "correct": correct,
+        "total": total,
+
+        "submitted_at": submitted_at
+    }
+
+    append_result_to_excel(excel_payload)
+
     return True
 
 

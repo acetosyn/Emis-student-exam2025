@@ -223,3 +223,20 @@ def view_results():
 
     results.sort(key=lambda r: r.get("submitted_at", ""), reverse=True)
     return jsonify({"results": results})
+
+
+
+@admin_bp.route('/admin/results')
+@teacher_allowed
+def admin_results():
+    return render_template('admin_results.html', user_type=session.get('user_type'))
+# ==========================================================
+
+
+
+@admin_bp.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('admin_bp.admin_login'))
+
+

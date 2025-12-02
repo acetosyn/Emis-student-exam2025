@@ -1,0 +1,123 @@
+.results-wrapper {
+  padding: 2rem;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.8rem;
+}
+
+.subtext {
+  color: #6b7280;
+  font-size: 0.9rem;
+}
+
+.results-card {
+  background: white;
+  border-radius: 14px;
+  padding: 1.2rem;
+  box-shadow: var(--shadow-md);
+}
+
+.results-toolbar {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+#searchBox {
+  width: 45%;
+  padding: 0.7rem;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+}
+
+.table-container {
+  max-height: 550px;
+  overflow-y: auto;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.results-table thead {
+  background: #f3f4f6;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.results-table th,
+.results-table td {
+  padding: 0.8rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.status-pass {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.status-fail {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  color: #9ca3af;
+}
+
+.pagination {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.pagination button {
+  padding: 0.4rem 1rem;
+  border: none;
+  background: #e5e7eb;
+  border-radius: 6px;
+  margin: 0 0.2rem;
+  cursor: pointer;
+}
+
+.pagination button.active {
+  background: #3b82f6;
+  color: white;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal-card {
+  background: white;
+  border-radius: 16px;
+  width: 650px;
+  padding: 1.5rem;
+  animation: fadeUp 0.3s ease;
+}
+
+.modal-card.wide {
+  width: 750px;
+}
+
+@keyframes fadeUp {
+  from {transform: translateY(30px); opacity: 0;}
+  to {transform: translateY(0); opacity: 1;}
+}
