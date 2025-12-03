@@ -27,9 +27,10 @@
       <span id="liveClock" class="live-clock"></span>
 
       <!-- Logout Button -->
-      <a href="{{ url_for('user_bp.logout') }}" class="logout-btn" title="Logout">
+      <a href="{{ url_for('user_bp.student_login') }}" class="logout-btn" title="Logout">
         <i class="fa-solid fa-right-from-bracket"></i>
-      </a>
+    </a>
+
 
       <!-- Notifications -->
       <button class="icon-btn" id="notifBtn" title="Notifications">
@@ -111,11 +112,13 @@
       <button class="btn-light" id="openSubjectsBtn">
         <i class="fa-solid fa-book"></i> Subjects
       </button>
-        <button class="btn-light"><i class="fa-solid fa-chart-line"></i> Results</button>
+     <a href="{{ url_for('student_portal_bp.result') }}" class="btn-light">
+    <i class="fa-solid fa-chart-line"></i> Results
+</a>
+
         <button class="btn-light"><i class="fa-solid fa-folder-open"></i> Past Questions</button>
-        <button class="btn-light"><i class="fa-solid fa-file-circle-check"></i> Study Materials</button>
-        <button class="btn-light"><i class="fa-solid fa-id-card"></i> Student ID</button>
-      </div>
+
+
 
 
 <!-- SMALL AVAILABLE SUBJECTS CARD -->

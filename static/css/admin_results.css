@@ -425,3 +425,76 @@
     padding: 1rem;
   }
 }
+
+/* ========================================================================
+   ADMIN PRINT SUMMARY — BEAUTIFUL RESULT.CSS STYLE
+=========================================================================== */
+
+@media print {
+
+    /* Hide everything */
+    body * {
+        visibility: hidden !important;
+    }
+
+    /* Show only admin summary */
+    #adminPrintSummary, #adminPrintSummary * {
+        visibility: visible !important;
+    }
+
+    #adminPrintSummary {
+        display: block !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100% !important;
+        background: #ffffff !important;
+        padding: 2.5rem !important;
+        color: #000;
+        line-height: 1.65 !important;
+        font-size: 1.05rem !important;
+        font-family: "Inter", sans-serif !important;
+    }
+
+    /* Header */
+    #adminPrintSummary h2 {
+        font-size: 1.8rem !important;
+        font-weight: 800 !important;
+        text-align: center !important;
+        margin-bottom: 1rem !important;
+        color: #111 !important;
+    }
+
+    /* Strong labels */
+    #adminPrintSummary p strong {
+        color: #111 !important;
+        font-weight: 700 !important;
+    }
+
+    /* Paragraph spacing */
+    #adminPrintSummary p {
+        margin: 0.35rem 0 !important;
+        font-size: 1.05rem !important;
+    }
+
+    /* Divider */
+    #adminPrintSummary hr {
+        margin: 1.2rem 0 !important;
+        border: none;
+        height: 1px;
+        background: #ddd !important;
+    }
+
+    /* Footer note */
+    #adminPrintSummary .print-footer-note {
+        margin-top: 1.8rem !important;
+        font-size: 0.8rem !important;
+        text-align: center !important;
+        color: #555 !important;
+    }
+
+    /* Page margins */
+    @page {
+        margin: 1.4cm;
+    }
+}

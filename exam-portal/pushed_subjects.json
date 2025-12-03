@@ -6,5 +6,7 @@
         "accounts_ss1.json"
     ],
     "SS2": [],
-    "SS3": []
+    "SS3": [
+        "chemistry_ss3.json"
+    ]
 }

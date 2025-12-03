@@ -36,39 +36,66 @@ def get_excel_path(class_category: str, subject: str):
 
 
 # -----------------------------------
-# Append one student's result to the correct file
+# Auto-repair headers — SAFE VERSION
+# -----------------------------------
+EXPECTED_HEADERS = [
+    "Student Name", "Admission No", "Class", "Subject",
+    "Score (%)", "Correct", "Total", "Status", "Submitted At"
+]
+
+
+def repair_missing_headers(ws):
+    """
+    Safely handle empty sheets or missing headers.
+    Returns the cleaned header row or empty list.
+    """
+
+    rows = list(ws.iter_rows(values_only=True))
+
+    # EMPTY SHEET — add headers and return them
+    if not rows:
+        for c, val in enumerate(EXPECTED_HEADERS, start=1):
+            ws.cell(row=1, column=c).value = val
+        return EXPECTED_HEADERS
+
+    first_row = list(rows[0])
+
+    # If row is empty: add headers
+    if all(cell is None for cell in first_row):
+        for c, val in enumerate(EXPECTED_HEADERS, start=1):
+            ws.cell(row=1, column=c).value = val
+        return EXPECTED_HEADERS
+
+    # If existing headers are numeric → broken → fix
+    if all(isinstance(col, int) for col in first_row):
+        for c, val in enumerate(EXPECTED_HEADERS, start=1):
+            ws.cell(row=1, column=c).value = val
+        return EXPECTED_HEADERS
+
+    # Otherwise return valid header
+    return first_row
+
+
+# -----------------------------------
+# Append result to Excel (always safe)
 # -----------------------------------
 def append_result_to_excel(result: dict):
-    """
-    result must include:
-    - full_name
-    - admission_number
-    - class_name
-    - class_category
-    - subject
-    - score
-    - correct
-    - total
-    - submitted_at
-    """
+
     class_cat = result.get("class_category", "UNKNOWN").upper()
     subject = result.get("subject", "UNKNOWN")
-
     excel_path = get_excel_path(class_cat, subject)
 
-    # Create Excel if missing
+    # Create workbook if missing
     if not excel_path.exists():
         wb = Workbook()
         ws = wb.active
-        ws.append([
-            "Student Name", "Admission No", "Class", "Subject",
-            "Score (%)", "Correct", "Total", "Status", "Submitted At"
-        ])
+        ws.append(EXPECTED_HEADERS)
         wb.save(excel_path)
 
-    # Append new row
     wb = load_workbook(excel_path)
     ws = wb.active
+
+    repair_missing_headers(ws)
 
     score_percent = result.get("score", 0)
     status = "PASS" if score_percent >= 50 else "FAIL"
@@ -90,9 +117,10 @@ def append_result_to_excel(result: dict):
 
 
 # -----------------------------------
-# Read result table for admin
+# Read Excel results safely
 # -----------------------------------
 def read_results(class_category: str, subject: str):
+
     excel_path = get_excel_path(class_category, subject)
 
     if not excel_path.exists():
@@ -100,18 +128,29 @@ def read_results(class_category: str, subject: str):
 
     wb = load_workbook(excel_path)
     ws = wb.active
+
+    headers = repair_missing_headers(ws)
+
     rows = list(ws.iter_rows(values_only=True))
 
-    if not rows:
+    # Still empty after repair → return []
+    if len(rows) < 2:
         return []
 
-    headers = rows[0]
-    data = [dict(zip(headers, row)) for row in rows[1:]]
+    # If wrong header count → enforce expected
+    if len(headers) != len(EXPECTED_HEADERS):
+        headers = EXPECTED_HEADERS
+
+    data = []
+    for row in rows[1:]:
+        d = dict(zip(headers, row))
+        data.append(d)
+
     return data
 
 
 # -----------------------------------
-# Read all results for a student (history)
+# Student history lookup
 # -----------------------------------
 def read_student_history(full_name: str, class_category: str):
     results = []
@@ -126,15 +165,16 @@ def read_student_history(full_name: str, class_category: str):
         if excel_file.exists():
             wb = load_workbook(excel_file)
             ws = wb.active
+
+            headers = repair_missing_headers(ws)
             rows = list(ws.iter_rows(values_only=True))
 
             if len(rows) < 2:
                 continue
 
-            headers = rows[0]
             for row in rows[1:]:
                 row_dict = dict(zip(headers, row))
-                if row_dict.get("Student Name") == full_name:
+                if str(row_dict.get("Student Name", "")).strip().upper() == full_name.strip().upper():
                     results.append(row_dict)
 
     return results

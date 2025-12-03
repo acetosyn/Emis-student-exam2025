@@ -131,58 +131,91 @@
 
 
   /* -------------------------------------------------------------------------
-     4. Submit Confirmation Modal
+     4. Submit Confirmation Modal (Enhanced UX: Hover + Pointer)
   ------------------------------------------------------------------------- */
-  function openSubmitConfirm() {
-    const total     = window.examData.questions.length;
-    const answered  = Object.keys(window.userAnswers).length;
-    const unanswered = total - answered;
+function openSubmitConfirm() {
+  const total     = window.examData.questions.length;
+  const answered  = Object.keys(window.userAnswers).length;
+  const unanswered = total - answered;
 
-    const wrap = document.createElement("div");
-    wrap.style.cssText = `
-      position:fixed; inset:0; background:rgba(0,0,0,.55);
-      display:grid; place-items:center; z-index:99999;
-    `;
+  const wrap = document.createElement("div");
+  wrap.style.cssText = `
+    position:fixed; inset:0; background:rgba(0,0,0,.55);
+    display:grid; place-items:center; z-index:99999;
+  `;
 
-    wrap.innerHTML = `
-      <div style="background:#fff; padding:20px; border-radius:14px;
-           max-width:560px; width:92%; box-shadow:0 14px 34px rgba(0,0,0,.35)">
-        <h3 style="margin:0 0 10px; font-size:1.25rem; font-weight:800; color:#1e3a8a">
-          Submit Exam?
-        </h3>
+  wrap.innerHTML = `
+    <div style="background:#fff; padding:20px; border-radius:14px;
+         max-width:560px; width:92%; box-shadow:0 14px 34px rgba(0,0,0,.35);
+         animation:fadeIn .25s ease-out">
+      <h3 style="margin:0 0 10px; font-size:1.25rem; font-weight:800; color:#1e3a8a">
+        Submit Exam?
+      </h3>
 
-        <p>You answered <b>${answered}</b> of <b>${total}</b>.</p>
+      <p>You answered <b>${answered}</b> of <b>${total}</b>.</p>
 
-        ${
-          unanswered > 0
-          ? `<p style="background:#fef3c7; padding:10px; border-radius:10px;
-                        border:1px solid #fde68a; color:#b45309">
-               ${unanswered} unanswered will be marked incorrect.
-             </p>`
-          : `<p style="background:#dcfce7; padding:10px; border-radius:10px;
-                        border:1px solid #bbf7d0; color:#166534">
-               All questions answered ✔
-             </p>`
-        }
+      ${
+        unanswered > 0
+        ? `<p style="background:#fef3c7; padding:10px; border-radius:10px;
+                      border:1px solid #fde68a; color:#b45309">
+             ${unanswered} unanswered will be marked incorrect.
+           </p>`
+        : `<p style="background:#dcfce7; padding:10px; border-radius:10px;
+                      border:1px solid #bbf7d0; color:#166534">
+             All questions answered ✔
+           </p>`
+      }
 
-        <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px">
-          <button id="cxl" style="
-              padding:10px 16px; background:#f1f5f9; border-radius:10px;
-              border:1px solid #cbd5e1">Review</button>
+      <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:16px">
 
-          <button id="ok" style="
-              padding:10px 16px; background:#dc2626; border-radius:10px;
-              color:#fff">Submit</button>
-        </div>
+        <!-- REVIEW BTN -->
+        <button id="cxl" style="
+            padding:10px 16px; background:#f1f5f9; border-radius:10px;
+            border:1px solid #cbd5e1; cursor:pointer;
+            transition: all .2s ease; font-weight:600;">
+          Review
+        </button>
+
+        <!-- SUBMIT BTN -->
+        <button id="ok" style="
+            padding:10px 16px; background:#dc2626; border-radius:10px;
+            color:#fff; cursor:pointer;
+            transition: all .2s ease; font-weight:600;">
+          Submit
+        </button>
+
       </div>
-    `;
+    </div>
+  `;
 
-    document.body.appendChild(wrap);
+  document.body.appendChild(wrap);
 
-    $("#cxl", wrap).onclick = () => wrap.remove();
-    $("#ok",  wrap).onclick = () => { wrap.remove(); window.submitExam(false); };
-  }
+  // Hover Effects
+  const cxlBtn = wrap.querySelector("#cxl");
+  const okBtn  = wrap.querySelector("#ok");
 
+  cxlBtn.onmouseover = () => {
+    cxlBtn.style.background = "#e2e8f0";
+    cxlBtn.style.transform = "scale(1.05)";
+  };
+  cxlBtn.onmouseout = () => {
+    cxlBtn.style.background = "#f1f5f9";
+    cxlBtn.style.transform = "scale(1)";
+  };
+
+  okBtn.onmouseover = () => {
+    okBtn.style.filter = "brightness(1.2)";
+    okBtn.style.transform = "scale(1.05)";
+  };
+  okBtn.onmouseout = () => {
+    okBtn.style.filter = "none";
+    okBtn.style.transform = "scale(1)";
+  };
+
+  // Click handlers
+  cxlBtn.onclick = () => wrap.remove();
+  okBtn.onclick  = () => { wrap.remove(); window.submitExam(false); };
+}
 
 
   /* -------------------------------------------------------------------------
