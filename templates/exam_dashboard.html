@@ -24,9 +24,10 @@
     <div class="header-right">
       <span id="liveClock" class="live-clock"></span>
 
-      <a href="{{ url_for('user_bp.logout') }}" class="logout-btn">
-        <i class="fa-solid fa-right-from-bracket"></i>
-      </a>
+    <a href="{{ url_for('user_bp.student_login') }}" class="logout-btn">
+    <i class="fa-solid fa-right-from-bracket"></i>
+</a>
+
 
       <button class="icon-btn" id="notifBtn">
         <i class="fa-solid fa-bell"></i>
@@ -272,6 +273,47 @@
 
   </div>
 </div>
+
+
+<!-- ============================================================
+     ALREADY WRITTEN MODAL
+============================================================ -->
+<div id="alreadyWrittenModal" class="exam-modal hidden">
+
+  <div class="exam-modal-content">
+
+    <button class="exam-modal-close" id="closeAlreadyWrittenModal" title="Close">
+      <i class="fa-solid fa-xmark"></i>
+    </button>
+
+    <h2 class="exam-modal-title" style="color:#ef4444;">
+      <i class="fa-solid fa-ban"></i> Exam Already Submitted
+    </h2>
+
+    <p class="exam-modal-sub">
+      You have already written and submitted this exam.
+    </p>
+
+    <p style="font-size:0.95rem; margin-top:10px;">
+      If you believe this is a mistake, please contact your teacher or admin for assistance.
+    </p>
+
+    <a href="{{ url_for('student_portal_bp.result') }}" class="exam-modal-startbtn" style="background:#22c55e;">
+      View My Result
+    </a>
+
+  </div>
+</div>
+
+  <!-- Inline script to show Already Written Modal -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const alreadyWritten = "{{ already_written }}".toLowerCase() === "true";
+        if (alreadyWritten) {
+            document.getElementById("alreadyWrittenModal")?.classList.remove("hidden");
+        }
+    });
+  </script>
 
 
 </div> <!-- End of exdash-shell -->

@@ -448,3 +448,102 @@
     transform: scale(1);
   }
 }
+
+
+
+
+/* ============================================================
+   ALREADY-WRITTEN MODAL (Same style as Start Exam modal)
+============================================================ */
+
+#alreadyWrittenModal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+#alreadyWrittenModal.hidden {
+    display: none;
+}
+
+#alreadyWrittenModal .exam-modal-content {
+    background: #ffffff;
+    width: 90%;
+    max-width: 520px;
+    border-radius: 18px;
+    padding: 2rem 2.3rem;
+    box-shadow: 0 0 25px rgba(0,0,0,0.25);
+    position: relative;
+    animation: fadeUpModal 0.35s ease;
+    text-align: center;
+}
+
+/* Close button */
+#alreadyWrittenModal .exam-modal-close {
+    position: absolute;
+    right: 18px;
+    top: 16px;
+    background: transparent;
+    border: none;
+    font-size: 1.3rem;
+    cursor: pointer;
+    color: #555;
+    transition: 0.2s ease;
+}
+#alreadyWrittenModal .exam-modal-close:hover {
+    color: #000;
+}
+
+/* Title */
+#alreadyWrittenModal .exam-modal-title {
+    font-size: 1.45rem;
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    color: #dc2626; /* Red color for warning */
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* Subtext */
+#alreadyWrittenModal .exam-modal-sub {
+    font-size: 1rem;
+    color: #4b5563;
+    margin-bottom: 1rem;
+}
+
+/* Start/View Results Button */
+#alreadyWrittenModal .exam-modal-startbtn {
+    display: inline-block;
+    background: #22c55e;
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 600;
+    padding: 0.8rem 1.8rem;
+    border-radius: 12px;
+    text-decoration: none;
+    margin-top: 1rem;
+    transition: 0.25s ease;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+}
+#alreadyWrittenModal .exam-modal-startbtn:hover {
+    background: #16a34a;
+    transform: translateY(-2px);
+}
+
+/* Smooth Fade-Up Animation */
+@keyframes fadeUpModal {
+    from {
+        opacity: 0;
+        transform: translateY(25px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

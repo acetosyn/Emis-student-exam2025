@@ -34,9 +34,9 @@
     <div class="header-right">
         <span id="liveClock" class="live-clock"></span>
 
-        <a href="{{ url_for('user_bp.logout') }}" class="logout-btn">
-            <i class="fa-solid fa-right-from-bracket"></i>
-        </a>
+          <a href="{{ url_for('user_bp.student_login') }}" class="logout-btn">
+    <i class="fa-solid fa-right-from-bracket"></i>
+</a>
 
         <button class="icon-btn" id="themeToggle">
             <i class="fa-solid fa-moon"></i>
@@ -51,7 +51,7 @@
 <!-- ======================================================
      MAIN RESULT WRAPPER
 ====================================================== -->
-<main class="result-wrapper">
+<main class="result-wrapper" data-subject="{{ result.subject }}">
 
     <!-- TOP TITLE + ACTION BTNS AREA -->
     <div class="result-topbar">
@@ -61,15 +61,18 @@
         </h1>
 
         <div class="result-topbar-actions">
-            <button id="backToDashboardBtn" class="btn-primary">
-                <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
-            </button>
+          <a href="{{ url_for('student_portal_bp.back_to_exam_dashboard') }}" 
+   class="btn-primary" id="backToDashboardBtn">
+    <i class="fa-solid fa-arrow-left"></i> Back to Dashboard
+</a>
+
             <!-- PDF & Share buttons are injected by result.js -->
         </div>
     </div>
 
     <!-- Accent Bar -->
     <div class="result-accent-bar"></div>
+
 
     <!-- ======================================================
          MAIN GRID (Profile | Result | Detailed Breakdown)

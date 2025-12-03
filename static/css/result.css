@@ -474,3 +474,12 @@
     }
 }
 
+/* Remove underline for all action buttons inside the result topbar */
+.result-topbar-actions a {
+    text-decoration: none !important;
+}
+
+/* Also ensure ALL .btn-primary links never get underlined */
+a.btn-primary {
+    text-decoration: none !important;
+}

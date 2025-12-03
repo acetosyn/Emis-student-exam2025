@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     assignBadge(window.resultData.score);
     addPDFDownloadButton();
     addShareButton();
-    sendResultToServer();
+    // sendResultToServer();
     setupBackButton();
     overrideBackNavigation();
 
@@ -222,20 +222,8 @@ function randomColor() {
 /* ------------------------------------------------------------
    7. Save Result to Backend
 -------------------------------------------------------------*/
-let resultSent = false;
-
 function sendResultToServer() {
-    if (resultSent) return;
-    resultSent = true;
-
-    fetch("/submit_exam", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(window.resultData)
-    })
-        .then(res => res.json())
-        .then(d => console.log("Result saved:", d))
-        .catch(e => console.error("Backend error:", e));
+    console.warn("⚠ sendResultToServer blocked — submission already handled by exam-core.js");
 }
 
 /* ------------------------------------------------------------
@@ -281,17 +269,22 @@ function addShareButton() {
 function setupBackButton() {
     document.getElementById("backToDashboardBtn")
         .addEventListener("click", () => {
-            window.location.href = "/student_portal";
+            window.location.href = "/back_to_exam_dashboard";
         });
 }
+
 
 /* ------------------------------------------------------------
    11. Disable Browser Back
 -------------------------------------------------------------*/
 function overrideBackNavigation() {
     history.pushState(null, "", window.location.href);
-    window.onpopstate = () => window.location.href = "/student_portal";
+
+    window.onpopstate = () => {
+        window.location.href = "/back_to_exam_dashboard";
+    };
 }
+
 
 /* ------------------------------------------------------------
    Utilities
@@ -330,3 +323,4 @@ function fillPrintSummary() {
     document.getElementById("p_date").textContent =
         new Date(r.submitted_at).toLocaleString();
 }
+

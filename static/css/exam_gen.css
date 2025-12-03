@@ -666,6 +666,22 @@
 }
 
 
+
+/* Make all modal buttons show pointer cursor */
+.modal-foot button,
+.modal-head .close-x,
+.btn-success,
+.btn-secondary,
+.btn-danger,
+.btn-primary,
+.btn-ghost,
+.flag-btn,
+#startExamBtn {
+    cursor: pointer !important;
+}
+
+
+
 /* ============================================================
    HOURGLASS KEYFRAMES
 ============================================================ */
