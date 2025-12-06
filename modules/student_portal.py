@@ -7,9 +7,19 @@ from modules.excel_manager import read_results
 student_portal_bp = Blueprint('student_portal_bp', __name__)
 
 DEFAULT_SUBJECTS = [
-    "BIOLOGY", "CHEMISTRY", "COMPUTER STUDIES", "ECONOMICS", "ENGLISH LANGUAGE",
-    "GEOGRAPHY", "GOVERNMENT", "MATHEMATICS", "PHYSICS", "TECHNICAL DRAWING",
-    "FINANCIAL ACCOUNTING", "LITERATURE-IN-ENGLISH"
+    "BIOLOGY",
+    "CHEMISTRY",
+    "CIVIC EDUCATION",
+    "COMPUTER SCIENCE",
+    "ECONOMICS",
+    "ENGLISH LANGUAGE",
+    "FINANCIAL ACCOUNTING",
+    "GEOGRAPHY",
+    "GOVERNMENT",
+    "LITERATURE-IN-ENGLISH",
+    "MATHEMATICS",
+    "PHYSICS",
+    "TECHNICAL DRAWING"
 ]
 
 
