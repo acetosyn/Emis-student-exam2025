@@ -1,0 +1,563 @@
+{
+  "school": "Epitome Model Islamic Schools",
+  "subject": "Mathematics",
+  "exam_title": "1st Term Examination",
+  "instructions": "Do not start until you are told to do so",
+  "time_allowed_minutes": null,
+  "questions": [
+    {
+      "id": 1,
+      "question": "If (2x + 3)3 = 125, find the value of x",
+      "options": [
+        "A. 1",
+        "B. 2",
+        "C. 3",
+        "D. 4"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 2,
+      "question": "Write 0.0364891 in three significant figures and express the answer in standard form",
+      "options": [
+        "A. 3.64 x 10^2",
+        "B. 3.65 x 10^2",
+        "C. 3.64 x 10^-2",
+        "D. 3.65 x 10^-2"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 3,
+      "question": "Given that x + y = 1 and x + 3y = 5. Find the value of (x2 + 4xy + 3y2)",
+      "options": [
+        "A. 1",
+        "B. 10",
+        "C. 5",
+        "D. 25"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 4,
+      "question": "Given that (x-n)4 = , find the value of n",
+      "options": [
+        "A. -",
+        "B. -",
+        "C. ",
+        "D. "
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 5,
+      "question": "Solve: 5(y + 2) -2(3y – 5) = 4",
+      "options": [
+        "A. 16",
+        "B. -16",
+        "C. 4",
+        "D. -4"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 6,
+      "question": "If a = - 4, b = 6 and c = - 3, find the value of",
+      "options": [
+        "A. - 1",
+        "B. ",
+        "C. ",
+        "D. 1"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 7,
+      "question": "Express in index form logax + logay = 3",
+      "options": [
+        "A. x + y = 3",
+        "B. xy = 3",
+        "C. xy = a3",
+        "D. x + y = a3"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 8,
+      "question": "If (3  - 4   2)(1 + 3  2) = a + b   2, find the value of b",
+      "options": [
+        "A. -21",
+        "B. -5",
+        "C. 5",
+        "D. 21"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 9,
+      "question": "If log3(2x – 1) = 5, find the value of x",
+      "options": [
+        "A. 16",
+        "B. 122",
+        "C. 64",
+        "D. 8"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 10,
+      "question": "A trader gave a change of N540.00 instead of N570.00 to a customer. Calculate the percentage error",
+      "options": [
+        "A. 5%",
+        "B. 5%",
+        "C. 5%",
+        "D. 5%"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 11,
+      "question": "Given that log416 = logy36, find the value of y",
+      "options": [
+        "A. 6",
+        "B. 8",
+        "C. ",
+        "D. 3"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 12,
+      "question": "The bearing of P from G is 0640. What is the bearing of G from P?",
+      "options": [
+        "A. 1280",
+        "B. 2440",
+        "C. 1160",
+        "D. 1800"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 13,
+      "question": "Simplify:   2000 -   72",
+      "options": [
+        "A. 8  2",
+        "B. 2   2",
+        "C. 4  2",
+        "D. 10  2"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 14,
+      "question": "Make R the subject of the relation V = L (R2 – r2)",
+      "options": [
+        "A. R =    V + Lr2",
+        "B. R =   V - Lr2",
+        "C. R =     - r2",
+        "D. R =     + r2"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 15,
+      "question": "Factorize: 3 – 2x – x2",
+      "options": [
+        "A. (x – 1)(x + 3)",
+        "B. (x – 1)(x – 3)",
+        "C. (x + 1)(x – 3)",
+        "D. (x + 1)(x + 3)"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 16,
+      "question": "A variable P varies inversely as the square of Q. If P = 5 when Q = 6, find Q when P = 1.8",
+      "options": [
+        "A. 5",
+        "B. 10",
+        "C. 15",
+        "D. 20"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 17,
+      "question": "Find the quadratic equation whose roots are   and -1",
+      "options": [
+        "A. 3x2 – x – 2 = 0",
+        "B. 3x2  + x + 2 = 0",
+        "C. 3x2 + x – 2 = 0",
+        "D. 3x2 + x – 1 = 0"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 18,
+      "question": "Hauwa, Bilikisu and Aisha shared 60 oranges in the ratio 5:3:7 respectively. How many oranges did Bilikisu receive?",
+      "options": [
+        "A. 16",
+        "B. 20",
+        "C. 28",
+        "D. 12"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 19,
+      "question": "Evaluate    leaving your answer in standard form",
+      "options": [
+        "A. 1.67 x 10^-3",
+        "B. 1.67 x 10^-1",
+        "C. 1.67 x 10^2",
+        "D. 1.67 x 10^-2"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 20,
+      "question": "Find the determinant of the matric",
+      "options": [
+        "A. 3",
+        "B. 14",
+        "C. 29",
+        "D. 33"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 21,
+      "question": "Solve:    =",
+      "options": [
+        "A. 36",
+        "B. -36",
+        "C. 12",
+        "D. -12"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 22,
+      "question": "Solve the following equation simultaneously 5x+2y = 1, 32x+y = 27",
+      "options": [
+        "A. x = -1, y = -1",
+        "B. x = 2, y = -1",
+        "C. x = -2, y = -1",
+        "D. x = 2, y = 1"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 23,
+      "question": "Factorize: 4y2  -  144",
+      "options": [
+        "A. 2(y + 6)(y – 6)",
+        "B. 4(y - 6)(y- 6)",
+        "C. 4(y + 6)(y – 6)",
+        "D. (2y – 12)(2y – 12)"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 24,
+      "question": "The square root of a number is 2K. What is half of the number?",
+      "options": [
+        "A. K",
+        "B. ",
+        "C. ½K2",
+        "D. 2K2"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 25,
+      "question": "Three students Aisha, Mubarak and Safiyah share N500 in the ratio 3:2:x respectively. If Aisha  share is N150, find the value of x",
+      "options": [
+        "A. 5",
+        "B. 1",
+        "C. 4",
+        "D. 6"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 26,
+      "question": "What must be added to (2x – 3y) to get (x – 2y)?",
+      "options": [
+        "A. y – x",
+        "B. 5y - x",
+        "C. y – 5x",
+        "D. x – y"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 27,
+      "question": "If 27x = 9y, find the value of",
+      "options": [
+        "A. ",
+        "B. 1",
+        "C. ",
+        "D. 3"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 28,
+      "question": "Solve the inequality 3(x+1)    5(x + 2) + 15",
+      "options": [
+        "A. x  -11",
+        "B. x  -4",
+        "C. x  -11",
+        "D. x  -14"
+      ],
+      "correctOption": "A",
+      "diagram": "/uploads/diagrams/mathematics/diagram_28.PNG"
+    },
+    {
+      "id": 29,
+      "question": "Given that tanx = 1, where 00  x  900, evaluate",
+      "options": [
+        "A. 2   2",
+        "B. 2",
+        "C. ½",
+        "D. "
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 30,
+      "question": "If sin3y = cos2y and 00    y   900, find the value of y",
+      "options": [
+        "A. 180",
+        "B. 360",
+        "C. 540",
+        "D. 900"
+      ],
+      "correctOption": "C",
+      "diagram": "/uploads/diagrams/mathematics/diagram_30.PNG"
+    },
+    {
+      "id": 31,
+      "question": "If the sum of the roots of the equation (x – p) (2x + 1) = 0 is 1, find the value of P",
+      "options": [
+        "A. ",
+        "B. ",
+        "C. 1",
+        "D. -1"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 32,
+      "question": "The mean of the numbers 2, 5, 2x and 7 is less than or equal to 5. Find the range of value of x",
+      "options": [
+        "A. x  3",
+        "B. x  3",
+        "C. x   3",
+        "D. x   3"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 33,
+      "question": "A die is tossed once. Find the probability of getting a prime number",
+      "options": [
+        "A. ",
+        "B. ",
+        "C. ",
+        "D. "
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 34,
+      "question": "If A =  and B = , find (A + 3B)",
+      "options": [
+        "A. ",
+        "B. ",
+        "C. ",
+        "D. "
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 35,
+      "question": "If (x – 3) is one of the factors of x2 + 14x  - 15, find the other factor",
+      "options": [
+        "A. (x + 17)",
+        "B. (x – 17)",
+        "C. (x – 22)",
+        "D. (x +11)"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 36,
+      "question": "Solve the equation: x5 =",
+      "options": [
+        "A. -5",
+        "B. -2",
+        "C. ",
+        "D. "
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 37,
+      "question": "Simplify:  5  12   -  5  75  +  3  48",
+      "options": [
+        "A. 4   2",
+        "B. 4   3",
+        "C. 2   3",
+        "D. 3   2"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 38,
+      "question": "A fridge bought for N120,000.00 depreciate by 25% in the first year and 20% the second year. Find its value at the end of second year",
+      "options": [
+        "A. N80,000.00",
+        "B. N90,000.00",
+        "C. N120,000.00",
+        "D. N72,000.00"
+      ],
+      "correctOption": "D",
+      "diagram": "/uploads/diagrams/mathematics/diagram_38.PNG"
+    },
+    {
+      "id": 39,
+      "question": "Rationalize",
+      "options": [
+        "A. ",
+        "B. 3  -   5",
+        "C. 4 -   5",
+        "D. 5 -   5"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 40,
+      "question": "Evaluate:  log58  +  Log59   -  log52",
+      "options": [
+        "A. 2log52",
+        "B. 2log53",
+        "C. 2log56",
+        "D. 2log57"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 41,
+      "question": "What must be added to y2 – 7y to make the expression a perfect square?",
+      "options": [
+        "A. ",
+        "B. ",
+        "C. -",
+        "D. "
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 42,
+      "question": "Find the gradient of a line joining the point A(-5, 8) and B(11, -2)",
+      "options": [
+        "A. -",
+        "B. -",
+        "C. ",
+        "D. "
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 43,
+      "question": "The bearing of 750W can also be expressed as",
+      "options": [
+        "A. 2850",
+        "B. 2550",
+        "C. 2250",
+        "D. 1650"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 44,
+      "question": "In the figure below, O is the centre of the circle. Find the value of y",
+      "options": [
+        "A. 530",
+        "B. 1060",
+        "C. 1270",
+        "D. 2330"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 45,
+      "question": "In a circle of radius 10cm, find the distance of a chord of length 16cm from the centre of the circle",
+      "options": [
+        "A. 3cm",
+        "B. 2cm",
+        "C. 6cm",
+        "D. 8cm"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 46,
+      "question": "Calculate the variance of the following data: 2, 3, 5, 6",
+      "options": [
+        "A. 4.0",
+        "B. 2.0",
+        "C. 1.58",
+        "D. 2.5"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 47,
+      "question": "Find the range of the following data : 23, 72, 51, 61, 42, 34, 22, 52",
+      "options": [
+        "A. 22",
+        "B. 25",
+        "C. 34",
+        "D. 50"
+      ],
+      "correctOption": "D"
+    },
+    {
+      "id": 48,
+      "question": "Calculate the standard deviation of the following set of number 9, 8, 7, 6, 4, 2",
+      "options": [
+        "A. 4.38",
+        "B. 5.67",
+        "C. 2.38",
+        "D. 6.48"
+      ],
+      "correctOption": "C"
+    },
+    {
+      "id": 49,
+      "question": "The third and ninth terms of an Arithmetic Progression(AP) are 9 and -27 respectively. Find the fifth term",
+      "options": [
+        "A. 3",
+        "B. - 3",
+        "C. - 6",
+        "D. 18"
+      ],
+      "correctOption": "B"
+    },
+    {
+      "id": 50,
+      "question": "Hauwa will be 31 years in Xyears time. If Hauwa is 6years older than Aisha. Find expression for Aisha’s present age",
+      "options": [
+        "A. 25 – x",
+        "B. 31 + x",
+        "C. 25 + x",
+        "D. 31 - x"
+      ],
+      "correctOption": "A"
+    }
+  ],
+  "class_category": "SS3"
+}
