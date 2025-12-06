@@ -31,7 +31,7 @@ const deleteModal = document.getElementById("deleteModal");
 const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
 
 /* ============================================================================
-   1. LOAD RESULTS FROM BACKEND
+   1. LOAD RESULTS FROM BACKEND  — FIXED ENDPOINT + SAFER HANDLING
 ============================================================================ */
 async function loadResults() {
     const classVal = classSelector.value.trim();
@@ -47,7 +47,11 @@ async function loadResults() {
     `;
 
     try {
-        const response = await fetch(`/api/results?class=${classVal}&subject=${subjectVal}`);
+        // ✅ FIXED — use the correct backend route
+        const response = await fetch(
+            `/api/results/load?class=${encodeURIComponent(classVal)}&subject=${encodeURIComponent(subjectVal)}`
+        );
+
         const data = await response.json();
 
         RESULTS = data.results || [];

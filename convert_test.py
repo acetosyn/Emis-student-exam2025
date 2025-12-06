@@ -1,9 +1,14 @@
 # ============================================================
+<<<<<<< HEAD
 # convert_test.py — MASS JSON REGENERATOR (2025 DIAGRAM VERSION)
 # ------------------------------------------------------------
 # Uses the updated convert.py (with Option-A JSON repair engine)
 # • Regenerates ALL JSON files cleanly
 # • Clears old JSONs before generating new ones
+=======
+# convert_test.py — MASS JSON REGENERATOR (2025 GROUPED EDITION)
+# Works with the NEW convert.py (groups + passages + fixed counts)
+>>>>>>> echo
 # ============================================================
 
 import os
@@ -13,7 +18,13 @@ from convert import convert_exam, save_output
 BASE_DOCX = "static/subjects/subjects-docx"
 BASE_JSON = "static/subjects/subjects-json"
 
+<<<<<<< HEAD
 # Create required JSON folders
+=======
+# ------------------------------------------------------------
+# ENSURE JSON FOLDERS EXIST
+# ------------------------------------------------------------
+>>>>>>> echo
 for cls in ["SS1", "SS2", "SS3", "GENERAL"]:
     os.makedirs(os.path.join(BASE_JSON, cls), exist_ok=True)
 
@@ -22,11 +33,10 @@ for cls in ["SS1", "SS2", "SS3", "GENERAL"]:
 # CLEAN OLD JSON FILES
 # ============================================================
 def clear_old_jsons():
-    print("\n=== 🧹 Clearing old JSON folders ===\n")
+    print("\n=== 🧹 Clearing OLD JSONs (SS1 / SS2 / SS3 / GENERAL) ===\n")
 
     for cls in ["SS1", "SS2", "SS3", "GENERAL"]:
         folder = os.path.join(BASE_JSON, cls)
-
         if not os.path.exists(folder):
             os.makedirs(folder)
 
@@ -39,21 +49,32 @@ def clear_old_jsons():
                 except PermissionError:
                     print(f"⚠ Skipped locked file → {path}")
 
+<<<<<<< HEAD
     print("\n✅ All old JSON files cleared.\n")
 
 
 # ============================================================
 # SAFE CONVERSION WRAPPER
 # ============================================================
+=======
+    print("\n✅ JSON folders cleaned.\n")
+
+
+# ------------------------------------------------------------
+# SAFE CONVERSION with RETRY LOGIC
+# ------------------------------------------------------------
+>>>>>>> echo
 def safe_convert(full_path, filename, max_retries=2):
     retries = 0
 
     while retries <= max_retries:
         try:
+            print(f"🔍 Running convert_exam on: {filename}")
             return convert_exam(full_path)
 
         except Exception as e:
             print(f"\n⚠ ERROR converting {filename}")
+<<<<<<< HEAD
             print(f"   Reason: {e}\n")
 
             retries += 1
@@ -62,6 +83,16 @@ def safe_convert(full_path, filename, max_retries=2):
                 time.sleep(2)
             else:
                 print("⛔ Conversion FAILED — Skipping.\n")
+=======
+            print(f"   → Reason: {e}")
+
+            retries += 1
+            if retries <= max_retries:
+                print(f"🔁 Retrying ({retries}/{max_retries}) …\n")
+                time.sleep(2)
+            else:
+                print("⛔ FAILED — skipping this file.\n")
+>>>>>>> echo
                 return None
 
 
@@ -69,33 +100,55 @@ def safe_convert(full_path, filename, max_retries=2):
 # PROCESS ALL DOCX FILES
 # ============================================================
 def convert_all():
+<<<<<<< HEAD
     print("\n=== 🚀 STARTING MASS JSON CONVERSION ===\n")
 
     if not os.path.exists(BASE_DOCX):
         print(f"❌ DOCX folder missing: {BASE_DOCX}")
+=======
+    print("\n=== 🚀 STARTING MASS CONVERSION OF ALL SUBJECTS ===\n")
+
+    if not os.path.exists(BASE_DOCX):
+        print(f"❌ subjects-docx folder NOT FOUND → {BASE_DOCX}")
+>>>>>>> echo
         return
 
-    docx_files = sorted([f for f in os.listdir(BASE_DOCX) if f.endswith(".docx")])
+    docx_files = sorted([f for f in os.listdir(BASE_DOCX) if f.lower().endswith(".docx")])
 
     if not docx_files:
+<<<<<<< HEAD
         print("❌ No .docx files found in subjects-docx")
+=======
+        print("❌ No .docx files found in subjects-docx folder.")
+>>>>>>> echo
         return
 
     for filename in docx_files:
-        print(f"\n📘 Converting: {filename}")
+        print(f"\n📘 Converting → {filename}")
         full_path = os.path.join(BASE_DOCX, filename)
 
         result = safe_convert(full_path, filename)
         if not result:
+<<<<<<< HEAD
             continue  # skip failed ones
+=======
+            continue  # skip failed extraction
+>>>>>>> echo
 
         subject, class_cat, data = result
 
+        # Save JSON
         save_output(subject, class_cat, data)
 
+<<<<<<< HEAD
         print(f"✅ Successfully completed → {filename}\n")
 
     print("\n🎉 DONE — All subjects processed successfully!\n")
+=======
+        print(f"✅ Finished → {filename}\n")
+
+    print("\n🎉 COMPLETED — All subjects processed successfully!\n")
+>>>>>>> echo
 
 
 # ============================================================

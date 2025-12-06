@@ -49,9 +49,28 @@ def init_db():
 
 
 # ============================================================
-#   SAVE RESULT  — FINAL VERSION (SQLite + Excel)
+#   SAVE RESULT  — FINAL FIXED VERSION (SQLite + Excel)
 # ============================================================
 from modules.excel_manager import append_result_to_excel
+
+SUBJECT_MAP = {
+    "FINANCIAL ACCOUNTING": "ACCOUNTING",
+    "ACCOUNTS": "ACCOUNTING",
+    "ACCOUNTING": "ACCOUNTING",
+
+    "ENGLISH LANGUAGE": "ENGLISH",
+    "ENGLISH": "ENGLISH",
+
+    "MATHEMATICS": "MATHEMATICS",
+    "MATHS": "MATHEMATICS",
+}
+
+def normalize_subject(name: str) -> str:
+    if not name:
+        return "UNKNOWN"
+    name = name.strip().upper()
+    return SUBJECT_MAP.get(name, name)
+
 
 def save_result(data: dict):
     """
@@ -59,14 +78,20 @@ def save_result(data: dict):
     - SQLite database
     - Excel folder structure (CLASS/SS1/Subject/results.xlsx)
     """
-
     init_db()
 
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # Timestamp
-    submitted_at = data.get("submittedAt") or datetime.now().isoformat()
+    # --- FIX 1: Accept both submittedAt and submitted_at ---
+    submitted_at = (
+        data.get("submittedAt") or
+        data.get("submitted_at") or
+        datetime.now().isoformat()
+    )
+
+    # --- FIX 2: Normalize subject before saving ---
+    subject = normalize_subject(data.get("subject"))
 
     # Defensive extraction
     total = int(data.get("total") or 0)
@@ -96,8 +121,8 @@ def save_result(data: dict):
         data.get("class_name"),
         data.get("class_category"),
 
-        data.get("subject"),
-        data.get("score"),               # percent
+        subject,
+        data.get("score"),
         correct,
         incorrect,
         total,
@@ -123,7 +148,7 @@ def save_result(data: dict):
         "admission_number": data.get("admission_number"),
         "class_name": data.get("class_name"),
         "class_category": data.get("class_category"),
-        "subject": data.get("subject"),
+        "subject": subject,
 
         "score": data.get("score") or 0,
         "correct": correct,

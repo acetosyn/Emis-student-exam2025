@@ -1,9 +1,30 @@
 {
+<<<<<<< HEAD
   "school": "EPITOME MODEL ISLAMIC SCHOOLS",
   "subject": "Accounts",
   "exam_title": "1st Term Examination",
   "instructions": "Answer all questions.",
   "time_allowed_minutes": 60,
+=======
+  "subject": "Accounts",
+  "class_category": "SS1",
+  "groups": [
+    {
+      "start_id": 1,
+      "end_id": 50,
+      "instruction": "ANSWER ALL QUESTIONS",
+      "passage": "",
+      "diagram": null,
+      "question_ids": [
+        1,2,3,4,5,6,7,8,9,10,
+        11,12,13,14,15,16,17,18,19,20,
+        21,22,23,24,25,26,27,28,29,30,
+        31,32,33,34,35,36,37,38,39,40,
+        41,42,43,44,45,46,47,48,49,50
+      ]
+    }
+  ],
+>>>>>>> echo
   "questions": [
     {
       "id": 1,
@@ -18,7 +39,11 @@
     },
     {
       "id": 2,
+<<<<<<< HEAD
       "question": "When was Association of National Accountants of Nigeria(ANAN) established?",
+=======
+      "question": "When was Association of National Accountants of Nigeria (ANAN) established?",
+>>>>>>> echo
       "options": [
         "A. 1993",
         "B. 1983",
@@ -29,7 +54,11 @@
     },
     {
       "id": 3,
+<<<<<<< HEAD
       "question": "The difference between two and three columns cashbook is",
+=======
+      "question": "The difference between two and three column cashbook is",
+>>>>>>> echo
       "options": [
         "A. bank",
         "B. cash",
@@ -115,6 +144,10 @@
       ],
       "correctOption": "A"
     },
+<<<<<<< HEAD
+=======
+
+>>>>>>> echo
     {
       "id": 11,
       "question": "A user of accounting information who would be more interested in the liquidity of the firm is the",
@@ -128,7 +161,11 @@
     },
     {
       "id": 12,
+<<<<<<< HEAD
       "question": "When was the Institute of Chartered Accountants of Nigerian established?",
+=======
+      "question": "When was the Institute of Chartered Accountants of Nigeria established?",
+>>>>>>> echo
       "options": [
         "A. 1982",
         "B. 1980",
@@ -194,7 +231,11 @@
     },
     {
       "id": 18,
+<<<<<<< HEAD
       "question": "The concept of double entry book keeping states that",
+=======
+      "question": "The concept of double entry bookkeeping states that",
+>>>>>>> echo
       "options": [
         "A. for every buyer there is a seller",
         "B. one party gives value and another party receives value",
@@ -205,7 +246,11 @@
     },
     {
       "id": 19,
+<<<<<<< HEAD
       "question": "The number of accounting entries requires to record each financial transaction in the double entry accounting system are",
+=======
+      "question": "The number of accounting entries required to record each financial transaction in the double entry system is",
+>>>>>>> echo
       "options": [
         "A. one",
         "B. two",
@@ -225,6 +270,10 @@
       ],
       "correctOption": "A"
     },
+<<<<<<< HEAD
+=======
+
+>>>>>>> echo
     {
       "id": 21,
       "question": "In cash book, the discount that will not appear or be recorded is",
@@ -282,14 +331,22 @@
     },
     {
       "id": 26,
+<<<<<<< HEAD
       "question": "How much is the balance carried down from the following information?",
+=======
+      "question": "How much is the balance carried down from the following information? Purchased goods N100, Sold goods N150, Loaned Tunde cash N80, Received N200 from Dairo, Paid Chukwu N80, Sold goods N500.",
+>>>>>>> echo
       "options": [
         "A. N890",
         "B. N790",
         "C. N690",
         "D. N590"
       ],
+<<<<<<< HEAD
       "correctOption": "B"
+=======
+      "correctOption": "A"
+>>>>>>> echo
     },
     {
       "id": 27,
@@ -304,7 +361,11 @@
     },
     {
       "id": 28,
+<<<<<<< HEAD
       "question": "Which of the following in a classified form contains a permanent record of all transaction?",
+=======
+      "question": "Which of the following contains a permanent record of all transactions?",
+>>>>>>> echo
       "options": [
         "A. Sales daybook",
         "B. Journal",
@@ -315,7 +376,11 @@
     },
     {
       "id": 29,
+<<<<<<< HEAD
       "question": "External users of accounting information includes",
+=======
+      "question": "External users of accounting information include",
+>>>>>>> echo
       "options": [
         "A. employees",
         "B. bankers",
@@ -335,6 +400,10 @@
       ],
       "correctOption": "C"
     },
+<<<<<<< HEAD
+=======
+
+>>>>>>> echo
     {
       "id": 31,
       "question": "When cash is deposited into the bank out of the cash in hand, the entry is called",
@@ -350,6 +419,7 @@
       "id": 32,
       "question": "The three column cashbook represents how many accounts?",
       "options": [
+<<<<<<< HEAD
         "A. three account",
         "B. two account",
         "C. one account",
@@ -360,6 +430,18 @@
     {
       "id": 33,
       "question": "Mrs. Aisha bought a vehicle for N100,000 paying by cheque, identify the two accounts involved",
+=======
+        "A. three accounts",
+        "B. two accounts",
+        "C. one account",
+        "D. four accounts"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 33,
+      "question": "Mrs. Aisha bought a vehicle for N100,000 paying by cheque. Identify the two accounts involved:",
+>>>>>>> echo
       "options": [
         "A. vehicle and cheque account",
         "B. vehicle and bank account",
@@ -370,18 +452,31 @@
     },
     {
       "id": 34,
+<<<<<<< HEAD
       "question": "The principle of double entry can be summarized thus",
       "options": [
         "A. Dr – owner and Cr- business",
         "B. Dr – receiver and Cr – giver",
         "C. Dr – income and Cr – gain",
         "D. Cr – assets and Cr- liabilities"
+=======
+      "question": "The principle of double entry can be summarized thus:",
+      "options": [
+        "A. Dr – owner and Cr – business",
+        "B. Dr – receiver and Cr – giver",
+        "C. Dr – income and Cr – gain",
+        "D. Cr – assets and Cr – liabilities"
+>>>>>>> echo
       ],
       "correctOption": "B"
     },
     {
       "id": 35,
+<<<<<<< HEAD
       "question": "Withdrew cheque N10,000 for private use, identify the two account involved",
+=======
+      "question": "Withdrew cheque N10,000 for private use. Identify the two accounts involved:",
+>>>>>>> echo
       "options": [
         "A. drawings and cheque account",
         "B. private and drawings account",
@@ -395,6 +490,7 @@
       "question": "All credit transactions must first be entered into",
       "options": [
         "A. daybook",
+<<<<<<< HEAD
         "B. cash book",
         "C. ledger",
         "D. sales book"
@@ -404,6 +500,17 @@
     {
       "id": 37,
       "question": "Mrs. Idi-Araba started a business with N400,000, identify the two accounts involved",
+=======
+        "B. cashbook",
+        "C. ledger",
+        "D. sales book"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 37,
+      "question": "Mrs. Idi-Araba started a business with N400,000. Identify the two accounts involved:",
+>>>>>>> echo
       "options": [
         "A. capital and loan account",
         "B. Mrs. Idi-Araba and cash account",
@@ -414,18 +521,30 @@
     },
     {
       "id": 38,
+<<<<<<< HEAD
       "question": "The primary purpose of source document",
       "options": [
         "A. to record transactions in the ledger",
         "B. to provide evidence of financial transactions",
         "C. to prepare financial statement",
+=======
+      "question": "The primary purpose of source document is",
+      "options": [
+        "A. to record transactions in the ledger",
+        "B. to provide evidence of financial transactions",
+        "C. to prepare financial statements",
+>>>>>>> echo
         "D. to analyze financial performance"
       ],
       "correctOption": "B"
     },
     {
       "id": 39,
+<<<<<<< HEAD
       "question": "Which of the following is an example of source document?",
+=======
+      "question": "Which of the following is an example of a source document?",
+>>>>>>> echo
       "options": [
         "A. Ledger account",
         "B. Trial balance",
@@ -440,11 +559,20 @@
       "options": [
         "A. Original document",
         "B. Provides evidence of a transaction",
+<<<<<<< HEAD
         "C. Prepare after recording in the ledger",
         "D. Support accounting records"
       ],
       "correctOption": "C"
     },
+=======
+        "C. Prepared after recording in the ledger",
+        "D. Supports accounting records"
+      ],
+      "correctOption": "C"
+    },
+
+>>>>>>> echo
     {
       "id": 41,
       "question": "Subsidiary books are also known as",
@@ -460,7 +588,11 @@
       "id": 42,
       "question": "The fundamental principle of double entry accounting is",
       "options": [
+<<<<<<< HEAD
         "A. every transaction affects only account",
+=======
+        "A. every transaction affects only one account",
+>>>>>>> echo
         "B. every transaction affects two accounts",
         "C. assets = liabilities – capital",
         "D. revenue = expenses"
@@ -469,12 +601,20 @@
     },
     {
       "id": 43,
+<<<<<<< HEAD
       "question": "The purpose of debit and credit entries  in double entry accounting",
+=======
+      "question": "The purpose of debit and credit entries in double entry accounting is",
+>>>>>>> echo
       "options": [
         "A. to record only increase in assets and decrease in liabilities",
         "B. to record only decrease in assets and decrease in liabilities",
         "C. to record increase and decrease in accounts",
+<<<<<<< HEAD
         "D. to prepare financial statement"
+=======
+        "D. to prepare financial statements"
+>>>>>>> echo
       ],
       "correctOption": "C"
     },
@@ -504,7 +644,11 @@
       "id": 46,
       "question": "Example of subsidiary books include",
       "options": [
+<<<<<<< HEAD
         "A. sales book, purchases book, cash book",
+=======
+        "A. sales book, purchases book, cashbook",
+>>>>>>> echo
         "B. ledger, journal, trial balance",
         "C. balance sheet, income statement, cash flow statement",
         "D. journal, ledger, financial statements"
@@ -515,10 +659,17 @@
       "id": 47,
       "question": "The accounting equation is",
       "options": [
+<<<<<<< HEAD
         "A. Assets  =  Liability – Capital",
         "B. Assets = Revenue  – Expenses",
         "C. Assets = Capital – Liabilities",
         "D. Assets = Liabilities + capital"
+=======
+        "A. Assets = Liability – Capital",
+        "B. Assets = Revenue – Expenses",
+        "C. Assets = Capital – Liabilities",
+        "D. Assets = Liabilities + Capital"
+>>>>>>> echo
       ],
       "correctOption": "D"
     },
@@ -526,7 +677,11 @@
       "id": 48,
       "question": "Accounting can be defined as",
       "options": [
+<<<<<<< HEAD
         "A. the process of recording, classify and reporting financial information",
+=======
+        "A. the process of recording, classifying, and reporting financial information",
+>>>>>>> echo
         "B. the process of reporting tax return",
         "C. the process of analyzing financial statement",
         "D. the process of making investment decision"
@@ -555,6 +710,11 @@
       ],
       "correctOption": "C"
     }
+<<<<<<< HEAD
   ],
   "class_category": "SS1"
 }
+=======
+  ]
+}
+>>>>>>> echo
