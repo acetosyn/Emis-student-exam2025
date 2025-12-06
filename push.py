@@ -1,4 +1,4 @@
-# push.py — All Portal Push Logic (FINAL 2025 FIXED VERSION)
+# push.py — All Portal Push Logic (UPDATED FOR STATIC PATHS — 2025)
 import os
 import json
 from flask import Blueprint, jsonify, request, session
@@ -7,7 +7,13 @@ push_bp = Blueprint("push_bp", __name__)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-SUBJECTS_JSON_FOLDER = os.path.join(BASE_DIR, "subjects-json")
+# ----------------------------------------------
+# NEW FIXED PATH → static/subjects/subjects-json
+# ----------------------------------------------
+SUBJECTS_JSON_FOLDER = os.path.join(
+    BASE_DIR, 
+    "static", "subjects", "subjects-json"
+)
 
 # Folder where pushed subjects are stored per class
 PORTAL_ROOT = os.path.join(BASE_DIR, "exam-portal")
@@ -32,7 +38,7 @@ def save_pushed_data(data):
 
 
 # ======================================================
-# PUSH SUBJECTS TO CLASS FOLDER (SS1 / SS2 / SS3)
+# PUSH SUBJECTS TO SPECIFIC CLASS (SS1 / SS2 / SS3)
 # ======================================================
 @push_bp.route("/push", methods=["POST"])
 def push_subjects():
@@ -52,18 +58,21 @@ def push_subjects():
 
     copied_files = []
 
+    # -----------------------------------
+    # NOW SEARCH IN: static/subjects/subjects-json/SS1, SS2, SS3
+    # -----------------------------------
     for fname in filenames:
         found = False
 
-        # search in SS1, SS2, SS3, GENERAL
-        for ccat in ["SS1", "SS2", "SS3", "GENERAL"]:
+        for ccat in ["SS1", "SS2", "SS3"]:
             src = os.path.join(SUBJECTS_JSON_FOLDER, ccat, fname)
 
             if os.path.exists(src):
                 found = True
+
                 dst = os.path.join(class_folder, fname)
 
-                # FIX: always UTF-8
+                # Read -> Write JSON
                 with open(src, "r", encoding="utf-8") as s:
                     data = json.load(s)
 
@@ -77,7 +86,7 @@ def push_subjects():
                 break
 
         if not found:
-            print(f"⚠️ WARNING: {fname} not found in subjects-json folders.")
+            print(f"⚠️ WARNING: File not found: {fname}")
 
     save_pushed_data(pushed)
 
@@ -120,7 +129,7 @@ def clear_portal():
 
 
 # ======================================================
-# STUDENT PORTAL FETCHES SUBJECTS HERE
+# STUDENT PORTAL FETCH
 # ======================================================
 @push_bp.route("/get_pushed_subjects", methods=["GET"])
 def student_get_pushed():
