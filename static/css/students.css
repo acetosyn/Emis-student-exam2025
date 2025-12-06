@@ -568,3 +568,52 @@ body.students-body {
 }
 
 
+
+
+/* ============================================================================
+   EXAM MODAL — UPDATED POSITIONING (Moved Further Up)
+============================================================================ */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  display: none;
+  place-items: center;
+  z-index: 9999;
+  padding-top: 100px;        /* increased from 40px → pushes modal MUCH higher */
+}
+
+.modal-overlay.show {
+  display: grid;
+}
+
+.modal-box {
+  background: #ffffff;
+  width: 92%;
+  max-width: 420px;
+  padding: 1.4rem 1.6rem;
+  border-radius: 14px;
+  box-shadow: var(--shadow-lg);
+  animation: modalSlide 0.25s ease-out;
+  transform: translateY(-80px);   /* increased from -40px → lifts modal even more */
+}
+
+@keyframes modalSlide {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(-80px); }
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.modal-actions {
+  margin-top: 1.4rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+}

@@ -1,141 +1,107 @@
-# convert_test.py
+# ============================================================
+# convert_test.py — MASS JSON REGENERATOR (2025 GROUPED EDITION)
+# Works with the NEW convert.py (groups + passages + fixed counts)
+# ============================================================
+
 import os
-import shutil
-from convert import (
-    detect_subject,
-    detect_version,
-    detect_class_category,
-    convert_exam,
-    save_output
-)
+import time
+from convert import convert_exam, save_output
 
-SUBJECTS_DIR = "subjects"
-JSON_DIR = "subjects-json"
+BASE_DOCX = "static/subjects/subjects-docx"
+BASE_JSON = "static/subjects/subjects-json"
 
-
-# ---------------------------------------------------------
-# MAP VERSION → CLASS
-# ---------------------------------------------------------
-def class_from_version(version):
-    if version == "1": return "SS1"
-    if version == "2": return "SS2"
-    if version == "3": return "SS3"
-    return "GENERAL"
+# ------------------------------------------------------------
+# ENSURE JSON FOLDERS EXIST
+# ------------------------------------------------------------
+for cls in ["SS1", "SS2", "SS3", "GENERAL"]:
+    os.makedirs(os.path.join(BASE_JSON, cls), exist_ok=True)
 
 
-# ---------------------------------------------------------
-# RENAME OLD JSON FILES INTO SS1/SS2/SS3
-# ---------------------------------------------------------
-def rename_old_jsons():
-    print("\n=== 🔄 Fixing Old JSON Files ===\n")
+# ------------------------------------------------------------
+# CLEAN OLD JSON FILES
+# ------------------------------------------------------------
+def clear_old_jsons():
+    print("\n=== 🧹 Clearing OLD JSONs (SS1 / SS2 / SS3 / GENERAL) ===\n")
 
-    for f in os.listdir(JSON_DIR):
-        if not f.lower().endswith(".json"):
-            continue
-        if f == "pushed_subjects.json":
-            continue
+    for cls in ["SS1", "SS2", "SS3", "GENERAL"]:
+        folder = os.path.join(BASE_JSON, cls)
+        if not os.path.exists(folder):
+            os.makedirs(folder)
 
-        old_path = os.path.join(JSON_DIR, f)
+        for file in os.listdir(folder):
+            if file.endswith(".json"):
+                path = os.path.join(folder, file)
+                print(f"🗑 Removing → {path}")
+                try:
+                    os.remove(path)
+                except PermissionError:
+                    print(f"⚠ Skipped locked file → {path}")
 
-        subject = detect_subject(f)
-        version = detect_version(f)
-        class_cat = detect_class_category(f)
-
-        # Map old filenames like accounts1.json
-        if class_cat == "GENERAL":
-            class_cat = class_from_version(version)
-
-        safe = subject.lower().replace(" ", "_")
-        class_folder = class_cat.upper()
-
-        target_dir = os.path.join(JSON_DIR, class_folder)
-        os.makedirs(target_dir, exist_ok=True)
-
-        new_name = f"{safe}_{class_cat.lower()}.json"
-        new_path = os.path.join(target_dir, new_name)
-
-        print(f"📁 Moving {f} → {new_path}")
-        shutil.move(old_path, new_path)
-
-    print("\n✅ JSON Rename Completed!\n")
+    print("\n✅ JSON folders cleaned.\n")
 
 
-# ---------------------------------------------------------
-# TRACK EXISTING JSON
-# RETURNS SET OF (subject, CLASS)
-# ---------------------------------------------------------
-def get_existing_json_map():
-    existing = set()
+# ------------------------------------------------------------
+# SAFE CONVERSION with RETRY LOGIC
+# ------------------------------------------------------------
+def safe_convert(full_path, filename, max_retries=2):
+    retries = 0
 
-    for root, dirs, files in os.walk(JSON_DIR):
-        for f in files:
-            if not f.endswith(".json"):
-                continue
-            if f == "pushed_subjects.json":
-                continue
+    while retries <= max_retries:
+        try:
+            print(f"🔍 Running convert_exam on: {filename}")
+            return convert_exam(full_path)
 
-            name = f.replace(".json", "")
+        except Exception as e:
+            print(f"\n⚠ ERROR converting {filename}")
+            print(f"   → Reason: {e}")
 
-            try:
-                subj, cls = name.rsplit("_", 1)
-                existing.add((subj.lower(), cls.upper()))
-            except:
-                pass
+            retries += 1
+            if retries <= max_retries:
+                print(f"🔁 Retrying ({retries}/{max_retries}) …\n")
+                time.sleep(2)
+            else:
+                print("⛔ FAILED — skipping this file.\n")
+                return None
 
-    return existing
 
+# ------------------------------------------------------------
+# PROCESS ALL DOCX FILES
+# ------------------------------------------------------------
+def convert_all():
+    print("\n=== 🚀 STARTING MASS CONVERSION OF ALL SUBJECTS ===\n")
 
-# ---------------------------------------------------------
-# AUTO-RESUME CONVERSION
-# ---------------------------------------------------------
-def resume_conversion():
-    print("\n=== 🚀 Resuming Remaining Conversions ===\n")
+    if not os.path.exists(BASE_DOCX):
+        print(f"❌ subjects-docx folder NOT FOUND → {BASE_DOCX}")
+        return
 
-    existing = get_existing_json_map()
-    docx_files = sorted([f for f in os.listdir(SUBJECTS_DIR) if f.endswith(".docx")])
+    docx_files = sorted([f for f in os.listdir(BASE_DOCX) if f.lower().endswith(".docx")])
 
     if not docx_files:
-        print("❌ No DOCX files found.")
+        print("❌ No .docx files found in subjects-docx folder.")
         return
 
     for filename in docx_files:
-        subject = detect_subject(filename)
-        class_cat = detect_class_category(filename)
+        print(f"\n📘 Converting → {filename}")
+        full_path = os.path.join(BASE_DOCX, filename)
 
-        # Map accounts1 → SS1
-        if class_cat == "GENERAL":
-            class_cat = class_from_version(detect_version(filename))
+        result = safe_convert(full_path, filename)
 
-        safe_subject = subject.lower().replace(" ", "_")
+        if not result:
+            continue  # skip failed extraction
 
-        # Skip if this subject/class already exists
-        if (safe_subject, class_cat.upper()) in existing:
-            print(f"⏭ SKIP (already done): {filename}")
-            continue
+        subject, class_cat, data = result
 
-        print(f"\n📘 Converting: {filename}")
+        # Save JSON
+        save_output(subject, class_cat, data)
 
-        try:
-            path = os.path.join(SUBJECTS_DIR, filename)
+        print(f"✅ Finished → {filename}\n")
 
-            # convert_exam RETURNS: (subject, data, class_cat)
-            subject, data, class_cat = convert_exam(path)
-
-            # Save JSON
-            save_output(subject, data, class_cat)
-
-            print(f"✅ Done → {filename}")
-
-        except Exception as e:
-            print(f"❌ ERROR converting {filename}: {e}")
-            print("Stopping so you don't waste API.")
-            break
+    print("\n🎉 COMPLETED — All subjects processed successfully!\n")
 
 
-# ---------------------------------------------------------
-# MAIN
-# ---------------------------------------------------------
+# ------------------------------------------------------------
+# MAIN ENTRY
+# ------------------------------------------------------------
 if __name__ == "__main__":
-    rename_old_jsons()
-    resume_conversion()
-    print("\n🎉 ALL DONE — Resume Mode Safe\n")
+    clear_old_jsons()
+    convert_all()

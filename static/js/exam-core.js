@@ -159,7 +159,9 @@ window.loadExamData = async function(quiet = false){
     });
 
     // ❗ NO internal shuffling here — shuffle.js will handle if needed
-    window.examData = rawData;
+    // ❗ Load raw, then apply external shufflewindow.examData = shuffleQuestions(rawData);
+    window.examData = shuffleQuestions(rawData);
+
 
     // Timer setup
     window.timeRemaining      = (rawData.time_allowed_minutes || 60) * 60;
@@ -508,11 +510,11 @@ window.submitExam = async function(timeUp = false) {
     const answered  = Object.keys(window.userAnswers).length;
     const skipped   = total - answered;
 
-    // -----------------------------
-    // FINAL PAYLOAD (100% backend-aligned)
-    // -----------------------------
+    // NORMALIZE SUBJECT FOR BACKEND
+    const rawSubject = $('meta[name="exam-subject"]').content.trim().toUpperCase();
+
     const payload = {
-        subject: $('meta[name="exam-subject"]').content,
+        subject: rawSubject,
 
         score: total ? Math.round((correct / total) * 100) : 0,
         correct: correct,
@@ -528,7 +530,8 @@ window.submitExam = async function(timeUp = false) {
             ? Math.round((Date.now() - window.examStartTime) / 1000)
             : 0,
 
-        submitted_at: new Date().toISOString(),
+        // FIXED FIELD NAME
+        submittedAt: new Date().toISOString(),
 
         status: timeUp ? "timeout" : "completed"
     };
