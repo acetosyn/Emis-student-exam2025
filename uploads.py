@@ -1,10 +1,15 @@
-# uploads.py — CLEAN VERSION (Upload + Convert Only)
+# uploads.py — UPDATED FOR STATIC PATHS (2025)
 import os
 import json
 from flask import Blueprint, jsonify, request
 from werkzeug.utils import secure_filename
 
-from convert import convert_exam, save_output, detect_version, detect_subject
+from convert import (
+    convert_exam,
+    save_output,
+    detect_subject,
+    detect_version,
+)
 
 # ---------------------------------------------------------
 # BLUEPRINT
@@ -12,15 +17,16 @@ from convert import convert_exam, save_output, detect_version, detect_subject
 uploads_bp = Blueprint("uploads_bp", __name__)
 
 # ---------------------------------------------------------
-# CONFIGURATION
+# PATHS — UPDATED TO STATIC STRUCTURE
 # ---------------------------------------------------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-SUBJECTS_JSON_FOLDER = os.path.join(BASE_DIR, "subjects-json")
-os.makedirs(SUBJECTS_JSON_FOLDER, exist_ok=True)
+# NEW STATIC PATHS
+BASE_DOCX = os.path.join(BASE_DIR, "static", "subjects", "subjects-docx")
+BASE_JSON = os.path.join(BASE_DIR, "static", "subjects", "subjects-json")
 
 ALLOWED_EXTENSIONS = {"docx", "json"}
 
@@ -37,7 +43,6 @@ def safe_filename(filename: str) -> str:
 
 
 def detect_class_category(filename: str) -> str:
-    """Detect SS1/SS2/SS3 from filename."""
     name = filename.lower()
     if "ss1" in name: return "SS1"
     if "ss2" in name: return "SS2"
@@ -66,7 +71,7 @@ def handle_upload(request):
         filename = safe_filename(file.filename)
         ext = filename.split(".")[-1].lower()
 
-        # Save temporarily
+        # Temporary save
         save_path = os.path.join(UPLOAD_FOLDER, filename)
         file.save(save_path)
 
@@ -74,34 +79,34 @@ def handle_upload(request):
         class_cat = detect_class_category(filename)
         version = detect_version(filename)
 
-        # Prepare JSON output folder
-        folder = class_cat.upper()
-        os.makedirs(os.path.join(SUBJECTS_JSON_FOLDER, folder), exist_ok=True)
+        # Final JSON output folder
+        class_folder = os.path.join(BASE_JSON, class_cat.upper())
+        os.makedirs(class_folder, exist_ok=True)
 
         json_filename = f"{subject.lower().replace(' ', '_')}_{class_cat.lower()}.json"
-        json_path = os.path.join(SUBJECTS_JSON_FOLDER, folder, json_filename)
+        json_path = os.path.join(class_folder, json_filename)
 
-        # Already exists?
+        # If exists & no overwrite
         if os.path.exists(json_path) and not overwrite_requested:
             converted.append({
                 "source": filename,
                 "status": "exists",
                 "json_filename": json_filename,
                 "subject": subject,
-                "class_category": class_cat
+                "class_category": class_cat,
             })
             continue
 
-        # DOCX → Convert
+        # ===== DOCX → JSON Conversion =====
         if ext == "docx":
             try:
-                subject, data, final_class = convert_exam(save_path)
-                json_path = save_output(subject, data, final_class)
+                subj, final_class, data = convert_exam(save_path)     # NEW RETURN SIGNATURE
+                json_path = save_output(subj, final_class, data)
 
                 converted.append({
                     "source": filename,
                     "status": "overwritten" if overwrite_requested else "converted",
-                    "subject": subject,
+                    "subject": subj,
                     "class_category": final_class,
                     "json_filename": json_filename,
                     "json_path": json_path,
@@ -112,20 +117,20 @@ def handle_upload(request):
                 print("⚠️ Conversion error:", e)
                 converted.append({"source": filename, "error": "conversion_failed"})
 
-        # JSON upload
+        # ===== RAW JSON UPLOAD =====
         elif ext == "json":
             try:
                 file.stream.seek(0)
                 payload = json.load(file.stream)
-                subject = payload.get("subject") or subject
+                subj = payload.get("subject") or subject
                 final_class = class_cat
 
-                json_path = save_output(subject, payload, final_class)
+                json_path = save_output(subj, final_class, payload)
 
                 converted.append({
                     "source": filename,
                     "status": "overwritten" if overwrite_requested else "saved",
-                    "subject": subject,
+                    "subject": subj,
                     "class_category": final_class,
                     "json_filename": json_filename,
                     "json_path": json_path,
@@ -139,13 +144,13 @@ def handle_upload(request):
 
 
 # ---------------------------------------------------------
-# LIST JSON FILES
+# LIST JSON FILES (ADMIN UI)
 # ---------------------------------------------------------
 def list_converted_files():
     result = []
 
-    for class_cat in ["SS1", "SS2", "SS3", "GENERAL"]:
-        folder = os.path.join(SUBJECTS_JSON_FOLDER, class_cat)
+    for class_cat in ["SS1", "SS2", "SS3"]:
+        folder = os.path.join(BASE_JSON, class_cat)
         if not os.path.isdir(folder):
             continue
 
@@ -156,9 +161,8 @@ def list_converted_files():
             full = os.path.join(folder, f)
             size_kb = round(os.path.getsize(full) / 1024, 1)
 
-            subject = detect_subject(f)
-            version = detect_version(f)
             q_count = 0
+            subject = detect_subject(f)
 
             try:
                 with open(full, "r", encoding="utf-8") as jf:
@@ -172,7 +176,6 @@ def list_converted_files():
                 "filename": f,
                 "subject": subject,
                 "class_category": class_cat,
-                "version": version,
                 "questions": q_count,
                 "size_kb": size_kb,
                 "path": full,
@@ -190,8 +193,8 @@ def list_subject_jsons():
 # PREVIEW JSON
 # ---------------------------------------------------------
 def get_converted_json(filename: str):
-    for class_cat in ["SS1", "SS2", "SS3", "GENERAL"]:
-        path = os.path.join(SUBJECTS_JSON_FOLDER, class_cat, filename)
+    for class_cat in ["SS1", "SS2", "SS3"]:
+        path = os.path.join(BASE_JSON, class_cat, filename)
         if os.path.exists(path):
             try:
                 with open(path, "r", encoding="utf-8") as f:
@@ -206,8 +209,8 @@ def get_converted_json(filename: str):
 # DELETE JSON
 # ---------------------------------------------------------
 def delete_converted_file(filename: str):
-    for class_cat in ["SS1", "SS2", "SS3", "GENERAL"]:
-        path = os.path.join(SUBJECTS_JSON_FOLDER, class_cat, filename)
+    for class_cat in ["SS1", "SS2", "SS3"]:
+        path = os.path.join(BASE_JSON, class_cat, filename)
         if os.path.exists(path):
             try:
                 os.remove(path)
