@@ -1,13 +1,10 @@
 # ============================================================
-# convert.py — WAEC CBT EXTRACTOR (2025 FINAL PATCHED EDITION)
-# Supports:
-#  • Passages
-#  • Grouped questions
-#  • Maths diagrams extraction
-#  • Poetry formatting
-#  • Sub/sup formatting
-#  • JSON sanitizing (prevents crashes)
-#  • Numeric hallucination prevention
+# convert.py — WAEC CBT EXTRACTOR (2025 DIAGRAM VERSION + JSON REPAIR)
+# ------------------------------------------------------------
+# • Uses manual diagrams only
+# • ZERO docx image extraction
+# • Ultra-safe JSON repair (Option A)
+# • Never crashes from malformed LLM output
 # ============================================================
 
 import os
@@ -28,15 +25,17 @@ if not API_KEY:
 client = Groq(api_key=API_KEY)
 
 # ============================================================
-# PATH CONFIG — FLASK STATIC STRUCTURE
+# PATHS
 # ============================================================
 BASE_DOCX = "static/subjects/subjects-docx"
 BASE_JSON = "static/subjects/subjects-json"
 BASE_DIAGRAMS = "static/uploads/diagrams"
+ERROR_DUMP = "static/json_errors"
+os.makedirs(ERROR_DUMP, exist_ok=True)
 
 
 # ============================================================
-# DETECT SUBJECT / CLASS
+# SUBJECT + CLASS DETECTION
 # ============================================================
 def detect_subject(filename: str) -> str:
     n = filename.lower()
@@ -45,6 +44,12 @@ def detect_subject(filename: str) -> str:
     if "eng" in n: return "English"
     if "literature" in n: return "Literature"
     if "account" in n: return "Accounts"
+    if "computer" in n: return "Computer"
+    if "biology" in n: return "Biology"
+    if "physics" in n: return "Physics"
+    if "government" in n: return "Government"
+    if "civic" in n: return "Civic"
+    if "economics" in n: return "Economics"
     return "General"
 
 
@@ -56,88 +61,84 @@ def detect_class_category(filename: str) -> str:
     return "GENERAL"
 
 
-def detect_version(filename: str) -> str:
-    m = re.search(r"(\d+)", filename)
-    return m.group(1) if m else "1"
-
-
-def class_from_version(v: str) -> str:
-    return {"1": "SS1", "2": "SS2", "3": "SS3"}.get(v, "GENERAL")
-
-
 # ============================================================
-# DOCX PARSER — TEXT + DIAGRAMS
+# JSON REPAIR ENGINE (OPTION A)
 # ============================================================
-def extract_docx(path: str, diagram_out_dir: str):
+def extract_json_block(text: str) -> str:
+    """Extract the largest {...} JSON-like block from LLM output."""
+    start = text.find("{")
+    end = text.rfind("}")
+    if start == -1 or end == -1:
+        return text
+    return text[start:end+1]
+
+
+def basic_clean(text: str) -> str:
+    """Remove control chars and normalize quotes."""
+    text = text.replace("```json", "").replace("```", "")
+    text = re.sub(r"[\x00-\x1f]", "", text)
+    text = text.replace("“", "\"").replace("”", "\"")
+    text = text.replace("‘", "'").replace("’", "'")
+    text = text.replace("\\\n", "")
+    return text
+
+
+def fix_trailing_commas(text: str) -> str:
+    text = re.sub(r",\s*([\]}])", r"\1", text)
+    return text
+
+
+def fix_missing_commas(text: str) -> str:
+    text = re.sub(r"\"(\s*?)\"(\s*?)\"", "\", \"", text)
+    return text
+
+
+def fix_unquoted_keys(text: str) -> str:
+    text = re.sub(r"(\s)([a-zA-Z0-9_]+):", r' "\2":', text)
+    return text
+
+
+def json_repair(raw: str, filename: str):
     """
-    Extract:
-      • Paragraph text
-      • Diagrams → static/uploads/diagrams/<subject_class>/
+    Attempt 3-stage JSON repair:
+    1. Direct load
+    2. Repaired load
+    3. Fallback structural fix
     """
-    doc = Document(path)
-    full_text_lines = []
-    diagram_map = {}
+    cleaned = basic_clean(raw)
+    block = extract_json_block(cleaned)
 
-    os.makedirs(diagram_out_dir, exist_ok=True)
+    # Attempt 1 — direct
+    try:
+        return json.loads(block)
+    except Exception:
+        pass
 
-    # Extract text
-    for p in doc.paragraphs:
-        t = p.text.strip()
-        if t:
-            full_text_lines.append(t)
+    # Attempt 2 — repaired
+    repaired = block
+    repaired = fix_trailing_commas(repaired)
+    repaired = fix_unquoted_keys(repaired)
 
-    # Extract images
-    img_index = 1
-    rels = doc.part.rels
+    try:
+        return json.loads(repaired)
+    except Exception:
+        pass
 
-    for rel in rels:
-        rel_obj = rels[rel]
-        if "image" in rel_obj.target_ref:
-            img_data = rel_obj.target_part.blob
-            fname = f"diagram_{img_index}.png"
-            out_path = os.path.join(diagram_out_dir, fname)
+    # Attempt 3 — fallback: quote numbers, repair arrays
+    fallback = repaired
+    fallback = re.sub(r'(\d+)(\s*?)"', r'"\1"', fallback)
+    fallback = re.sub(r'",\s*}', '"}', fallback)
+    fallback = re.sub(r'",\s*]', '"]', fallback)
 
-            with open(out_path, "wb") as f:
-                f.write(img_data)
+    try:
+        return json.loads(fallback)
+    except Exception as e:
+        # Final fail — dump output
+        dump_path = os.path.join(ERROR_DUMP, f"{filename}_raw.txt")
+        with open(dump_path, "w", encoding="utf-8") as f:
+            f.write(raw)
 
-            # Flask static path
-            static_path = out_path.replace("static", "/static")
-            diagram_map[str(img_index)] = static_path
-            img_index += 1
-
-    return "\n".join(full_text_lines), diagram_map
-
-
-# ============================================================
-# CLEAN LLM JSON SAFELY (patched)
-# ============================================================
-def clean_llm_json(raw: str) -> str:
-    """
-    Cleans invalid JSON from LLM:
-    - removes control chars
-    - fixes quotes
-    - fixes unescaped characters
-    - extracts only the JSON object
-    """
-    raw = raw.strip()
-    raw = raw.replace("```json", "").replace("```", "")
-
-    # Remove invisible DOCX control chars
-    raw = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", raw)
-
-    # Normalize quotes
-    raw = raw.replace("“", "\"").replace("”", "\"")
-    raw = raw.replace("‘", "'").replace("’", "'")
-
-    # Fix accidental backslash-newline combos
-    raw = raw.replace("\\\n", "")
-
-    # Extract JSON object
-    m = re.search(r"(\{[\s\S]*\})", raw)
-    if m:
-        raw = m.group(1)
-
-    return raw
+        raise Exception(f"❌ JSON parse FAILED for {filename}. Raw dumped to {dump_path}\nError: {e}")
 
 
 # ============================================================
@@ -145,132 +146,105 @@ def clean_llm_json(raw: str) -> str:
 # ============================================================
 SUB_SUP_SUBJECTS = {"chemistry", "mathematics", "further mathematics", "physics"}
 
-def apply_sub_sup_formatting(text: str, subject: str = None) -> str:
-    if not text or not subject:
+def apply_sub_sup_formatting(text: str, subject: str) -> str:
+    if not text or subject.lower() not in SUB_SUP_SUBJECTS:
         return text
-
-    subj = subject.lower()
-    if subj not in SUB_SUP_SUBJECTS:
-        return text
-
-    # Chemical subscripts → Al2O3
-    def chem_repl(m):
-        elem, num = m.group(1), m.group(2)
-        if elem.upper() in {"SS", "WA", "Q"}:
-            return m.group(0)
-        return f"{elem}<sub>{num}</sub>"
-
-    text = re.sub(r"([A-Z][a-z]?)(\d+)", chem_repl, text)
-
-    # Mathematical exponents → x^2
+    text = re.sub(r"([A-Z][a-z]?)(\d+)", r"\1<sub>\2</sub>", text)
     text = re.sub(r"(\w)\^(\d+)", r"\1<sup>\2</sup>", text)
-
     return text
 
 
 # ============================================================
-# LLM CALL — WITH NUMBER SAFETY
+# LLM EXTRACTION
 # ============================================================
-def ask_llm(subject: str, text: str) -> dict:
+def ask_llm(subject: str, text: str, filename: str) -> dict:
 
     prompt = f"""
 You are an expert WAEC MCQ extractor.
 
-Extract into STRICT JSON ONLY.
+TASK:
+- Extract MCQs in STRICT JSON.
+- Detect group instructions (e.g., “Answer questions 12–15…”).
+- DO NOT hallucinate diagrams.
+- DO NOT change numbers.
 
-IMPORTANT NUMBER RULES:
-- ALL numbers (money, years, values) MUST be treated as TEXT.
-- DO NOT convert numbers into long integers.
-- Return numeric values EXACTLY as they appear in the document.
-- Examples: "N50,000", "1983", "1494", "400,000" must remain EXACT strings.
+OUTPUT ONLY VALID JSON. NO COMMENTARY.
 
-STRICT SCHEMA:
+JSON FORMAT:
 {{
   "subject": "{subject}",
-  "groups": [
-    {{
-      "start_id": 31,
-      "end_id": 35,
-      "instruction": "Use the information below...",
-      "passage": "optional",
-      "diagram": "optional",
-      "question_ids": [31,32,33,34,35]
-    }}
-  ],
-  "questions": [
-    {{
-      "id": 1,
-      "question": "text",
-      "options": [
-        "A. ...",
-        "B. ...",
-        "C. ...",
-        "D. ..."
-      ],
-      "correctOption": "A"
-    }}
-  ]
+  "groups": [...],
+  "questions": [...]
 }}
 
-RULES:
-- Preserve passages EXACTLY.
-- Preserve poetry EXACTLY.
-- NEVER hallucinate diagrams.
-- NEVER modify numbers.
-- ONLY return valid JSON.
-- NO commentary.
-
-Extract the MCQs from:
+Extract from this text:
 
 {text}
 """
 
-    res = client.chat.completions.create(
+    resp = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[{"role": "user", "content": prompt}],
         temperature=0
     )
 
-    cleaned = clean_llm_json(res.choices[0].message.content)
-
-    # PRIMARY LOAD
-    try:
-        return json.loads(cleaned)
-
-    except Exception:
-        # Fallback: wrap any large numbers with quotes
-        repaired = re.sub(r'(\d{4,})', r'"\1"', cleaned)
-
-        return json.loads(repaired)
+    raw = resp.choices[0].message.content
+    return json_repair(raw, filename)
 
 
 # ============================================================
-# NORMALIZATION
+# DIAGRAM MAPPING
 # ============================================================
-def normalize_output(data: dict, subject: str, diagram_map: dict):
-    # Repair group diagrams
+def attach_manual_diagrams(data: dict, subject: str, class_cat: str):
+    folder = os.path.join(BASE_DIAGRAMS, f"{subject.lower()}_{class_cat.lower()}")
+
+    if not os.path.exists(folder):
+        return data
+
+    available = {f.lower(): f for f in os.listdir(folder)}
+
+    # Groups
     for g in data.get("groups", []):
-        if isinstance(g.get("diagram"), str):
-            key = g["diagram"].replace("diagram_", "")
-            g["diagram"] = diagram_map.get(key)
+        sid = g.get("start_id")
+        if sid:
+            fname = f"diagram_{sid}.png".lower()
+            if fname in available:
+                g["diagram"] = f"/static/uploads/diagrams/{subject.lower()}_{class_cat.lower()}/{available[fname]}"
 
-    # Apply formatting
+    # Questions
     for q in data.get("questions", []):
-        q["question"] = apply_sub_sup_formatting(q.get("question", ""), subject)
-
-        fixed_opts = []
-        for opt in q.get("options", []):
-            o = re.sub(r"^[A-Da-d][.\)\-:\s]*", "", opt).strip()
-            o = apply_sub_sup_formatting(o, subject)
-            fixed_opts.append(f"{opt[0]}. {o}")
-
-        q["options"] = fixed_opts
+        qid = q.get("id")
+        if not qid:
+            continue
+        fname = f"diagram_{qid}.png".lower()
+        if fname in available:
+            q["diagram"] = f"/static/uploads/diagrams/{subject.lower()}_{class_cat.lower()}/{available[fname]}"
+        else:
+            q["diagram"] = None
 
     return data
 
 
 # ============================================================
-# SAVE JSON OUTPUT
+# NORMALIZATION
+# ============================================================
+def normalize_output(data: dict, subject: str, class_cat: str):
+
+    for q in data.get("questions", []):
+        q["question"] = apply_sub_sup_formatting(q.get("question", ""), subject)
+
+        opts = []
+        for opt in q.get("options", []):
+            clean = re.sub(r"^[A-Da-d][\.\)\-:\s]*", "", opt)
+            clean = apply_sub_sup_formatting(clean, subject)
+            opts.append(f"{opt[0]}. {clean}")
+        q["options"] = opts
+
+    return attach_manual_diagrams(data, subject, class_cat)
+
+
+# ============================================================
+# SAVE JSON
 # ============================================================
 def save_output(subject: str, class_category: str, data: dict):
     folder = os.path.join(BASE_JSON, class_category.upper())
@@ -287,53 +261,38 @@ def save_output(subject: str, class_category: str, data: dict):
 
 
 # ============================================================
-# MAIN CONVERSION
+# MAIN EXAM CONVERTER
 # ============================================================
 def convert_exam(path: str):
     filename = os.path.basename(path)
     subject = detect_subject(filename)
     class_cat = detect_class_category(filename)
-    version = detect_version(filename)
 
-    if class_cat == "GENERAL":
-        class_cat = class_from_version(version)
+    print(f"\n📘 Processing: {filename}  ({subject}, {class_cat})")
 
-    print(f"\n📘 Processing: {filename}")
-    print(f"   → Subject: {subject}")
-    print(f"   → Class:   {class_cat}")
-
-    # Extract text + diagrams
-    diag_dir = os.path.join(BASE_DIAGRAMS, f"{subject.lower()}_{class_cat.lower()}")
-    text, diagram_map = extract_docx(path, diag_dir)
-
-    # LLM extraction
+    text = "\n".join([p.text for p in Document(path).paragraphs])
     print("🧠 Sending to LLM...")
-    data = ask_llm(subject, text)
 
-    # Normalize
-    data = normalize_output(data, subject, diagram_map)
+    data = ask_llm(subject, text, filename)
+    data = normalize_output(data, subject, class_cat)
     data["class_category"] = class_cat
 
     return subject, class_cat, data
 
 
 # ============================================================
-# PROCESS ALL
+# BATCH PROCESSOR
 # ============================================================
 def process_all():
     print("\n=== 🚀 FULL CONVERSION START ===\n")
 
     for filename in sorted(os.listdir(BASE_DOCX)):
-        if not filename.endswith(".docx"):
-            continue
-
-        path = os.path.join(BASE_DOCX, filename)
-        try:
-            subject, class_cat, data = convert_exam(path)
-            save_output(subject, class_cat, data)
-        except Exception as e:
-            print(f"❌ ERROR converting {filename}: {e}")
-            break
+        if filename.endswith(".docx"):
+            try:
+                subject, class_cat, data = convert_exam(os.path.join(BASE_DOCX, filename))
+                save_output(subject, class_cat, data)
+            except Exception as e:
+                print(f"❌ ERROR converting {filename}: {e}")
 
     print("\n🎉 DONE.\n")
 

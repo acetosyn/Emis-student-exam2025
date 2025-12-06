@@ -1,0 +1,562 @@
+{
+  "subject": "Biology",
+  "groups": [
+    {
+      "instruction": "ANSWER ALL QUESTIONS",
+      "questions": "1-50"
+    }
+  ],
+  "questions": [
+    {
+      "id": 1,
+      "question": "The basic unit of life is",
+      "options": [
+        "(. (a) species",
+        "(. (b) cells",
+        "(. (c) tissues",
+        "(. (d) organs"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 2,
+      "question": "Angiosperm belong to the class",
+      "options": [
+        "(. (a) thallophyta",
+        "(. (b) bryophyte",
+        "(. (c) spermatophyta",
+        "(. (d) pteridophyta"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 3,
+      "question": "The study of animals is called",
+      "options": [
+        "(. (a) Botany",
+        "(. (b) Ecology",
+        "(. (c) Zoology",
+        "(. (d) Entomology"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 4,
+      "question": "One of these is not a characteristic of living things",
+      "options": [
+        "(. (a) Smiling",
+        "(. (b) Growth",
+        "(. (c) Feeding",
+        "(. (d) Reproduction"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 5,
+      "question": "Which of the following organism exist as a colony?",
+      "options": [
+        "(. (a) Amoeba",
+        "(. (b) Volvox",
+        "(. (c) Euglena",
+        "(. (d) Paramecium"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 6,
+      "question": "Shrimps, spiders and crabs belong to the group of animals called",
+      "options": [
+        "(. (a) arthropoda",
+        "(. (b) nematoda",
+        "(. (c) coelenterate",
+        "(. (d) Mollusca"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 7,
+      "question": "One of these is regarded as the father of cells",
+      "options": [
+        "(. (a) Robert Hooke",
+        "(. (b) Felix Dwardin",
+        "(. (c) Mathias Schleiden",
+        "(. (d) Carl Linneaus"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 8,
+      "question": "One of these brought about taxonomy",
+      "options": [
+        "(. (a) Carl Linneaus",
+        "(. (b) Mathias Schleiden",
+        "(. (c) Robert Hooke",
+        "(. (d) Felix Dwardin"
+      ],
+      "diagram": "/static/uploads/diagrams/biology_ss1/diagram_8.PNG"
+    },
+    {
+      "id": 9,
+      "question": "The structure above represent .....organism",
+      "options": [
+        "(. (a) Euglena",
+        "(. (b) Paramecium",
+        "(. (c) Amoeba",
+        "(. (d) Volvox"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 10,
+      "question": "The part labeled III is the",
+      "options": [
+        "(. (a) endoderm",
+        "(. (b) ectoderm",
+        "(. (c) nucleus",
+        "(. (d) food vacuole"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 11,
+      "question": "Contractile vacuole is the part labeled",
+      "options": [
+        "(. (a) II",
+        "(. (b) III",
+        "(. (c) I",
+        "(. (d) IV"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 12,
+      "question": "Which of these is not correct about fish?",
+      "options": [
+        "(. (a) Live in water",
+        "(. (b) Skin is covered with scales",
+        "(. (c) Perspires(sweats) through the gill",
+        "(. (d) They are poikilothermic"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 13,
+      "question": "The following are levels of organization of life except",
+      "options": [
+        "(. (a) cells",
+        "(. (b) organs",
+        "(. (c) organisms",
+        "(. (d) tissues"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 14,
+      "question": "The largest and strongest bone in human body is the",
+      "options": [
+        "(. (a) radius",
+        "(. (b) ulna",
+        "(. (c) tibia",
+        "(. (d) femur"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 15,
+      "question": "The two Greek words which biology was coined from are",
+      "options": [
+        "(. (a) Bios and logo",
+        "(. (b) Bios and logos",
+        "(. (c) Bios and Lagos",
+        "(. (d) Bios and Lagoon"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 16,
+      "question": "A system is the .....level of organization of life",
+      "options": [
+        "(. (a) 1st",
+        "(. (b) 2nd",
+        "(. (c) 4th",
+        "(. (d) 3rd"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 17,
+      "question": "A group of similar cells form a layer called",
+      "options": [
+        "(. (a) organs",
+        "(. (b) tissues",
+        "(. (c) system",
+        "(. (d) organism"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 18,
+      "question": "A cell without a membrane bound nucleus is called",
+      "options": [
+        "(. (a) Protista cell",
+        "(. (b) prokaryotic cell",
+        "(. (c) eukaryotic cell",
+        "(. (d) bacterial cell"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 19,
+      "question": "One of these is not a phylum in animal kingdom",
+      "options": [
+        "(. (a) Mollusca",
+        "(. (b) Annelida",
+        "(. (c) Nematoda",
+        "(. (d) Insecta"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 20,
+      "question": "One of these organisms is slippers-shaped",
+      "options": [
+        "(. (a) Amoeba",
+        "(. (b) Euglena",
+        "(. (c) Paramecium",
+        "(. (d) Chlamydomonas"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 21,
+      "question": "The organism above belong to the phylum",
+      "options": [
+        "(. (a) Arthropoda",
+        "(. (b) Mollusca",
+        "(. (c) Chordate",
+        "(. (d) Annelida"
+      ],
+      "diagram": "/static/uploads/diagrams/biology_ss1/diagram_21.PNG"
+    },
+    {
+      "id": 22,
+      "question": "The part labelled IV is called",
+      "options": [
+        "(. (a) foot",
+        "(. (b) shell",
+        "(. (c) tentacle",
+        "(. (d) mouth"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 23,
+      "question": "The used for sight sensation are",
+      "options": [
+        "(. (a) I and III",
+        "(. (b) IV and II",
+        "(. (c) V and II",
+        "(. (d) I and II"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 24,
+      "question": "The cell theory was postulated in the year",
+      "options": [
+        "(. (a) 1939",
+        "(. (b) 1858",
+        "(. (c) 1839",
+        "(. (d) 1855"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 25,
+      "question": "One of these is not an animal characteristics of euglena",
+      "options": [
+        "(. (a) possession of eye spot",
+        "(. (b) possession of flagellum",
+        "(. (c) possession of chloroplast",
+        "(. (d) possession of contractile vacuole"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 26,
+      "question": "The removal of metabolic waste from living organisms is called",
+      "options": [
+        "(. (a) egestion",
+        "(. (b) digestion",
+        "(. (c) secretion",
+        "(. (d) excretion"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 27,
+      "question": "The ability of living organisms to perpetuate their kind is called",
+      "options": [
+        "(. (a) production",
+        "(. (b) reproduction",
+        "(. (c) conjugation",
+        "(. (d) replication"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 28,
+      "question": "All are control measures of harmful micro-organisms except",
+      "options": [
+        "(. (a) high temperature",
+        "(. (b) sterilization",
+        "(. (c) inhygiene",
+        "(. (d) hygiene"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 29,
+      "question": "One of these scientists put to an end the theory of spontaneous generation",
+      "options": [
+        "(. (a) Rudolf Von Virchow",
+        "(. (b) Theodor Schwann",
+        "(. (c) Mathias Schleiden",
+        "(. (d) Robert Hooke"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 30,
+      "question": "The sudden retraction of body or body parts from a noticed environmental change is termed",
+      "options": [
+        "(. (a) irritation",
+        "(. (b) irrigation",
+        "(. (c) irritability",
+        "(. (d) stimulus"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 31,
+      "question": "The fusion of male gamete and female gamete is called",
+      "options": [
+        "(. (a) zygote",
+        "(. (b) gametocyte",
+        "(. (c) progeny",
+        "(. (d) fertilization"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 32,
+      "question": "When living organisms feed on solid food substances that must be digested before absorption, it is termed",
+      "options": [
+        "(. (a) parasitic",
+        "(. (b) symbiotic",
+        "(. (c) saprophytic",
+        "(. (d) holozoic"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 33,
+      "question": "All hereditary information of a living organism is stored in",
+      "options": [
+        "(. (a) nucleus",
+        "(. (b) nucleolus",
+        "(. (c) lysosome",
+        "(. (d) ribosomes"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 34,
+      "question": "One of these organelles controls the green pigmentation of plants leaves",
+      "options": [
+        "(. (a) Chlorophyll",
+        "(. (b) Chloroplast",
+        "(. (c) Vacuole",
+        "(. (d) Lysosome"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 35,
+      "question": "All are examples of protozoa except",
+      "options": [
+        "(. (a) Amoeba",
+        "(. (b) Paramecium",
+        "(. (c) Trypanosome",
+        "(. (d) Algae"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 36,
+      "question": "The surface of leaves and the wings of insects contains........that makes them proof",
+      "options": [
+        "(. (a) hyphae",
+        "(. (b) spores",
+        "(. (c) chitin",
+        "(. (d) mycelium"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 37,
+      "question": "One of these undergo saprophytic mode of nutrition",
+      "options": [
+        "(. (a) Protozoa",
+        "(. (b) Plants",
+        "(. (c) Animals",
+        "(. (d) Fungi"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 38,
+      "question": "A tentative answer to a question raised by scientific observation is called",
+      "options": [
+        "(. (a) Testing",
+        "(. (b) Theory",
+        "(. (c) Hypothesis",
+        "(. (d) Law"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 39,
+      "question": "One of these is not true about plants",
+      "options": [
+        "(. (a) Growth is indefinite and apical",
+        "(. (b) Growth is definite and intercalary",
+        "(. (c) Slow response to stimulus",
+        "(. (d) Undergo holophytic mode of nutrition"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 40,
+      "question": "C6H1206 + 602 6C02 + 6H20 + energy is a common equation that summarizes",
+      "options": [
+        "(. (a) excretion",
+        "(. (b) respiration",
+        "(. (c) adaptation",
+        "(. (d) nutrition"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 41,
+      "question": "Urine is stored temporarily in one of the following",
+      "options": [
+        "(. (a) Liver",
+        "(. (b) Kidney",
+        "(. (c) Gall bladder",
+        "(. (d) Bladder"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 42,
+      "question": "Monocot plants are easily recognized by",
+      "options": [
+        "(. (a) short leaves with a petiole",
+        "(. (b) long leaves with parallel veins",
+        "(. (c) short leaves with many veins",
+        "(. (d) long leaves with interconnected veins"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 43,
+      "question": "One of these is a unicellular organism",
+      "options": [
+        "(. (a) Spirogyra",
+        "(. (b) Hydra",
+        "(. (c) Amoeba",
+        "(. (d) Cat"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 44,
+      "question": "All are branches of biology except",
+      "options": [
+        "(. (a) Zoology",
+        "(. (b) Geology",
+        "(. (c) Botany",
+        "(. (d) Microbiology"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 45,
+      "question": "Which of the does not control harmful microbes?",
+      "options": [
+        "(. (a) Hygiene",
+        "(. (b) High temperature",
+        "(. (c) Inhygiene",
+        "(. (d) Sterilization"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 46,
+      "question": "The power house of the cell is the",
+      "options": [
+        "(. (a) nucleus",
+        "(. (b) nucleolus",
+        "(. (c) golgi apparatus",
+        "(. (d) mitochondrion"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 47,
+      "question": "One of these structures cannot be found in the nucleus of a cell",
+      "options": [
+        "(. (a) Genes",
+        "(. (b) Ribosomes",
+        "(. (c) Chromosomes",
+        "(. (d) Nucleolus"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 48,
+      "question": "All are advantages of complexity in higher organism except",
+      "options": [
+        "(. (a) cellular differentiation",
+        "(. (b) internal structural specialization",
+        "(. (c) difficulties in acquisition of essential materials",
+        "(. (d) mutual interdependence between component cells"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 49,
+      "question": "Amoeba uses one of the following for movement",
+      "options": [
+        "(. (a) Flagella",
+        "(. (b) Cilia",
+        "(. (c) Legs",
+        "(. (d) Pseudopodia"
+      ],
+      "diagram": null
+    },
+    {
+      "id": 50,
+      "question": "One of these play a major role in protein synthesis",
+      "options": [
+        "(. (a) Centrioles",
+        "(. (b) Ribosomes",
+        "(. (c) Lysosomes",
+        "(. (d) Mitochondrion"
+      ],
+      "diagram": null
+    }
+  ],
+  "class_category": "SS1"
+}
