@@ -1,13 +1,7 @@
 {
-    "SS1": [
-        "chemistry_ss1.json",
-        "mathematics_ss1.json",
-        "english_ss1.json",
-        "accounts_ss1.json"
+    "SS1": [],
+    "SS2": [
+        "accounts_ss2.json"
     ],
-    "SS2": [],
-    "SS3": [
-        "chemistry_ss3.json",
-        "english_ss3.json"
-    ]
+    "SS3": []
 }

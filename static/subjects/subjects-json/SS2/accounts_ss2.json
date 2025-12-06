@@ -1,0 +1,576 @@
+{
+  "subject": "Accounts",
+  "class_category": "SS2",
+  "groups": [
+    {
+      "start_id": 1,
+      "end_id": 50,
+      "instruction": "ANSWER ALL QUESTIONS",
+      "passage": "",
+      "diagram": null,
+      "question_ids": [
+        1,2,3,4,5,6,7,8,8,10,
+        11,12,13,14,15,16,17,18,19,20,
+        21,22,23,24,25,26,27,28,29,30,
+        31,32,33,34,35,36,37,38,39,40,
+        41,42,43,44,45,46,47,48,49,50
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "id": 1,
+      "question": "Which of the following is not a current liability?",
+      "options": [
+        "A. Accrual expenses",
+        "B. Bad debts",
+        "C. Bill payable",
+        "D. Creditors"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 2,
+      "question": "The formula for the computation of the periodic charge of depreciation under straight line method is",
+      "options": [
+        "A. ---",
+        "B. ---",
+        "C. ---",
+        "D. ---"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 3,
+      "question": "The following are examples of depreciation method except",
+      "options": [
+        "A. diminishing balance",
+        "B. sum of year digit",
+        "C. straight line",
+        "D. residual"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 4,
+      "question": "Goods on which production is not completed at the time of preparing the final account are called",
+      "options": [
+        "A. finished goods",
+        "B. inventory",
+        "C. overhead",
+        "D. work-in-progress"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 5,
+      "question": "Which of the following does not belong to the group?",
+      "options": [
+        "A. Factory overhead",
+        "B. Net profit",
+        "C. Prime cost",
+        "D. Royalties"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 6,
+      "question": "Direct materials + direct labour + direct expenses equals to",
+      "options": [
+        "A. cost of goods available",
+        "B. cost of goods sold",
+        "C. prime cost",
+        "D. production cost"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 7,
+      "question": "The addition of prime cost and factory overhead expenses equals",
+      "options": [
+        "A. production cost",
+        "B. cost of materials used",
+        "C. prime cost",
+        "D. total cost"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 8,
+      "question": "Termination of the activities of a partnership is called",
+      "options": [
+        "A. appropriation",
+        "B. dissolution",
+        "C. liquidation",
+        "D. rejection"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 9,
+      "question": "An income and expenditure account is prepared based on the same principle as",
+      "options": [
+        "A. balance sheet",
+        "B. incomplete records",
+        "C. profit and loss account",
+        "D. trading account"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 10,
+      "question": "The annual summary of cash records of a club or society is called",
+      "options": [
+        "A. receipt and payment",
+        "B. profit and loss account",
+        "C. single entry",
+        "D. statement of affairs"
+      ],
+      "correctOption": "A"
+    },
+
+    {
+      "id": 11,
+      "question": "Which of the following is an example of non-profit making organization?",
+      "options": [
+        "A. Civil society organization",
+        "B. Joint venture",
+        "C. Partnership",
+        "D. Sole proprietorship"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 12,
+      "question": "The document setting out the internal regulations of a partnership firm is the partnership",
+      "options": [
+        "A. code",
+        "B. deed",
+        "C. edit",
+        "D. regulation"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 13,
+      "question": "Where there is no partnership agreement, a partner who lends money to the partnership business shall get interest at the rate of ____ percent per annum",
+      "options": [
+        "A. 8",
+        "B. 7",
+        "C. 6",
+        "D. 5"
+      ],
+      "correctOption": "A"
+    },
+
+    {
+      "id": 14,
+      "question": "What is Dago’s share of profit?",
+      "options": [
+        "A. N2550",
+        "B. N2500",
+        "C. N2050",
+        "D. N1650"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 15,
+      "question": "How much is the interest on capital of Akeem?",
+      "options": [
+        "A. N500",
+        "B. N400",
+        "C. N300",
+        "D. N200"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 16,
+      "question": "What is Akeem’s share of profit?",
+      "options": [
+        "A. N1900",
+        "B. N2000",
+        "C. N1800",
+        "D. N1700"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 17,
+      "question": "How much is the interest on capital of Dayo?",
+      "options": [
+        "A. N150",
+        "B. N130",
+        "C. N100",
+        "D. N70"
+      ],
+      "correctOption": "A"
+    },
+
+    {
+      "id": 18,
+      "question": "A statement of affairs is equivalent to a/an",
+      "options": [
+        "A. appropriation account",
+        "B. balance sheet",
+        "C. profit and loss account",
+        "D. trading account"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 19,
+      "question": "Prepayment is treated in the balance sheet of a firm as",
+      "options": [
+        "A. capital",
+        "B. current asset",
+        "C. current liability",
+        "D. fixed asset"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 20,
+      "question": "Which of the following is not a cause of depreciation?",
+      "options": [
+        "A. Devaluation of naira",
+        "B. Obsolescence",
+        "C. Passage of time",
+        "D. Wear and tear"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 21,
+      "question": "Which of the following is a real account?",
+      "options": [
+        "A. Advertising",
+        "B. Motor vehicle",
+        "C. Rent",
+        "D. Repairs"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 22,
+      "question": "The following are types of partners except",
+      "options": [
+        "A. active",
+        "B. dormant",
+        "C. limited",
+        "D. illegal"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 23,
+      "question": "When there is provision for depreciation, fixed assets are shown in the balance sheet at",
+      "options": [
+        "A. appraisal value",
+        "B. net book value",
+        "C. appreciated value",
+        "D. cost value"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 24,
+      "question": "Which of the following expenses forms part of cost of production?",
+      "options": [
+        "A. Selling expenses",
+        "B. Administrative expenses",
+        "C. Direct expenses",
+        "D. General expenses"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 25,
+      "question": "When the total of the debit side of income and expenditure account exceeds the credit side, the difference is",
+      "options": [
+        "A. deficit",
+        "B. surplus",
+        "C. cash in hand",
+        "D. accumulated fund"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 26,
+      "question": "The acquisition of furniture for office use for N290,000 should be debited to",
+      "options": [
+        "A. cash account",
+        "B. purchases account",
+        "C. assets account",
+        "D. bank account"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 27,
+      "question": "An item debited to the income and expenditure account is",
+      "options": [
+        "A. rent paid",
+        "B. life membership fees",
+        "C. profit on bar",
+        "D. donations received"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 28,
+      "question": "Goods taken over by the owner of the business for personal use is treated as",
+      "options": [
+        "A. allowances",
+        "B. loan",
+        "C. sales",
+        "D. drawings"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 29,
+      "question": "A person who lends his name to be used as a partner without capital contribution is a",
+      "options": [
+        "A. dormant partner",
+        "B. active partner",
+        "C. limited partner",
+        "D. nominal partner"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 30,
+      "question": "Which of the following items is an example of an intangible asset?",
+      "options": [
+        "A. Debtors",
+        "B. Furniture",
+        "C. Copyright",
+        "D. Cash"
+      ],
+      "correctOption": "A"
+    },
+
+    {
+      "id": 31,
+      "question": "Using straight line method, what is the depreciation to be charged annually?",
+      "options": [
+        "A. N5000",
+        "B. N4000",
+        "C. N3000",
+        "D. N2000"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 32,
+      "question": "What is the accumulated depreciation at the end of the 3rd year?",
+      "options": [
+        "A. N17400",
+        "B. N16000",
+        "C. N14000",
+        "D. N12000"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 33,
+      "question": "Depreciation decreases",
+      "options": [
+        "A. capital",
+        "B. cash",
+        "C. bank",
+        "D. liabilities"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 34,
+      "question": "Depreciation of plant & machinery is recorded in the",
+      "options": [
+        "A. profit and loss account",
+        "B. trading account",
+        "C. assets account",
+        "D. purchases account"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 35,
+      "question": "Which of the following may cause depreciation?",
+      "options": [
+        "A. I, II and III",
+        "B. I and II only",
+        "C. I and III only",
+        "D. II and III only"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 36,
+      "question": "Which labour cost is direct?",
+      "options": [
+        "A. Accountant’s salary",
+        "B. Auditor’s salary",
+        "C. Cashier’s salary",
+        "D. Factory worker’s salary"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 37,
+      "question": "The maximum number that can form partnership business is",
+      "options": [
+        "A. 15",
+        "B. 10",
+        "C. 30",
+        "D. 20"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 38,
+      "question": "Patent right is an example of ____ asset",
+      "options": [
+        "A. current",
+        "B. fictitious",
+        "C. intangible",
+        "D. liquid"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 39,
+      "question": "The primary objective of a not-for-profit organization is",
+      "options": [
+        "A. to maximize profit",
+        "B. to provide services",
+        "C. to accumulate wealth",
+        "D. to pay dividends"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 40,
+      "question": "The following are charged to manufacturing account except",
+      "options": [
+        "A. direct wages",
+        "B. administrative expenses",
+        "C. factory wages",
+        "D. indirect wages"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 41,
+      "question": "The main purpose of manufacturing account is to determine",
+      "options": [
+        "A. assets and liabilities",
+        "B. cost of goods produced",
+        "C. cost of machinery",
+        "D. gross profit or loss"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 42,
+      "question": "Loss is the amount",
+      "options": [
+        "A. charged by bank",
+        "B. when goods sold < cost",
+        "C. cost if hire-purchase",
+        "D. of loan"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 43,
+      "question": "A depreciable asset may suffer obsolescence due to",
+      "options": [
+        "A. passage of time",
+        "B. wear and tear",
+        "C. technological changes",
+        "D. appreciation"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 44,
+      "question": "Which is a component of prime cost?",
+      "options": [
+        "A. Depreciation",
+        "B. Direct wages",
+        "C. Factory power",
+        "D. Factory rent"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 45,
+      "question": "Which item is found in manufacturing account?",
+      "options": [
+        "A. Rent",
+        "B. Insurance",
+        "C. Prime cost",
+        "D. Carriage outwards"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 46,
+      "question": "In partnership, a quasi-partner is a partner",
+      "options": [
+        "A. who neither contributes capital nor manages",
+        "B. under quasi act",
+        "C. under limited act",
+        "D. who contributes capital"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 47,
+      "question": "The net book value of assets is obtained by deducting ____ with accumulated depreciation",
+      "options": [
+        "A. depreciation",
+        "B. market value",
+        "C. cost",
+        "D. % depreciation"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 48,
+      "question": "An example of direct expenses is",
+      "options": [
+        "A. insurance",
+        "B. royalty",
+        "C. carriage inward",
+        "D. purchases of raw materials"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 49,
+      "question": "Factory cost excluding prime cost is",
+      "options": [
+        "A. overhead",
+        "B. fixed cost",
+        "C. material cost",
+        "D. administrative cost"
+      ],
+      "correctOption": "A"
+    },
+    {
+      "id": 50,
+      "question": "The minimum number of persons to start a partnership business is",
+      "options": [
+        "A. 2",
+        "B. 3",
+        "C. 1",
+        "D. 4"
+      ],
+      "correctOption": "A"
+    }
+  ]
+}

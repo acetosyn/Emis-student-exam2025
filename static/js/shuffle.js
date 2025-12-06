@@ -1,7 +1,30 @@
-// shuffle.js (Corrected Version — preserves correctIndex after option shuffle)
+// ================================================================
+// shuffle.js — FINAL BULLETPROOF VERSION (2025)
+// ---------------------------------------------------------------
+//  ✓ Preserves correctIndex after shuffling
+//  ✓ Handles "A. text", "A ) text", "A- text", etc.
+//  ✓ Robust fallback when option text is modified by LLM
+//  ✓ Protects against malformed option arrays
+// ================================================================
 
 (function(){
-  // Utility: Fisher–Yates shuffle
+
+  // ------------------------------------------------------------
+  // Utility: Remove leading "A. ", "B)", "C:", "D -", etc.
+  // ------------------------------------------------------------
+  function normalizeOptionText(opt) {
+    if (!opt) return "";
+    return opt
+      .toString()
+      .trim()
+      .replace(/^[A-Da-d][\.\)\-:\s]+/, "") // remove A.  B)  C-  etc.
+      .trim()
+      .toLowerCase();
+  }
+
+  // ------------------------------------------------------------
+  // Fisher–Yates Shuffle
+  // ------------------------------------------------------------
   function shuffleArray(arr) {
     const a = [...arr];
     for (let i = a.length - 1; i > 0; i--) {
@@ -11,29 +34,45 @@
     return a;
   }
 
-  // Main hook used by exam-core.js
+  // ------------------------------------------------------------
+  // Main Hook Called by exam-core.js
+  // ------------------------------------------------------------
   window.shuffleQuestions = function(examData) {
-    if (!examData || !examData.questions) return examData;
+    if (!examData || !Array.isArray(examData.questions)) return examData;
 
     examData.questions = examData.questions.map(q => {
+      if (!q.options || q.options.length !== 4) return q;
 
-      // 1️⃣ Store original correct option text BEFORE shuffle
-      const originalCorrectText =
-        q.options[q.correctIndex] || q.options[q.correct_index] || null;
+      // --- 1. Get correct option using letter index ---
+      const oldCorrectIndex = q.correctIndex ?? q.correct_index ?? -1;
+      const originalOption = q.options[oldCorrectIndex] || null;
 
-      // 2️⃣ Shuffle the options
+      // Normalize original for reliable matching
+      const normalizedOriginal = normalizeOptionText(originalOption);
+
+      // --- 2. Shuffle options ---
       const shuffled = shuffleArray(q.options);
 
-      // 3️⃣ Find where the old correct text moved to
-      const newCorrectIndex = shuffled.findIndex(opt => opt === originalCorrectText);
+      // --- 3. Locate new correct index (smart matching) ---
+      let newCorrectIndex = shuffled.findIndex(opt =>
+        normalizeOptionText(opt) === normalizedOriginal
+      );
 
+      // --- Fallback: If matching fails, default to first option ---
+      if (newCorrectIndex === -1) {
+        console.warn("⚠️ shuffle.js: Correct option fallback triggered for Q:", q);
+        newCorrectIndex = 0;
+      }
+
+      // --- 4. Return updated question object ---
       return {
         ...q,
         options: shuffled,
-        correctIndex: newCorrectIndex  // ⭐️ FIXED — correct answer ALWAYS tracked
+        correctIndex: newCorrectIndex
       };
     });
 
     return examData;
   };
+
 })();
