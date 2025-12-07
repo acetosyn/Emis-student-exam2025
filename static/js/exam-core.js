@@ -78,27 +78,61 @@ function getCorrectIndex(q){
 }
 
 // ------------------------------------------------------
-// NORMALIZE SUBJECT NAME (ROBUST MAP)
+// NORMALIZE SUBJECT NAME (FULL MAP FOR ALL 13 SUBJECTS)
 // ------------------------------------------------------
 function normalizeSubjectName(subject){
   subject = subject.toLowerCase().trim();
+
   const map = {
+    // 1. BIOLOGY
+    "biology": "biology",
+
+    // 2. CHEMISTRY
+    "chemistry": "chemistry",
+
+    // 3. CIVIC EDUCATION
+    "civic education": "civic",
+    "civic": "civic",
+
+    // 4. COMPUTER SCIENCE
+    "computer science": "computer_science",
+    "computer studies": "computer_science",
+    "computer": "computer_science",
+
+    // 5. ECONOMICS
+    "economics": "economics",
+
+    // 6. ENGLISH LANGUAGE
+    "english language": "english",
+    "english": "english",
+
+    // 7. FINANCIAL ACCOUNTING
     "financial accounting": "accounts",
-    "accounting":          "accounts",
-    "english language":    "english",
-    "english":             "english",
-    "mathematics":         "mathematics",
-    "maths":               "mathematics",
+    "accounting": "accounts",
+
+    // 8. GEOGRAPHY
+    "geography": "geography",
+
+    // 9. GOVERNMENT
+    "government": "government",
+
+    // 10. LITERATURE-IN-ENGLISH
     "literature-in-english": "literature",
-    "literature":          "literature",
-    "chemistry":           "chemistry",
-    "physics":             "physics",
-    "economics":           "economics",
-    "government":          "government",
-    "technical drawing":   "technical",
-    "computer studies":    "computer",
-    "biology":             "biology"
+    "literature in english": "literature",
+    "literature": "literature",
+
+    // 11. MATHEMATICS
+    "mathematics": "mathematics",
+    "maths": "mathematics",
+
+    // 12. PHYSICS
+    "physics": "physics",
+
+    // 13. TECHNICAL DRAWING
+    "technical drawing": "technical",
+    "technical": "technical"
   };
+
   return map[subject] || subject.replace(/\s+/g, "");
 }
 
@@ -136,7 +170,7 @@ window.loadExamData = async function(quiet = false){
 
     let rawData = await res.json();
 
-    // Standardize questions
+    // Standardize questions (KEEP DIAGRAM)
     rawData.questions = (rawData.questions || []).map((q, idx) => {
       let rawCorrect =
         q.correctOption ||
@@ -147,34 +181,33 @@ window.loadExamData = async function(quiet = false){
       let ci = -1;
       if (rawCorrect) {
         const letter = rawCorrect.toString().trim().toUpperCase(); // A/B/C/D
-        ci = letter.charCodeAt(0) - 65; // A=0
+        ci = letter.charCodeAt(0) - 65; // A = 0
       }
 
       return {
-        id:        q.id ?? idx,
-        question:  q.question,
-        options:   q.options,
+        id:           q.id ?? idx,
+        question:     q.question,
+        options:      q.options,
+        diagram:      q.diagram || null,   // <-- FIX ADDED
         correctIndex: ci
       };
     });
 
-    // ❗ NO internal shuffling here — shuffle.js will handle if needed
-    // ❗ Load raw, then apply external shufflewindow.examData = shuffleQuestions(rawData);
+    // No internal shuffle — external shuffle.js handles it
     window.examData = shuffleQuestions(rawData);
-
 
     // Timer setup
     window.timeRemaining      = (rawData.time_allowed_minutes || 60) * 60;
     window.initialTimeAllowed = window.timeRemaining;
 
-    // Reset timer warnings
+    // Reset warnings
     __warn20Shown = __warn10Shown = __warn5Shown = false;
 
     // Timer display
     const td = $("#timerDisplay");
     if (td) td.textContent = formatTime(window.timeRemaining);
 
-    // Subject title: SUBJECT — N QUESTIONS (modernized)
+    // Subject title
     const st = $("#examSubjectTitle");
     if (st) {
       const totalQ = window.examData.questions.length;
@@ -189,7 +222,7 @@ window.loadExamData = async function(quiet = false){
     const totalQEl = $("#totalQuestions");
     if (totalQEl) totalQEl.textContent = window.examData.questions.length;
 
-    // Load first question + nav/progress
+    // Load first question
     loadQuestion(0);
     updateProgress();
     updateQuestionNavigation();
@@ -204,34 +237,54 @@ window.loadExamData = async function(quiet = false){
 };
 
 // ------------------------------------------------------
-// LOAD SINGLE QUESTION  (with .qa-slide + fade-in)
+// LOAD SINGLE QUESTION  (fixed labeling + diagram)
 // ------------------------------------------------------
-window.loadQuestion = function(i){
+window.loadQuestion = function (i) {
   if (!window.examData) return;
   if (i < 0 || i >= window.examData.questions.length) return;
 
   window.currentQuestionIndex = i;
-  const q   = window.examData.questions[i];
+  const q = window.examData.questions[i];
   const qid = q.id ?? i;
 
   $("#currentQuestionNumber").textContent = i + 1;
 
-  const prev   = window.userAnswers[qid]?.index;
+  const prev = window.userAnswers[qid]?.index;
   const locked = window.lockedQuestions.has(qid);
 
+  // Remove any existing A., B., C., D. from JSON so UI can relabel
+  function stripLabel(opt) {
+    return opt.replace(/^[A-Da-d][\.\)\-:\s]+/, "").trim();
+  }
+
   const html = (q.options || []).map((opt, idx) => {
+    const cleanOpt = stripLabel(opt);  // remove "A.", "B." etc.
+    const letter = String.fromCharCode(65 + idx); // A, B, C, D
+
     const selected = prev === idx ? "selected" : "";
-    const dis      = locked ? "disabled" : "";
+    const dis = locked ? "disabled" : "";
+
     return `
       <button class="option-btn ${selected}" data-option-index="${idx}" ${dis}>
-        <span class="option-letter">${String.fromCharCode(65 + idx)}</span>
-        ${opt}
+        <span class="option-letter">${letter}</span>
+        ${cleanOpt}
       </button>
     `;
   }).join("");
 
+  // Diagram support
+  let diagramHTML = "";
+  if (q.diagram) {
+    diagramHTML = `
+      <div class="question-diagram mb-4">
+        <img src="${q.diagram}" class="diagram-img" style="max-width:100%;border-radius:6px;">
+      </div>
+    `;
+  }
+
   $("#questionContent").innerHTML = `
     <div class="qa-slide fade-in-up">
+      ${diagramHTML}
       <h3 class="text-xl font-medium mb-4">${q.question}</h3>
       <div class="space-y-3">
         ${html}
@@ -246,6 +299,7 @@ window.loadQuestion = function(i){
   updateNavigationButtons();
   updateQuestionNavigation();
 };
+
 
 // ------------------------------------------------------
 // SELECT OPTION
