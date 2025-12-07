@@ -20,7 +20,7 @@
     },
     {
       "id": 2,
-      "question": "Which of the following types of alkanols undergo oxidation to produce alkanoic acids?<br>I. Primary alkanols<br>II. Secondary alkanols<br>III. Tertiary alkanols",
+      "question": "Which of the following types of alkanols undergo oxidation to produce alkanoic acids?\nI. Primary alkanols\nII. Secondary alkanols\nIII. Tertiary alkanols",
       "diagram": null,
       "options": [
         "A. I, II and III",
@@ -48,7 +48,7 @@
       "diagram": null,
       "options": [
         "A. CH<sub>3</sub>(CH<sub>2</sub>)<sub>2</sub>OH",
-        "B. CH<sub>3</sub>CH=CHCH<sub>2</sub>OH",
+        "B. CH<sub>3</sub>CH = CHCH<sub>2</sub>OH",
         "C. CH<sub>3</sub>(CH<sub>2</sub>)<sub>3</sub>OH",
         "D. CH(CH<sub>3</sub>)<sub>2</sub>OH"
       ],
@@ -56,7 +56,7 @@
     },
     {
       "id": 5,
-      "question": "Which of the following is/are properties of ethanol?<br>I. It is colourless<br>II. It is miscible with water<br>III. Its boiling point is 78°C<br>IV. It is a strong electrolyte",
+      "question": "Which of the following is/are properties of ethanol?\nI. It is colourless\nII. It is miscible with water\nIII. Its boiling point is 78\u00b0C\nIV. It is a strong electrolyte",
       "diagram": null,
       "options": [
         "A. IV only",
@@ -85,7 +85,7 @@
       "options": [
         "A. ethanoic acid",
         "B. propan-1,2,3-triol",
-        "C. ethene",
+        "C. ethane",
         "D. ethanol"
       ],
       "correctOption": "C"
@@ -107,7 +107,7 @@
       "question": "What is the major product formed when C<sub>2</sub>H<sub>5</sub>OH reacts with CH<sub>3</sub>COOH?",
       "diagram": null,
       "options": [
-        "A. C<sub>2</sub>H<sub>5</sub>COOH",
+        "A. C<sub>2</sub>H<sub>5</sub>COOH<sub>2</sub>",
         "B. C<sub>2</sub>H<sub>5</sub>COCH<sub>3</sub>",
         "C. CH<sub>3</sub>COOC<sub>2</sub>H<sub>5</sub>",
         "D. C<sub>3</sub>H<sub>7</sub>COOH"
@@ -119,9 +119,9 @@
       "question": "What is the product of the reaction between ethanol and excess acidified KMnO<sub>4</sub> solution?",
       "diagram": null,
       "options": [
-        "A. CH<sub>3</sub>CH<sub>3</sub>",
+        "A. CH<sub>2</sub>CH<sub>3</sub>",
         "B. CH<sub>3</sub>COOH",
-        "C. CH<sub>3</sub>CH<sub>2</sub>",
+        "C. CH<sub>3</sub> - CH<sub>3</sub>",
         "D. CH<sub>3</sub>OCH<sub>3</sub>"
       ],
       "correctOption": "B"
@@ -152,7 +152,7 @@
     },
     {
       "id": 13,
-      "question": "The compound that makes palm wine taste sour after exposure to air for a few days is",
+      "question": "The compound that makes palm wine taste sour after exposure to the air for a few days is",
       "diagram": null,
       "options": [
         "A. ethanol",
@@ -186,8 +186,7 @@
       ],
       "correctOption": "C"
     },
-
-        {
+    {
       "id": 16,
       "question": "Which of the following compounds reacts with sodium hydroxide to form a salt?",
       "diagram": null,
@@ -285,7 +284,7 @@
     },
     {
       "id": 24,
-      "question": "Consider the reaction: vegetable oil  (H<sub>2</sub>/Ni catalyst, high temperature) → product. The reaction is applied in the manufacture of",
+      "question": "Consider the reaction: vegetable oil  (H<sub>2</sub>/Ni catalyst, high temperature)  → product. The reaction is applied in the manufacture of",
       "diagram": null,
       "options": [
         "A. drugs",
@@ -345,7 +344,7 @@
     },
     {
       "id": 29,
-      "question": "Which of the following statements about soapless detergents is correct? They—",
+      "question": "Which of the following statements about soapless detergents is correct? They",
       "diagram": null,
       "options": [
         "A. lather readily with hard water",
@@ -367,10 +366,9 @@
       ],
       "correctOption": "A"
     },
-
     {
       "id": 31,
-      "question": "The IUPAC name of the following organic compound, HOOC–COOH, is",
+      "question": "The IUPAC name of the following organic compound, HOOC-COOH, is",
       "diagram": null,
       "options": [
         "A. ethane-1,2-dioic acid",
@@ -409,7 +407,7 @@
       "question": "The product of the reaction between propanoic acid and ethanol is",
       "diagram": null,
       "options": [
-        "A. propyl methanoate",
+        "A. propymethanoate",
         "B. ethyl ethanoate",
         "C. methyl propanoate",
         "D. ethyl propanoate"
@@ -430,7 +428,7 @@
     },
     {
       "id": 36,
-      "question": "The products of the reaction between CH<sub>3</sub>CH<sub>2</sub>COOH and CH<sub>3</sub>OH are H<sub>2</sub>O and—",
+      "question": "The products of the reaction between CH<sub>3</sub>CH<sub>2</sub>COOH and CH<sub>3</sub>OH are H<sub>2</sub>O and",
       "diagram": null,
       "options": [
         "A. CH<sub>3</sub>CH<sub>2</sub>COOCH<sub>3</sub>",
@@ -495,7 +493,7 @@
       "options": [
         "A. ethanol",
         "B. ethanoic acid",
-        "C. ethene",
+        "C. ethane",
         "D. ethane"
       ],
       "correctOption": "C"

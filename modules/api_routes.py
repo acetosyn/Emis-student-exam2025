@@ -67,25 +67,47 @@ def get_subjects_for_class():
 #   INTERNAL: Resolve correct folder for subject
 #   (Case-insensitive matching)
 # ============================================================
-def resolve_subject_folder(class_category, subject):
+def resolve_subject_folder(class_category, subject_raw):
     """
-    Allows:
-        "CHEMISTRY" → "Chemistry"
-        "chemistry" → "Chemistry"
-        "Chemistry" → "Chemistry"
+    Smart resolver:
+    - Case-insensitive
+    - Space vs underscore insensitive
+    - Hyphen insensitive
+    - Handles 13 EMIS subjects safely
     """
+
+    if not class_category or not subject_raw:
+        return None
 
     class_folder = CLASS_DIR / class_category
     if not class_folder.exists():
         return None
 
-    target = subject.lower().strip()
+    # Normalize input
+    target = (
+        subject_raw.lower()
+        .replace(" ", "_")
+        .replace("-", "_")
+        .strip()
+    )
 
+    # Compare against each folder name in CLASS/<class>
     for folder in class_folder.iterdir():
-        if folder.is_dir() and folder.name.lower() == target:
-            return folder.name   # Return actual proper-case name
+        if not folder.is_dir():
+            continue
+
+        folder_key = (
+            folder.name.lower()
+            .replace(" ", "_")
+            .replace("-", "_")
+            .strip()
+        )
+
+        if folder_key == target:
+            return folder.name  # Return proper-case name
 
     return None
+
 
 
 # ============================================================

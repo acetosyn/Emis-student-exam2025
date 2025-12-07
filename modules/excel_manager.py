@@ -16,12 +16,56 @@ def ensure_folder(path: Path):
 
 
 # -----------------------------------
-# Normalize subject folder name
+# Normalize subject folder name (FULL MAPPING)
 # -----------------------------------
 def normalize_subject(subject: str):
     if not subject:
         return "Unknown"
+
+    key = subject.strip().lower()
+
+    mapping = {
+        # CORE SUBJECTS (13)
+        "biology": "Biology",
+        "chemistry": "Chemistry",
+        "civic education": "Civic_education",
+        "civic": "Civic_education",
+
+        "computer science": "Computer_studies",
+        "computer studies": "Computer_studies",
+        "computer": "Computer_studies",
+
+        "economics": "Economics",
+
+        "english language": "English_language",
+        "english": "English_language",
+
+        "financial accounting": "Financial_accounting",
+        "accounting": "Financial_accounting",
+
+        "geography": "Geography",
+        "government": "Government",
+
+        "literature-in-english": "Literature",
+        "literature": "Literature",
+
+        "mathematics": "Mathematics",
+        "maths": "Mathematics",
+
+        "physics": "Physics",
+
+        "technical drawing": "Technical",
+        "technical": "Technical",
+    }
+
+    # Return mapped folder
+    if key in mapping:
+        return mapping[key]
+
+    # Fallback for unknown subjects
     return subject.strip().replace(" ", "_").replace("-", "_").capitalize()
+
+
 
 
 # -----------------------------------
