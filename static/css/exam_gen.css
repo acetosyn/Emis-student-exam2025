@@ -716,3 +716,27 @@
   5% { transform: translateY(0); }
   45%,100% { transform: translateY(0); width:0; left:50%; }
 }
+
+
+
+
+.question-diagram {
+  text-align: center;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.diagram-img {
+  max-width: 260px;        /* reduce width */
+  max-height: 220px;       /* prevents extremely tall images */
+  width: auto;
+  height: auto;
+  object-fit: contain;     /* ensures image scales nicely */
+  
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 6px;
+  background: white;
+  box-shadow: 0 0 6px rgba(0,0,0,0.1);
+}
