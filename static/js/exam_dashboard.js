@@ -1,5 +1,5 @@
 // =============================================================
-// EMIS EXAM DASHBOARD JS — Typewriter + Modal + UX Enhancements
+// EMIS EXAM DASHBOARD JS — Typewriter + Validation + Flash + Modal
 // =============================================================
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -39,7 +39,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // -----------------------------------------------------------
-  // 2. SUPPORT MODAL (existing system)
+  // 2. FLASH BAR + EXAM AVAILABLE FLAG
+  // -----------------------------------------------------------
+  const flashBar = document.getElementById("flashBar");
+
+  function flash(msg, type = "red") {
+    if (!flashBar) {
+      alert(msg);
+      return;
+    }
+    flashBar.textContent = msg;
+    flashBar.className = "flash-bar show flash-" + type;
+
+    setTimeout(() => {
+      flashBar.classList.remove("show");
+    }, 2600);
+  }
+
+  // ⭐ Correct way: read from HTML attribute
+  let examAvailable = false;
+  if (flashBar && flashBar.dataset.examAvailable) {
+    examAvailable = flashBar.dataset.examAvailable === "true";
+    console.log("[exam-dashboard] examAvailable =", examAvailable);
+  }
+
+
+  // -----------------------------------------------------------
+  // 3. SUPPORT MODAL
   // -----------------------------------------------------------
   const supportModal = document.getElementById("supportModal");
   const openSupport = document.getElementById("openSupport");
@@ -60,26 +86,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // -----------------------------------------------------------
-  // 3. ACTIVITY LIST AUTO-TIMESTAMP
-  // -----------------------------------------------------------
-  const actMetaEls = document.querySelectorAll(".act-meta");
-  const now = new Date().toLocaleTimeString();
-
-  actMetaEls.forEach(el => {
-    if (el.textContent.includes("Just now")) return;
-    el.textContent = now;
-  });
-
-
-  // -----------------------------------------------------------
-  // 4. Status pill subtle animation
+  // 4. STATUS PILL ANIMATION
   // -----------------------------------------------------------
   const pill = document.querySelector(".status-pill");
   if (pill) {
     pill.style.transition = "transform 0.3s ease, opacity 0.3s ease";
     pill.style.transform = "scale(1.05)";
     pill.style.opacity = "0.9";
-
     setTimeout(() => {
       pill.style.transform = "scale(1)";
       pill.style.opacity = "1";
@@ -88,23 +101,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // -----------------------------------------------------------
-  // 5. EXAM START CONFIRMATION MODAL
+  // 5. EXAM START VALIDATION + MODAL LOGIC
   // -----------------------------------------------------------
   const openExamModal = document.getElementById("openExamModal");
   const examStartModal = document.getElementById("examStartModal");
   const closeExamModal = document.getElementById("closeExamModal");
 
-  // Open modal
   openExamModal?.addEventListener("click", () => {
-    examStartModal?.classList.remove("hidden");
+
+    if (!examAvailable) {
+      flash("❌ This exam is not available. Contact your teacher or admin.", "red");
+      return;
+    }
+
+    flash("✔ Loading exam…", "green");
+
+    setTimeout(() => {
+      examStartModal?.classList.remove("hidden");
+    }, 700);
   });
 
-  // Close modal with X button
   closeExamModal?.addEventListener("click", () => {
     examStartModal?.classList.add("hidden");
   });
 
-  // Close modal if clicking outside the modal box
   examStartModal?.addEventListener("click", (e) => {
     if (e.target === examStartModal) {
       examStartModal.classList.add("hidden");
@@ -112,4 +132,3 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
-

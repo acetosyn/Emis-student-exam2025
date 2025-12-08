@@ -1,37 +1,45 @@
-/* ============================================================================
-   EMIS — ADMIN RESULTS CONSOLE (v2.0)
-   Professional, enterprise-grade results management interface
-   Inspired by prototype.css tokens + dashboard aesthetic
-============================================================================ */
+/* ============================================================
+   EMIS — ADMIN RESULTS PAGE (2025/2026 Premium Blue Theme)
+   Matches uploads.css aesthetics
+   ============================================================ */
 
 :root {
-  --primary: #0f2b46;
+  --primary: #2a4d77;
+  --primary-dark: #1f3b5c;
+  --primary-light: #e8f1fb;
+
   --accent: #e11d48;
-  --secondary: #0d9488;
 
-  --light: #ffffff;
-  --dark: #0f172a;
-  --bg-soft: #f1f5f9;
-  --muted: #64748b;
+  --card-bg: #ffffff;
+  --card-bg-soft: rgba(255, 255, 255, 0.65);
 
-  --radius: 16px;
-  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.07);
-  --shadow-md: 0 6px 16px rgba(0,0,0,0.12);
-  --shadow-lg: 0 12px 26px rgba(0,0,0,0.15);
+  --text-dark: #0f172a;
+  --text-soft: #475569;
 
-  --transition: all 0.25s ease;
+  --border-soft: rgba(0,0,0,0.06);
+
+  --radius: 14px;
+
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+  --shadow-lg: 0 6px 28px rgba(0,0,0,0.12);
+
+  --gradient-soft: linear-gradient(135deg, #eef6ff, #f6faff);
 }
 
-/* ============================================================================
-   MAIN WRAPPER
-============================================================================ */
-.results-container {
-  padding: 2rem 1.8rem;
-  background: var(--bg-soft);
+/* ============================================================
+   GLOBAL + PAGE WRAPPER
+   ============================================================ */
+
+.results-wrapper {
+  padding: 1.6rem;
+  background: var(--primary-light);
+  border-radius: var(--radius);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
 }
 
 .fade-in {
-  animation: fadeIn 0.45s ease;
+  animation: fadeIn .45s ease;
 }
 
 @keyframes fadeIn {
@@ -39,462 +47,493 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ============================================================================
-   GENERIC CARD STYLE (Matches prototype.css)
-============================================================================ */
-.card {
-  background: var(--light);
+.glass-card {
+  background: var(--card-bg-soft);
   border-radius: var(--radius);
-  padding: 1.4rem 1.6rem;
-  margin-bottom: 1.5rem;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
+  padding: 1rem 1.25rem;
+  backdrop-filter: blur(6px);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-soft);
 }
 
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
+/* ============================================================
+   HEADER PANEL
+   ============================================================ */
+
+.header-panel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.4rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-/* ============================================================================
-   TITLE CARD
-============================================================================ */
-.title-card .results-title {
-  font-size: 1.7rem;
+.hp-title {
+  font-size: 1.8rem;
   font-weight: 800;
-  color: var(--primary);
+  color: var(--primary-dark);
+  margin-bottom: .3rem;
+}
+
+.hp-sub {
+  font-size: .95rem;
+  color: var(--text-soft);
+}
+
+.hp-badge {
+  padding: .55rem 1rem;
+  border-radius: 12px;
+  background: var(--gradient-soft);
+  border-left: 4px solid var(--accent);
+  color: var(--primary-dark);
+  font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================
+   FILTER PANEL
+   ============================================================ */
+
+.filter-panel {
+  margin-bottom: 1.4rem;
+}
+
+.filter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.filter-group label {
+  font-size: .8rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  display: block;
+  margin-bottom: .25rem;
+}
+
+.filter-input {
+  width: 100%;
+  padding: .55rem .8rem;
+  border-radius: 10px;
+  background: #f1f6ff;
+  border: 1px solid #d4e2f7;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--primary-dark);
+  box-shadow: var(--shadow-sm);
+  transition: .25s ease;
+}
+
+.filter-input:focus {
+  outline: none;
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 3px rgba(50,90,140,0.25);
+}
+
+.search-box {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  background: #f1f6ff;
+  border-radius: 10px;
+  padding: .45rem .75rem;
+  border: 1px solid #d4e2f7;
+  box-shadow: var(--shadow-sm);
 }
 
-.title-card .results-title i {
-  color: var(--accent);
-  font-size: 1.9rem;
+.search-box i {
+  margin-right: .6rem;
+  color: var(--primary-dark);
 }
 
-.results-subtitle {
-  font-size: 0.92rem;
-  color: var(--muted);
-  margin-top: 6px;
-  letter-spacing: 0.3px;
+.search-box input {
+  border: none;
+  background: transparent;
+  width: 100%;
+  outline: none;
+  font-weight: 600;
+  color: var(--primary-dark);
 }
 
-/* ============================================================================
-   ANALYTICS CARD
-============================================================================ */
-.analytics-card {
-  padding-top: 1.8rem;
+/* ============================================================
+   ANALYTICS PANEL
+   ============================================================ */
+
+.analytics-panel {
+  margin-bottom: 1.4rem;
 }
 
 .analytics-grid {
   display: grid;
-  gap: 1.2rem;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
 }
 
-.analytic-box {
-  background: #f8fafc;
+.analytics-item {
+  background: #f7faff;
+  border: 1px solid #d9e5f7;
   border-radius: 12px;
-  padding: 1rem 1.2rem;
+  padding: 1rem;
   box-shadow: var(--shadow-sm);
-  transition: var(--transition);
-  border-left: 5px solid var(--primary);
+  text-align: center;
 }
 
-.analytic-box:hover {
-  background: #fff;
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-md);
-}
-
-.analytic-box h3 {
-  font-size: 0.9rem;
+.analytics-item h3 {
+  font-size: .9rem;
+  color: var(--primary-dark);
+  margin-bottom: .25rem;
   font-weight: 700;
-  color: var(--muted);
-  margin-bottom: 0.35rem;
 }
 
-.analytic-box p {
+.analytics-item p {
   font-size: 1.6rem;
-  font-weight: 900;
-  color: var(--primary);
-  margin: 0;
+  font-weight: 800;
+  color: var(--accent);
 }
 
-/* ============================================================================
-   FILTER CARD — Class + Subject + Search
-============================================================================ */
-.filter-card {
-  padding-bottom: 1rem;
-}
+/* ============================================================
+   TOOLBAR PANEL
+   ============================================================ */
 
-.filter-row {
-  display: grid;
-  grid-template-columns: 200px 200px 1fr;
-  gap: 1.2rem;
-  align-items: end;
-}
-
-.filter-item label {
-  font-size: 0.85rem;
-  color: var(--muted);
-  font-weight: 600;
-  margin-bottom: 0.2rem;
-}
-
-.form-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: var(--radius);
-  font-size: 0.9rem;
-  background: #fff;
-  transition: var(--transition);
-}
-
-.form-input:focus {
-  border-color: var(--primary);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(15,43,70,0.15);
-}
-
-.full {
-  grid-column: span 1;
-}
-
-/* Search Section */
-.search-section {
-  background: #f1f5f9;
+.toolbar-panel {
+  margin-bottom: 1.4rem;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.7rem;
-  padding: 0.7rem 1rem;
-  border-radius: var(--radius);
-  box-shadow: inset 0 0 0 1px #d1d5db;
 }
 
-.search-section input {
+.toolbar-right, 
+.toolbar-left {
+  display: flex;
+  gap: .7rem;
+}
+
+.btn-light,
+.btn-danger,
+.btn-secondary {
+  padding: .55rem 1rem;
+  border-radius: 8px;
+  font-size: .85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: .25s ease;
   border: none;
-  background: none;
-  width: 100%;
-  font-size: 0.92rem;
 }
 
-.search-section input:focus {
-  outline: none;
+.btn-light {
+  background: #f1f6ff;
+  border: 1px solid #d4e2f7;
+  color: var(--primary-dark);
 }
 
-.search-icon {
-  color: #475569;
-  font-size: 1rem;
-}
-
-/* Load Button */
-.load-btn {
-  margin-top: 1.2rem;
-  padding: 0.85rem 1.2rem;
-  border-radius: var(--radius);
-  background: #2563eb;
-  color: white;
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  transition: var(--transition);
-}
-
-.load-btn:hover {
-  background: #1e3a8a;
-  transform: translateY(-3px);
-}
-
-/* ============================================================================
-   EXPORT CARD
-============================================================================ */
-.export-card {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
-
-.export-buttons {
-  display: flex;
-  gap: 0.8rem;
-  flex-wrap: wrap;
-}
-
-.export-buttons .btn-light {
-  padding: 0.7rem 1rem;
-  border-radius: var(--radius);
-  background: #fff;
-  border: 1px solid #d8dee9;
-  box-shadow: var(--shadow-sm);
-  font-weight: 700;
-  color: var(--primary);
-  transition: var(--transition);
-}
-
-.export-buttons .btn-light:hover {
-  background: #f1f5f9;
-  transform: translateY(-3px);
-}
-
-/* ============================================================================
-   TABLE CARD
-============================================================================ */
-.table-card {
-  padding-top: 1.4rem;
-}
-
-.table-toolbar {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 0.7rem;
+.btn-light:hover {
+  background: #e6f0ff;
+  transform: translateY(-2px);
 }
 
 .btn-danger {
-  padding: 0.7rem 1.1rem;
-  border-radius: var(--radius);
-  background: #dc2626;
-  color: white;
-  font-weight: 700;
-  border: none;
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
+  background: #fee2e2;
+  color: #b91c1c;
 }
 
 .btn-danger:hover {
-  background: #b91c1c;
-  transform: translateY(-3px);
+  background: #ef4444;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: #e2e8f0;
+  color: #475569;
+}
+
+.btn-secondary:hover {
+  background: #cbd5e1;
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+   RESULTS TABLE PANEL
+   ============================================================ */
+
+.results-table-panel {
+  margin-bottom: 1.4rem;
 }
 
 .table-wrapper {
-  max-height: 600px;
-  overflow-y: auto;
-  border-radius: var(--radius);
-  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e3ecfa;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
 }
 
 .results-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
 }
 
-.results-table thead {
-  background: #f8fafc;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+.results-table th {
+  background: #f1f6ff;
+  padding: .7rem;
+  font-size: .8rem;
+  color: var(--primary-dark);
+  font-weight: 800;
+  border-bottom: 1px solid #e3ecfa;
+  text-align: left;
 }
 
-.results-table th,
 .results-table td {
-  padding: 0.85rem;
-  border-bottom: 1px solid #e5e7eb;
+  padding: .7rem;
+  font-size: .84rem;
+  border-bottom: 1px solid #eef2f6;
+  color: var(--text-dark);
 }
 
-.results-table tbody tr:hover {
-  background: #f1f5f9;
+.results-table tr:hover td {
+  background: #f9fbff;
 }
 
-.status-pass {
-  font-weight: 700;
-  color: #16a34a;
-}
-
-.status-fail {
-  font-weight: 700;
-  color: #dc2626;
-}
-
-.no-data {
+.table-placeholder {
   text-align: center;
-  padding: 2.2rem 0;
+  padding: 1.5rem;
   color: #64748b;
-  font-weight: 600;
+  font-size: .9rem;
 }
 
-/* ============================================================================
+/* ============================================================
    PAGINATION
-============================================================================ */
+   ============================================================ */
+
 .pagination {
-  margin-top: 1rem;
+  padding: 1rem .3rem;
   text-align: center;
 }
 
-.pagination button {
-  padding: 0.45rem 1rem;
-  background: #e5e7eb;
-  border: none;
-  color: #0f172a;
-  border-radius: 6px;
-  margin: 0 0.25rem;
-  cursor: pointer;
-  font-weight: 600;
-  transition: var(--transition);
-}
+/* ============================================================
+   MODALS (Delete Confirmation)
+   ============================================================ */
 
-.pagination button:hover {
-  background: #cbd5e1;
-}
-
-.pagination .active {
-  background: #2563eb;
-  color: white;
-}
-
-/* ============================================================================
-   DELETE MODAL
-============================================================================ */
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
+  background: rgba(0,0,0,0.5);
+  backdrop-filter: blur(3px);
 }
 
 .modal-card {
   background: white;
-  padding: 1.6rem;
-  border-radius: var(--radius);
-  width: 420px;
-  text-align: center;
-  animation: fadeUp 0.3s ease;
-  box-shadow: var(--shadow-lg);
-}
-
-.modal-card.small {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
   width: 360px;
+  padding: 1.4rem;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-lg);
+  text-align: center;
+  animation: fadeIn .25s ease;
 }
 
 .modal-card h3 {
-  font-size: 1.3rem;
   font-weight: 800;
-  margin-bottom: 0.4rem;
-  color: var(--primary);
+  margin-bottom: .4rem;
+  color: var(--primary-dark);
 }
 
 .modal-card p {
-  color: var(--muted);
-  font-size: 0.9rem;
+  font-size: .85rem;
+  color: var(--text-soft);
   margin-bottom: 1rem;
 }
 
-.modal-footer {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 1rem;
+/* ============================================================
+   OVERLAY BEHIND MODAL
+============================================================ */
+.summary-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(2px);
+    z-index: 9998;
+    display: none;
+    transition: opacity 0.25s ease;
 }
 
-.btn-secondary {
-  background: #e5e7eb;
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius);
-  color: var(--dark);
-  font-weight: 700;
-  border: none;
+/* ============================================================
+   MODAL (VIEW SUMMARY)
+============================================================ */
+.show-summary {
+    position: fixed !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    width: 70% !important;
+    max-width: 850px;
+    max-height: 90vh !important;
+    overflow-y: auto !important;
+
+    background: #ffffff !important;
+    padding: 3rem 3.4rem !important;
+    border-radius: 22px !important;
+
+    box-shadow: 0 25px 60px rgba(0,0,0,0.38);
+    z-index: 9999 !important;
+
+    font-family: "Inter", sans-serif !important;
+
+    animation: fadeInSummary .28s ease;
 }
 
-.btn-secondary:hover {
-  background: #cbd5e1;
+/* Smooth fade-in animation */
+@keyframes fadeInSummary {
+    from { opacity: 0; transform: translate(-50%, -46%); }
+    to   { opacity: 1; transform: translate(-50%, -50%); }
 }
 
-/* ============================================================================
-   RESPONSIVE
-============================================================================ */
-@media (max-width: 900px) {
-  .filter-row {
-    grid-template-columns: 1fr 1fr;
-  }
+/* ============================================================
+   Close Button
+============================================================ */
+.summary-close-btn {
+    position: absolute;
+    top: 12px;
+    right: 18px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #555;
+    cursor: pointer;
+    transition: 0.2s ease;
 }
 
-@media (max-width: 600px) {
-  .filter-row {
-    grid-template-columns: 1fr;
-  }
-
-  .export-buttons {
-    flex-direction: column;
-  }
-
-  .results-container {
-    padding: 1rem;
-  }
+.summary-close-btn:hover {
+    color: #000;
 }
 
-/* ========================================================================
-   ADMIN PRINT SUMMARY — BEAUTIFUL RESULT.CSS STYLE
-=========================================================================== */
+/* ============================================================
+   Summary Header (Logo + Title)
+============================================================ */
+.summary-header {
+    display: flex;
+    align-items: center;
+    gap: 1.6rem;
+    margin-bottom: 1.8rem;
+}
 
+.summary-logo {
+    width: 90px;
+    height: auto;
+    object-fit: contain;
+}
+
+.summary-header-title {
+    font-size: 1.9rem;
+    font-weight: 800;
+    color: #111;
+    margin: 0;
+}
+
+/* ============================================================
+   Summary Sections
+============================================================ */
+.summary-section {
+    margin-top: 1.6rem;
+    margin-bottom: 1.6rem;
+}
+
+.summary-section p {
+    margin: 0.45rem 0;
+    font-size: 1.04rem;
+    line-height: 1.55;
+}
+
+.summary-section p strong {
+    color: #000;
+    font-weight: 700;
+}
+
+/* Divider */
+.summary-divider,
+.print-summary hr {
+    margin: 1.4rem 0;
+    height: 1px;
+    background: #e4e4e7;
+    border: none;
+}
+
+
+/* ============================================================
+   FIXED PRINT MODE — NO BLANK FIRST PAGE, NO EXTRA PAGES
+============================================================ */
 @media print {
 
-    /* Hide everything */
+    /* Hide all content BUT keep layout so Chrome doesn't add blank pages */
     body * {
         visibility: hidden !important;
     }
 
-    /* Show only admin summary */
-    #adminPrintSummary, #adminPrintSummary * {
+    /* Show the summary content ONLY */
+    #adminPrintSummary,
+    #adminPrintSummary * {
         visibility: visible !important;
     }
 
+    /* Ensure summary prints from top of page cleanly */
     #adminPrintSummary {
-        display: block !important;
-        position: absolute;
-        top: 0;
-        left: 0;
+        position: absolute !important;
+        top: 0 !important;
+        left: 0 !important;
+        padding: 2.5rem !important;
         width: 100% !important;
         background: #ffffff !important;
-        padding: 2.5rem !important;
-        color: #000;
-        line-height: 1.65 !important;
-        font-size: 1.05rem !important;
-        font-family: "Inter", sans-serif !important;
+        box-shadow: none !important;
     }
 
-    /* Header */
-    #adminPrintSummary h2 {
-        font-size: 1.8rem !important;
-        font-weight: 800 !important;
-        text-align: center !important;
-        margin-bottom: 1rem !important;
-        color: #111 !important;
+    /* Hide close button */
+    .summary-close-btn {
+        display: none !important;
     }
 
-    /* Strong labels */
-    #adminPrintSummary p strong {
-        color: #111 !important;
-        font-weight: 700 !important;
-    }
-
-    /* Paragraph spacing */
-    #adminPrintSummary p {
-        margin: 0.35rem 0 !important;
-        font-size: 1.05rem !important;
-    }
-
-    /* Divider */
-    #adminPrintSummary hr {
-        margin: 1.2rem 0 !important;
-        border: none;
-        height: 1px;
-        background: #ddd !important;
-    }
-
-    /* Footer note */
-    #adminPrintSummary .print-footer-note {
-        margin-top: 1.8rem !important;
-        font-size: 0.8rem !important;
-        text-align: center !important;
-        color: #555 !important;
-    }
-
-    /* Page margins */
     @page {
         margin: 1.4cm;
     }
+}
+
+/* ============================================================
+   PASS / FAIL BADGES
+============================================================ */
+.status-pass {
+    color: #16a34a;
+    font-weight: 700;
+}
+
+.status-fail {
+    color: #dc2626;
+    font-weight: 700;
+}
+
+
+
+/* ============================================================
+   SUMMARY CLOSE BUTTON (X)
+============================================================ */
+.summary-close-btn {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #666;
+    cursor: pointer;
+    transition: 0.25s ease;
+    user-select: none;
+}
+
+.summary-close-btn:hover {
+    color: #000;
+    transform: scale(1.15);
+}
+
+.summary-close-btn:active {
+    transform: scale(0.95);
 }

@@ -1,6 +1,6 @@
 /* ============================================================================
-   EMIS STUDENT DASHBOARD — Layout A (v7.0)
-   Clean professional split-hero + adaptive grid layout
+   EMIS STUDENT DASHBOARD — Layout (v10 FINAL — Year Aware)
+   Clean professional design + smooth animations
 ============================================================================ */
 
 :root {
@@ -30,8 +30,10 @@ body.students-body {
   color: var(--dark);
 }
 
+
+
 /* ============================================================================
-   HEADER — with Logout Button
+   HEADER
 ============================================================================ */
 .student-header {
   background: var(--primary);
@@ -79,7 +81,7 @@ body.students-body {
   color: #fff;
   font-size: 1.15rem;
   text-decoration: none;
-  transition: 0.2s ease;
+  transition: 0.2s;
 }
 
 .logout-btn:hover {
@@ -120,8 +122,10 @@ body.students-body {
   border: 2px solid var(--accent);
 }
 
+
+
 /* ============================================================================
-   HERO SPLIT LAYOUT
+   HERO SPLIT (Main Header Section)
 ============================================================================ */
 .hero-split {
   display: grid;
@@ -141,7 +145,7 @@ body.students-body {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(15, 43, 70, 0.8);
+  background: rgba(15, 43, 70, 0.78);
   backdrop-filter: blur(4px);
 }
 
@@ -151,8 +155,10 @@ body.students-body {
   z-index: 3;
 }
 
+
+
 /* ============================================================================
-   PROFILE CARD (Left Side)
+   PROFILE CARD
 ============================================================================ */
 .hero-profile-card {
   background: rgba(255, 255, 255, 0.95);
@@ -175,7 +181,6 @@ body.students-body {
 
 .profile-grid {
   display: grid;
-  grid-template-columns: 1fr;
   gap: 0.8rem;
 }
 
@@ -196,8 +201,10 @@ body.students-body {
   font-size: 1rem;
 }
 
+
+
 /* ============================================================================
-   RIGHT HERO — TEXT + BUTTONS
+   HERO RIGHT TEXT + BUTTONS
 ============================================================================ */
 .hero-title {
   color: #fff;
@@ -215,10 +222,14 @@ body.students-body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 0.7rem;
-  max-width: 620px;
+  max-width: 640px;
 }
 
-/* BUTTONS */
+
+
+/* ============================================================================
+   BUTTONS (Primary & Light)
+============================================================================ */
 .btn-primary,
 .btn-light {
   border: none;
@@ -253,27 +264,11 @@ body.students-body {
   transform: translateY(-2px);
 }
 
+
+
 /* ============================================================================
-   GENERAL CARD STYLE
+   MAIN DASHBOARD WRAPPER
 ============================================================================ */
-.card {
-  background: white;
-  padding: 1.4rem;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-sm);
-  transition: var(--transition);
-}
-
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: var(--shadow-lg);
-}
-
-/* ============================================================
-   UNIFIED DASHBOARD — SMALL, CLEAN, SINGLE COLOR
-============================================================ */
-
-/* Parent wrapper */
 .dashboard-wrapper {
   width: 100%;
   padding: 1.2rem;
@@ -283,31 +278,30 @@ body.students-body {
   margin-top: 1.2rem;
 }
 
-/* Grid of 4 small cards */
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 0.8rem;
 }
 
-/* ================================================
-   MINI CARDS — Navy Blue, smaller, bold text
-================================================ */
 
+
+/* ============================================================================
+   MINI CARDS (Navy Blue, Compact)
+============================================================================ */
 .mini-card {
-  background: #0f2b46;        /* single navy color */
+  background: #0f2b46;
   color: #ffffff;
   padding: 0.75rem;
   border-radius: 10px;
-  min-height: 130px;          /* reduced height */
+  min-height: 130px;
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
-  font-size: 0.82rem;
 }
 
 .mini-card h3 {
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   font-weight: 800;
   margin: 0;
   display: flex;
@@ -315,7 +309,6 @@ body.students-body {
   gap: 0.35rem;
 }
 
-/* stats small */
 .mini-stats {
   display: flex;
   justify-content: space-between;
@@ -331,10 +324,6 @@ body.students-body {
   font-weight: 800;
 }
 
-/* ================================================
-   MINI LISTS (Announcements + Activity)
-================================================ */
-
 .mini-list {
   max-height: 90px;
   overflow-y: auto;
@@ -342,8 +331,7 @@ body.students-body {
   list-style: none;
 }
 
-.mini-list li,
-.mini-list .activity-item {
+.mini-list li {
   background: rgba(255,255,255,0.12);
   padding: 0.35rem 0.45rem;
   border-radius: 6px;
@@ -352,10 +340,11 @@ body.students-body {
   font-weight: 600;
 }
 
-/* ================================================
-   FEEDBACK COMPACT AREA
-================================================ */
 
+
+/* ============================================================================
+   FEEDBACK CARD
+============================================================================ */
 .mini-chat {
   display: flex;
   flex-direction: column;
@@ -367,13 +356,12 @@ body.students-body {
   background: rgba(255,255,255,0.12);
   border-radius: 6px;
   padding: 0.45rem;
-  font-size: 0.72rem;
   overflow-y: auto;
+  font-size: 0.72rem;
 }
 
-/* white input area, not dark */
 .chat-input textarea {
-  background: #ffffff !important;
+  background: #fff !important;
   color: #0f2b46;
   border-radius: 6px;
   padding: 0.45rem;
@@ -383,81 +371,19 @@ body.students-body {
 }
 
 .send-btn {
-  background: #ffffff;
+  background: #fff;
   color: #0f2b46;
   border: none;
   padding: 0.35rem 0.7rem;
-  font-size: 0.85rem;
   font-weight: 800;
   border-radius: 6px;
-  margin-left: 0.4rem;
 }
 
-/* ================================================
-   MINI CHART SMALL SIZE
-================================================ */
 
-.mini-chart {
-  height: 60px !important;
-}
-
-/* ================================================
-   RESPONSIVE
-================================================ */
-
-@media (max-width: 1024px) {
-  .dashboard-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (max-width: 600px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
-  }
-}
 
 /* ============================================================================
-   FOOTER
+   AVAILABLE SUBJECTS FLOATING CARD
 ============================================================================ */
-.student-footer {
-  margin-top: 2.5rem;
-  padding: 1rem;
-  background: var(--primary);
-  color: white;
-  text-align: center;
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-}
-
-/* ============================================================================
-   RESPONSIVE
-============================================================================ */
-@media (max-width: 1024px) {
-  .hero-split {
-    grid-template-columns: 1fr;
-  }
-
-  .two-grid,
-  .bottom-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .hero-buttons {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-
-
-
-/* ============================================================
-   AVAILABLE SUBJECTS PREVIEW CARD — Hero Right Section
-   Fully Responsive, Clean, Floating Card Design
-============================================================ */
-
 .available-subjects-card {
   position: absolute;
   top: 130px;
@@ -472,7 +398,7 @@ body.students-body {
   display: none;
   opacity: 0;
   transform: translateY(10px);
-  transition: all 0.25s ease;
+  transition: var(--transition);
   z-index: 50;
 }
 
@@ -486,24 +412,16 @@ body.students-body {
   font-size: 1rem;
   font-weight: 800;
   color: var(--primary);
-  margin-bottom: 0.4rem;
+  margin-bottom: 0.45rem;
   display: flex;
   align-items: center;
   gap: 0.4rem;
 }
 
 .small-sub {
-  font-size: 0.82rem;
+  font-size: 0.83rem;
   color: var(--muted);
   margin-bottom: 0.7rem;
-}
-
-.subjects-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-height: 180px;
-  overflow-y: auto;
 }
 
 .subjects-list li {
@@ -526,15 +444,15 @@ body.students-body {
 .btn-mini {
   width: 100%;
   margin-top: 0.7rem;
-  padding: 0.55rem;
+  padding: 0.6rem;
   background: var(--primary);
   color: #ffffff;
   border: none;
   border-radius: 8px;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
   font-weight: 700;
   cursor: pointer;
-  transition: 0.25s ease;
+  transition: var(--transition);
 }
 
 .btn-mini:hover {
@@ -542,38 +460,11 @@ body.students-body {
   transform: translateY(-2px);
 }
 
-/* ============================================================
-   MOBILE RESPONSIVE — Small Screens
-============================================================ */
-@media (max-width: 1024px) {
-  .available-subjects-card {
-    position: relative;
-    top: 0;
-    right: 0;
-    width: 100%;
-    margin-top: 1rem;
-    transform: none;
-  }
-}
-
-@media (max-width: 600px) {
-  .available-subjects-card {
-    padding: 1rem;
-  }
-
-  .subjects-list li {
-    font-size: 0.82rem;
-    padding: 6px 8px;
-  }
-}
-
-
 
 
 /* ============================================================================
-   EXAM MODAL — UPDATED POSITIONING (Moved Further Up)
+   EXAM MODAL (Updated Positioning)
 ============================================================================ */
-
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -581,7 +472,7 @@ body.students-body {
   display: none;
   place-items: center;
   z-index: 9999;
-  padding-top: 100px;        /* increased from 40px → pushes modal MUCH higher */
+  padding-top: 90px;
 }
 
 .modal-overlay.show {
@@ -591,16 +482,16 @@ body.students-body {
 .modal-box {
   background: #ffffff;
   width: 92%;
-  max-width: 420px;
+  max-width: 430px;
   padding: 1.4rem 1.6rem;
   border-radius: 14px;
   box-shadow: var(--shadow-lg);
   animation: modalSlide 0.25s ease-out;
-  transform: translateY(-80px);   /* increased from -40px → lifts modal even more */
+  transform: translateY(-80px);
 }
 
 @keyframes modalSlide {
-  from { opacity: 0; transform: translateY(-20px); }
+  from { opacity: 0; transform: translateY(-10px); }
   to   { opacity: 1; transform: translateY(-80px); }
 }
 
@@ -608,12 +499,65 @@ body.students-body {
   font-size: 1.25rem;
   font-weight: 800;
   color: var(--primary);
-  margin-bottom: 1rem;
+  margin-bottom: 1.1rem;
 }
 
 .modal-actions {
   margin-top: 1.4rem;
   display: flex;
-  justify-content: flex-end;
   gap: 0.7rem;
+  justify-content: flex-end;
+}
+
+
+
+/* ============================================================================
+   FOOTER
+============================================================================ */
+.student-footer {
+  margin-top: 2.5rem;
+  padding: 1rem;
+  background: var(--primary);
+  color: white;
+  text-align: center;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+}
+
+
+
+/* ============================================================================
+   RESPONSIVE BEHAVIOR
+============================================================================ */
+@media (max-width: 1024px) {
+  .hero-split {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .available-subjects-card {
+    position: relative;
+    width: 100%;
+    right: 0;
+    top: 0;
+    margin-top: 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .subjects-list li {
+    font-size: 0.82rem;
+    padding: 6px 8px;
+  }
+
+  .hero-buttons {
+    grid-template-columns: 1fr 1fr;
+  }
 }

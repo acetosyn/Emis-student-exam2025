@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Exam Dashboard | EMIS</title>
 
+  <meta name="exam-year" content="{{ year }}">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/students.css') }}"/>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/exam_dashboard.css') }}"/>
@@ -41,6 +43,14 @@
       <img src="{{ url_for('static', filename='images/student.jpg') }}"
            class="student-avatar" />
     </div>
+
+<div id="flashBar"
+     class="flash-bar hidden"
+     data-exam-available="{{ 'true' if exam_available else 'false' }}">
+</div>
+
+
+
   </header>
 
 
@@ -164,8 +174,9 @@
        class="btn-success">View Results</a>
 
   {% else %}
-    <a href="{{ url_for('student_portal_bp.exam') }}"
-       class="btn-warning">Resume Exam</a>
+<a href="{{ url_for('student_portal_bp.exam', subject=subject, year=year) }}"
+   class="btn-warning">Resume Exam</a>
+
   {% endif %}
 </div>
   
@@ -266,10 +277,11 @@
 
     </div>
     <!-- START BUTTON -->
- <a href="{{ url_for('student_portal_bp.exam') }}"
+<a href="{{ url_for('student_portal_bp.exam', subject=subject, year=year) }}"
    class="exam-modal-startbtn">
    Proceed
 </a>
+
 
   </div>
 </div>

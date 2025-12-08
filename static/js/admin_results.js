@@ -1,112 +1,165 @@
 /* ============================================================================
-   EMIS ADMIN RESULTS CONSOLE — admin_results.js (v3.0)
-   Fully dynamic table engine + filtering + analytics + pagination
+   EMIS ADMIN RESULTS CONSOLE — PREMIUM v6.1 (2025)
+   Year UI only • Dynamic Subjects • Shimmer • Toast • Fully Working
 ============================================================================ */
 
-console.log("%c[admin_results.js] Loaded", "color:#0f4; font-weight:bold;");
+console.log("%c[admin_results.js] Premium v6.1 Loaded", "color:#22c55e;font-weight:bold;");
 
-let RESULTS = [];           // Full dataset loaded from backend
-let FILTERED = [];          // After search filter
+/* ============================================================================
+   ELEMENTS
+============================================================================ */
+let RESULTS = [];
+let FILTERED = [];
 let CURRENT_PAGE = 1;
 const ROWS_PER_PAGE = 10;
 
-const classSelector = document.getElementById("classSelector");
-const subjectSelector = document.getElementById("subjectSelector");
-const loadBtn = document.getElementById("loadClassResultsBtn");
+const yearSelector      = document.getElementById("yearSelector");   // UI only
+const classSelector     = document.getElementById("classSelector");
+const subjectSelector   = document.getElementById("subjectSelector");
+const searchBox         = document.getElementById("globalSearch");
 
-const searchBox = document.getElementById("globalSearch");
-const resultsBody = document.getElementById("resultsBody");
-const pagination = document.getElementById("pagination");
+const loadBtn           = document.getElementById("loadClassResultsBtn");
+const resultsBody       = document.getElementById("resultsBody");
+const pagination        = document.getElementById("pagination");
 
-const selectAllRows = document.getElementById("selectAllRows");
+const selectAllRows     = document.getElementById("selectAllRows");
 const deleteSelectedBtn = document.getElementById("deleteSelectedBtn");
 
-const statTotalResults = document.getElementById("statTotalResults");
-const statPassRate = document.getElementById("statPassRate");
-const statAvgScore = document.getElementById("statAvgScore");
-const statSubjects = document.getElementById("statSubjects");
+const deleteModal       = document.getElementById("deleteModal");
+const confirmDeleteBtn  = document.getElementById("confirmDeleteBtn");
 
-// Modal
-const deleteModal = document.getElementById("deleteModal");
-const confirmDeleteBtn = document.getElementById("confirmDeleteBtn");
+const statTotalResults  = document.getElementById("statTotalResults");
+const statPassRate      = document.getElementById("statPassRate");
+const statAvgScore      = document.getElementById("statAvgScore");
+const statSubjects      = document.getElementById("statSubjects");
 
 /* ============================================================================
-   1. LOAD RESULTS FROM BACKEND  — FIXED ENDPOINT + SAFER HANDLING
+   TOAST SYSTEM
+============================================================================ */
+function showToast(msg, type = "info") {
+    const box = document.createElement("div");
+    box.className = `toast toast-${type}`;
+    box.textContent = msg;
+    document.body.appendChild(box);
+
+    setTimeout(() => box.classList.add("show"), 10);
+    setTimeout(() => box.classList.remove("show"), 3000);
+    setTimeout(() => box.remove(), 3400);
+}
+
+/* ============================================================================
+   SHIMMER LOADING
+============================================================================ */
+function showShimmer() {
+    resultsBody.innerHTML = `
+        <tr>
+            <td colspan="9">
+                <div class="shimmer-wrapper">
+                    <div class="shimmer"></div>
+                </div>
+            </td>
+        </tr>
+    `;
+}
+
+/* ============================================================================
+   DYNAMIC SUBJECT LOADING (Corrects mismatch)
+============================================================================ */
+classSelector.addEventListener("change", async () => {
+    const cls = classSelector.value.trim();
+    if (!cls) return;
+
+    subjectSelector.innerHTML = `<option>Loading…</option>`;
+
+    const res = await fetch(`/api/results/subjects?class=${cls}`);
+    const data = await res.json();
+
+    subjectSelector.innerHTML = `<option value="">-- Select Subject --</option>`;
+
+    (data.subjects || []).forEach(sub => {
+        subjectSelector.innerHTML += `<option value="${sub}">${sub}</option>`;
+    });
+
+    showToast("Subjects updated ✔", "success");
+});
+
+/* ============================================================================
+   LOAD RESULTS (NO YEAR sent to backend)
 ============================================================================ */
 async function loadResults() {
-    const classVal = classSelector.value.trim();
-    const subjectVal = subjectSelector.value.trim();
+    const cls = classSelector.value.trim();
+    const sub = subjectSelector.value.trim();
 
-    if (!classVal || !subjectVal) {
-        alert("Please select BOTH class and subject.");
+    if (!cls || !sub) {
+        showToast("Select Class & Subject.", "error");
         return;
     }
 
-    resultsBody.innerHTML = `
-        <tr><td colspan="9" class="no-data">Loading results...</td></tr>
-    `;
+    showShimmer();
 
     try {
-        // ✅ FIXED — use the correct backend route
-        const response = await fetch(
-            `/api/results/load?class=${encodeURIComponent(classVal)}&subject=${encodeURIComponent(subjectVal)}`
-        );
+        const url = `/api/results/load?class=${encodeURIComponent(cls)}&subject=${encodeURIComponent(sub)}`;
 
+        const response = await fetch(url);
         const data = await response.json();
 
         RESULTS = data.results || [];
 
-        if (RESULTS.length === 0) {
+        if (!RESULTS.length) {
             resultsBody.innerHTML = `
-                <tr><td colspan="9" class="no-data">No results available yet</td></tr>
+                <tr><td colspan="9" class="no-data">No results found</td></tr>
             `;
-            updateAnalytics();
             pagination.innerHTML = "";
+            updateAnalytics();
             return;
         }
 
-        CURRENT_PAGE = 1;
         FILTERED = [...RESULTS];
+        CURRENT_PAGE = 1;
+
         renderTable();
         updateAnalytics();
+        showToast("Results loaded ✔", "success");
 
     } catch (err) {
-        console.error("Failed to load results:", err);
+        console.error(err);
         resultsBody.innerHTML = `
-            <tr><td colspan="9" class="no-data">Error loading results</td></tr>
+            <tr><td colspan="9" class="no-data">Server error while loading results</td></tr>
         `;
+        showToast("Error loading results.", "error");
     }
 }
 
 /* ============================================================================
-   2. RENDER TABLE WITH PAGINATION
+   RENDER TABLE — (View opens modal, NOT print)
 ============================================================================ */
 function renderTable() {
     if (!FILTERED.length) {
         resultsBody.innerHTML = `
-            <tr><td colspan="9" class="no-data">No results found</td></tr>
+            <tr><td colspan="9" class="no-data">No results match your search</td></tr>
         `;
         pagination.innerHTML = "";
         return;
     }
 
     const start = (CURRENT_PAGE - 1) * ROWS_PER_PAGE;
-    const end = start + ROWS_PER_PAGE;
-    const pageRows = FILTERED.slice(start, end);
+    const rows = FILTERED.slice(start, start + ROWS_PER_PAGE);
 
-    resultsBody.innerHTML = pageRows.map((row, index) => `
-        <tr>
+    resultsBody.innerHTML = rows.map((row, i) => `
+        <tr class="fade-row">
             <td><input type="checkbox" class="row-check"></td>
-            <td>${row["Student Name"] || ""}</td>
-            <td>${row["Admission No"] || ""}</td>
-            <td>${row["Class"] || ""}</td>
-            <td>${row["Subject"] || ""}</td>
-            <td>${row["Score (%)"] || ""}</td>
-            <td class="${row["Status"] === "PASS" ? "status-pass" : "status-fail"}">
-                ${row["Status"]}
+            <td>${row["Student Name"]}</td>
+            <td>${row["Admission No"]}</td>
+            <td>${row["Class"]}</td>
+            <td>${row["Subject"]}</td>
+            <td>${row["Score (%)"]}</td>
+            <td class="${row["Status"] === "PASS" ? "status-pass" : "status-fail"}">${row["Status"]}</td>
+            <td>${row["Submitted At"]}</td>
+            <td>
+                <button class="btn-light small view-btn" data-index="${start + i}">
+                    <i class="fa-solid fa-eye"></i> View
+                </button>
             </td>
-            <td>${row["Submitted At"] || ""}</td>
-            <td><button class="btn-light small">View</button></td>
         </tr>
     `).join("");
 
@@ -114,42 +167,35 @@ function renderTable() {
 }
 
 /* ============================================================================
-   3. PAGINATION GENERATOR
+   PAGINATION
 ============================================================================ */
 function renderPagination() {
-    const totalPages = Math.ceil(FILTERED.length / ROWS_PER_PAGE);
+    const pages = Math.ceil(FILTERED.length / ROWS_PER_PAGE);
 
-    if (totalPages <= 1) {
+    if (pages <= 1) {
         pagination.innerHTML = "";
         return;
     }
 
-    let buttons = "";
-    for (let i = 1; i <= totalPages; i++) {
-        buttons += `
-            <button class="${i === CURRENT_PAGE ? "active" : ""}" 
-                    onclick="gotoPage(${i})">${i}</button>
-        `;
-    }
-
-    pagination.innerHTML = buttons;
+    pagination.innerHTML = Array.from({ length: pages }).map((_, i) => `
+        <button class="page-btn ${i + 1 === CURRENT_PAGE ? "active" : ""}"
+                onclick="gotoPage(${i + 1})">${i + 1}</button>
+    `).join("");
 }
 
-function gotoPage(page) {
-    CURRENT_PAGE = page;
+function gotoPage(pg) {
+    CURRENT_PAGE = pg;
     renderTable();
 }
 
 /* ============================================================================
-   4. LIVE SEARCH FILTER
+   SEARCH FILTER
 ============================================================================ */
 searchBox.addEventListener("input", () => {
     const q = searchBox.value.toLowerCase();
 
     FILTERED = RESULTS.filter(r =>
-        Object.values(r).some(val =>
-            String(val).toLowerCase().includes(q)
-        )
+        Object.values(r).some(v => String(v).toLowerCase().includes(q))
     );
 
     CURRENT_PAGE = 1;
@@ -157,86 +203,107 @@ searchBox.addEventListener("input", () => {
 });
 
 /* ============================================================================
-   5. SELECT ALL + BULK DELETE  — FULL WORKING VERSION
+   AUTO LOAD WHEN SUBJECT CHANGES
 ============================================================================ */
+subjectSelector.addEventListener("change", loadResults);
 
-selectAllRows.addEventListener("change", () => {
-    const checks = document.querySelectorAll(".row-check");
-    checks.forEach(c => c.checked = selectAllRows.checked);
-});
-
-deleteSelectedBtn.addEventListener("click", () => {
-    const checks = document.querySelectorAll(".row-check:checked");
-
-    if (checks.length === 0) {
-        alert("No rows selected.");
+/* ============================================================================
+   UPDATE ANALYTICS
+============================================================================ */
+function updateAnalytics() {
+    if (!RESULTS.length) {
+        statTotalResults.textContent = 0;
+        statPassRate.textContent = "0%";
+        statAvgScore.textContent = "0%";
+        statSubjects.textContent = 0;
         return;
     }
+
+    statTotalResults.textContent = RESULTS.length;
+
+    const passes = RESULTS.filter(r => r["Status"] === "PASS").length;
+    statPassRate.textContent = `${((passes / RESULTS.length) * 100).toFixed(1)}%`;
+
+    const avg = RESULTS.reduce((sum, r) => {
+        const s = parseInt(String(r["Score (%)"] || "0").replace("%", ""));
+        return sum + s;
+    }, 0) / RESULTS.length;
+
+    statAvgScore.textContent = `${avg.toFixed(1)}%`;
+    statSubjects.textContent = new Set(RESULTS.map(r => r["Subject"])).size;
+}
+
+/* ============================================================================
+   SELECT ALL
+============================================================================ */
+selectAllRows.addEventListener("change", () => {
+    document.querySelectorAll(".row-check").forEach(c => {
+        c.checked = selectAllRows.checked;
+    });
+});
+
+/* ============================================================================
+   DELETE MODAL
+============================================================================ */
+deleteSelectedBtn.addEventListener("click", () => {
+    const selected = document.querySelectorAll(".row-check:checked").length;
+    if (!selected) return showToast("No rows selected.", "error");
 
     deleteModal.classList.remove("hidden");
 });
 
-confirmDeleteBtn.addEventListener("click", async () => {
-    const checks = document.querySelectorAll(".row-check:checked");
-
-    if (checks.length === 0) {
-        deleteModal.classList.add("hidden");
-        return;
-    }
-
-    // Collect selected rows
-    const deleteItems = [];
-    checks.forEach(chk => {
-        const row = chk.closest("tr");
-        deleteItems.push({
-            "Student Name": row.children[1].textContent.trim().toUpperCase(),
-            "Admission No": row.children[2].textContent.trim().toUpperCase()
-        });
-    });
-
-    // Prepare payload
-    const payload = {
-        class_category: classSelector.value.trim().toUpperCase(),
-        subject: subjectSelector.value.trim().toUpperCase(),
-        delete_items: deleteItems
-    };
-
-    try {
-        const response = await fetch("/api/results/delete", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
-
-        const result = await response.json();
-
-        if (result.status === "ok") {
-            alert("✔ Deleted successfully!");
-            deleteModal.classList.add("hidden");
-            loadResults(); // Reload from backend
-        } else {
-            alert("Delete failed: " + (result.error || "Unknown error"));
-        }
-
-    } catch (error) {
-        console.error("Delete error:", error);
-        alert("Server error while deleting results.");
-    }
-});
-
-/* ============================================================================
-   6. CLOSE DELETE MODAL
-============================================================================ */
 function closeDeleteModal() {
     deleteModal.classList.add("hidden");
 }
 window.closeDeleteModal = closeDeleteModal;
 
 /* ============================================================================
-   7. EXPORT CSV
+   CONFIRM DELETE
+============================================================================ */
+confirmDeleteBtn.addEventListener("click", async () => {
+    const checks = document.querySelectorAll(".row-check:checked");
+    if (!checks.length) return closeDeleteModal();
+
+    const payload = {
+        class_category: classSelector.value.trim().toUpperCase(),
+        subject: subjectSelector.value.trim().toUpperCase(),
+        delete_items: Array.from(checks).map(chk => {
+            const tr = chk.closest("tr");
+            return {
+                "Student Name": tr.children[1].textContent.trim().toUpperCase(),
+                "Admission No": tr.children[2].textContent.trim().toUpperCase()
+            };
+        })
+    };
+
+    try {
+        const res = await fetch("/api/results/delete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        const out = await res.json();
+
+        if (out.status === "ok") {
+            showToast("Deleted ✔", "success");
+            closeDeleteModal();
+            loadResults();
+        } else {
+            showToast("Delete failed.", "error");
+        }
+
+    } catch (err) {
+        console.error(err);
+        showToast("Server error during deletion.", "error");
+    }
+});
+
+/* ============================================================================
+   EXPORT CSV
 ============================================================================ */
 document.getElementById("exportCsvBtn").addEventListener("click", () => {
-    if (!FILTERED.length) return alert("No data to export.");
+    if (!FILTERED.length) return showToast("No data to export.", "error");
 
     let csv = "Student,Admission,Class,Subject,Score,Status,Date\n";
 
@@ -254,108 +321,121 @@ document.getElementById("exportCsvBtn").addEventListener("click", () => {
 });
 
 /* ============================================================================
-   8. PRINT TABLE
+   SUMMARY FILLER (Shared for modal + print)
 ============================================================================ */
-document.getElementById("printTableBtn").addEventListener("click", () => {
-    window.print();
-});
+function fillSummary(i) {
+    const row = FILTERED[i];
+    if (!row) return;
 
-/* ============================================================================
-   9. REFRESH RESULTS
-============================================================================ */
-document.getElementById("reloadTableBtn").addEventListener("click", () => {
-    loadResults();
-});
+    document.getElementById("ap_studentName").textContent = row["Student Name"];
+    document.getElementById("ap_studentID").textContent = row["Admission No"];
+    document.getElementById("ap_studentClass").textContent = row["Class"];
+    document.getElementById("ap_studentCategory").textContent = classSelector.value;
 
-/* ============================================================================
-   10. ANALYTICS UPDATE
-============================================================================ */
-function updateAnalytics() {
-    if (!RESULTS.length) {
-        statTotalResults.textContent = 0;
-        statPassRate.textContent = "0%";
-        statAvgScore.textContent = "0%";
-        statSubjects.textContent = 0;
-        return;
-    }
+    document.getElementById("ap_subject").textContent = row["Subject"];
 
-    statTotalResults.textContent = RESULTS.length;
+    const correct = parseInt(row["Correct"] || 0);
+    const total   = parseInt(row["Total"] || 0);
+    const raw     = total ? `${correct} / ${total}` : row["Score (%)"];
 
-    const passes = RESULTS.filter(r => r["Status"] === "PASS").length;
-    statPassRate.textContent = `${((passes / RESULTS.length) * 100).toFixed(1)}%`;
+    document.getElementById("ap_rawScore").textContent = raw;
+    document.getElementById("ap_correct").textContent = correct;
+    document.getElementById("ap_total").textContent = total;
+    document.getElementById("ap_accuracy").textContent =
+        total ? `${Math.round(correct / total * 100)}%` : "0%";
 
-    const avg = RESULTS.reduce((sum, r) => {
-        let s = parseInt((r["Score (%)"] || "0").replace("%", ""));
-        return sum + s;
-    }, 0) / RESULTS.length;
-
-    statAvgScore.textContent = `${avg.toFixed(1)}%`;
-
-    statSubjects.textContent = new Set(RESULTS.map(r => r["Subject"])).size;
+    document.getElementById("ap_time").textContent = "--";
+    document.getElementById("ap_status").textContent = row["Status"];
+    document.getElementById("ap_date").textContent = row["Submitted At"];
 }
 
 /* ============================================================================
-   11. LOAD BUTTON HANDLER
+   VIEW SUMMARY MODAL — OPEN
 ============================================================================ */
-loadBtn.addEventListener("click", loadResults);
+document.addEventListener("click", (e) => {
+    const btn = e.target.closest(".view-btn");
+    if (!btn) return;
 
+    const index = parseInt(btn.dataset.index);
+    fillSummary(index);
 
-/* ========================================================================
-   ADMIN — PRINT SUMMARY (Same as Student Print Format)
-======================================================================== */
+    const modal    = document.getElementById("adminPrintSummary");
+    const overlay  = document.getElementById("summaryOverlay");
+
+    overlay.style.display = "block";
+    modal.style.display = "block";
+    modal.classList.add("show-summary");
+});
+
+/* ============================================================================
+   CLOSE SUMMARY MODAL
+============================================================================ */
+function closeSummary() {
+    const modal   = document.getElementById("adminPrintSummary");
+    const overlay = document.getElementById("summaryOverlay");
+
+    modal.style.display = "none";
+    modal.classList.remove("show-summary");
+    overlay.style.display = "none";
+}
+window.closeSummary = closeSummary;
+
+/* ============================================================================
+   CLOSE WHEN CLICKING OVERLAY
+============================================================================ */
+document.getElementById("summaryOverlay").addEventListener("click", () => {
+    closeSummary();
+});
+/* ============================================================================
+   PRINT SUMMARY — SIMPLE + STABLE (NO BLANK PAGE)
+============================================================================ */
 function printAdminSummary(i) {
     const row = FILTERED[i];
     if (!row) return;
 
-    // Basic student info
+    // Fill Summary
     document.getElementById("ap_studentName").textContent = row["Student Name"] || "--";
     document.getElementById("ap_studentID").textContent = row["Admission No"] || "--";
     document.getElementById("ap_studentClass").textContent = row["Class"] || "--";
     document.getElementById("ap_studentCategory").textContent = classSelector.value || "--";
 
-    // Subject
     document.getElementById("ap_subject").textContent = row["Subject"] || "--";
 
-    // Correct / Total
     const correct = parseInt(row["Correct"] || 0);
-    const total = parseInt(row["Total"] || 0);
+    const total   = parseInt(row["Total"] || 0);
 
-    // Raw Score e.g. “35 / 50”
     const rawScore = total > 0 ? `${correct} / ${total}` : (row["Score (%)"] || "--");
     document.getElementById("ap_rawScore").textContent = rawScore;
 
-    document.getElementById("ap_correct").textContent = correct || 0;
-    document.getElementById("ap_total").textContent = total || 0;
+    document.getElementById("ap_correct").textContent = correct;
+    document.getElementById("ap_total").textContent = total;
 
-    // Accuracy
     const accuracy = total > 0 ? Math.round((correct / total) * 100) + "%" : "0%";
     document.getElementById("ap_accuracy").textContent = accuracy;
 
-    // Time Taken — NOT in Excel, so mark as "--"
     document.getElementById("ap_time").textContent = "--";
-
-    // Status
     document.getElementById("ap_status").textContent = row["Status"] || "--";
-
-    // Completion date
     document.getElementById("ap_date").textContent = row["Submitted At"] || "--";
 
-    // Show clean summary
+    // SHOW summary (NO modal class, NO overlay)
     const block = document.getElementById("adminPrintSummary");
+    block.classList.remove("show-summary");
     block.style.display = "block";
 
+    // PRINT — immediately capture DOM
     window.print();
 
-    // Hide after printing
-    setTimeout(() => block.style.display = "none", 400);
+    // HIDE after print (works perfectly)
+    setTimeout(() => {
+        block.style.display = "none";
+    }, 200);
 }
 
 window.printAdminSummary = printAdminSummary;
 
-
-/* ========================================================================
-   ADMIN — PRINT SUMMARY FOR SELECTED ROW (Top Button)
-======================================================================== */
+/* ============================================================================
+   PRINT SELECTED — UNCHANGED
+============================================================================ */
 function printAdminSummarySelected() {
     const checks = document.querySelectorAll(".row-check:checked");
 
@@ -369,8 +449,6 @@ function printAdminSummarySelected() {
     }
 
     const row = checks[0].closest("tr");
-
-    // Get correct index inside FILTERED array
     const displayIndex = Array.from(resultsBody.children).indexOf(row);
 
     printAdminSummary(displayIndex);
@@ -380,5 +458,42 @@ window.printAdminSummarySelected = printAdminSummarySelected;
 
 
 /* ============================================================================
-   END OF FILE
+   PRINT ALL & EXPORT ALL
 ============================================================================ */
+document.getElementById("printSelectedBtn")?.addEventListener("click", printAdminSummarySelected);
+
+document.getElementById("printAllPdfBtn")?.addEventListener("click", () => {
+    const tableHTML = document.querySelector(".results-table").outerHTML;
+
+    const w = window.open("", "_blank");
+    w.document.write(`
+        <html>
+        <head>
+            <title>All Results</title>
+            <style>
+                table { width:100%; border-collapse: collapse; font-size:14px; }
+                th, td { border:1px solid #ccc; padding:8px; }
+            </style>
+        </head>
+        <body>${tableHTML}</body>
+        </html>
+    `);
+    w.document.close();
+    w.print();
+});
+
+document.getElementById("exportAllExcelBtn")?.addEventListener("click", () => {
+    if (!FILTERED.length) return showToast("No data to export.", "error");
+
+    let csv = "Student,Admission,Class,Subject,Score,Status,Date\n";
+
+    FILTERED.forEach(r => {
+        csv += `${r["Student Name"]},${r["Admission No"]},${r["Class"]},${r["Subject"]},${r["Score (%)"]},${r["Status"]},${r["Submitted At"]}\n`;
+    });
+
+    const blob = new Blob([csv], { type:"application/vnd.ms-excel" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "all_results.xls";
+    link.click();
+});

@@ -6,27 +6,47 @@
 {% endblock %}
 
 {% block content %}
-<div class="results-container fade-in">
 
-    <!-- =========================================================
-        CARD 1 — TITLE + SUBTITLE
-    ========================================================== -->
-    <div class="card title-card">
-        <h1 class="results-title"><i class="fa-solid fa-chart-line"></i> Results Management Console</h1>
-        <p class="results-subtitle">View • Filter • Export • Manage</p>
-    </div>
+<div class="results-wrapper fade-in">
+
+    <!-- --------------------------------------------------------
+         TOP HEADER + SUBTITLE
+    --------------------------------------------------------- -->
+    <section class="header-panel">
+        <div class="hp-left">
+            <h1 class="hp-title">
+                <i class="fa-solid fa-chart-pie"></i> Results Management Console
+            </h1>
+            <p class="hp-sub">Filter • Analyze • Export • Print</p>
+        </div>
+
+        <div class="hp-right">
+            <div class="hp-badge">Admin Mode</div>
+        </div>
+    </section>
 
 
-    
-    <!-- =========================================================
-        CARD 3 — CLASS + SUBJECT + SEARCH
-    ========================================================== -->
-    <div class="card filter-card">
 
-        <div class="filter-row">
-            <div class="filter-item">
+    <!-- --------------------------------------------------------
+         FILTER BAR — Modern + Clean
+    --------------------------------------------------------- -->
+    <section class="filter-panel glass-card">
+
+        <div class="filter-grid">
+
+            <div class="filter-group">
+                <label for="yearSelector">Year</label>
+                <select id="yearSelector" class="filter-input">
+                    <option value="" disabled selected>Select Year</option>
+                    {% for y in range(2025, 2012, -1) %}
+                        <option value="{{ y }}">{{ y }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
                 <label>Class Category</label>
-                <select id="classSelector" class="form-input">
+                <select id="classSelector" class="filter-input">
                     <option value="">-- Select Class --</option>
                     <option value="SS1">SS1</option>
                     <option value="SS2">SS2</option>
@@ -34,73 +54,112 @@
                 </select>
             </div>
 
-            <div class="filter-item">
+            <div class="filter-group">
                 <label>Subject</label>
-                <select id="subjectSelector" class="form-input">
+                <select id="subjectSelector" class="filter-input">
                     <option value="">-- Select Subject --</option>
                     {% for sub in [
-                        "BIOLOGY","CHEMISTRY","CIVIC EDUCATION","COMPUTER STUDIES","ECONOMICS","ENGLISH LANGUAGE",
-                        "GEOGRAPHY","GOVERNMENT","MATHEMATICS","PHYSICS","TECHNICAL DRAWING",
-                        "ACCOUNTING","LITERATURE"
+                        "BIOLOGY","CHEMISTRY","CIVIC EDUCATION",
+                        "COMPUTER STUDIES","ECONOMICS","ENGLISH LANGUAGE",
+                        "GEOGRAPHY","GOVERNMENT","MATHEMATICS","PHYSICS",
+                        "TECHNICAL DRAWING","ACCOUNTING","LITERATURE"
                     ] %}
-                    <option value="{{ sub }}">{{ sub }}</option>
+                        <option value="{{ sub }}">{{ sub }}</option>
                     {% endfor %}
                 </select>
             </div>
 
-            <div class="filter-item full">
+            <div class="filter-group full">
                 <label>Search</label>
-                <div class="search-section">
-                    <i class="fa-solid fa-search search-icon"></i>
-                    <input id="globalSearch" type="text" placeholder="Search by name, subject, class, score…">
+                <div class="search-box">
+                    <i class="fa-solid fa-search"></i>
+                    <input id="globalSearch" type="text"
+                        placeholder="Search results by name, admission, subject, score…"
+                        autocomplete="off">
                 </div>
             </div>
+
         </div>
-
-        <button id="loadClassResultsBtn" class="btn-primary load-btn">
-            <i class="fa-solid fa-download"></i> Load Results
-        </button>
-
-    </div>
+    </section>
 
 
 
-    <!-- =========================================================
-        CARD 4 — EXPORT BUTTONS
-    ========================================================== -->
-    <div class="card export-card">
+    <!-- --------------------------------------------------------
+         ANALYTICS PANEL
+    --------------------------------------------------------- -->
+    <section class="analytics-panel glass-card">
+        <div class="analytics-grid">
+            <div class="analytics-item">
+                <h3>Total Results</h3>
+                <p id="statTotalResults">0</p>
+            </div>
 
-        <div class="export-buttons">
-            <button id="exportExcelBtn" class="btn-light">
-                <i class="fa-solid fa-file-excel"></i> Excel
-            </button>
+            <div class="analytics-item">
+                <h3>Pass Rate</h3>
+                <p id="statPassRate">0%</p>
+            </div>
 
-            <button id="exportCsvBtn" class="btn-light">
-                <i class="fa-solid fa-file-csv"></i> CSV
-            </button>
-<button id="printTableBtn" class="btn-light" onclick="printAdminSummarySelected()">
-    <i class="fa-solid fa-print"></i> Print Summary
-</button>
+            <div class="analytics-item">
+                <h3>Average Score</h3>
+                <p id="statAvgScore">0%</p>
+            </div>
 
-
-            <button id="reloadTableBtn" class="btn-light">
-                <i class="fa-solid fa-rotate"></i> Refresh
-            </button>
+            <div class="analytics-item">
+                <h3>Subjects Loaded</h3>
+                <p id="statSubjects">0</p>
+            </div>
         </div>
+    </section>
 
-    </div>
 
 
-    <!-- =========================================================
-        CARD 5 — TABLE
-    ========================================================== -->
-    <div class="card table-card">
+    <!-- --------------------------------------------------------
+         TOOLBAR — Export / Print / Delete / Refresh
+    --------------------------------------------------------- -->
+    <section class="toolbar-panel glass-card">
 
-        <div class="table-toolbar">
+        <div class="toolbar-left">
             <button id="deleteSelectedBtn" class="btn-danger">
                 <i class="fa-solid fa-trash"></i> Delete Selected
             </button>
+
+            <button id="printSelectedBtn" class="btn-light">
+                <i class="fa-solid fa-file-pdf"></i>
+                Print Selected
+            </button>
         </div>
+
+        <div class="toolbar-right">
+
+            <button id="exportAllExcelBtn" class="btn-light">
+                <i class="fa-solid fa-file-excel"></i>
+                Excel
+            </button>
+
+            <button id="exportCsvBtn" class="btn-light">
+                <i class="fa-solid fa-file-csv"></i>
+                CSV
+            </button>
+
+            <button id="printAllPdfBtn" class="btn-light">
+                <i class="fa-solid fa-print"></i>
+                Print All
+            </button>
+
+            <button id="reloadTableBtn" class="btn-light">
+                <i class="fa-solid fa-rotate"></i>
+                Refresh
+            </button>
+
+        </div>
+    </section>
+
+
+
+    <!-- --------------------------------------------------------
+         RESULTS TABLE
+    --------------------------------------------------------- -->
+    <section class="results-table-panel glass-card">
 
         <div class="table-wrapper">
             <table class="results-table">
@@ -119,94 +178,86 @@
                 </thead>
 
                 <tbody id="resultsBody">
-                    <tr><td colspan="9" class="no-data">Select class & subject to load results</td></tr>
+                    <tr>
+                        <td colspan="9" class="table-placeholder">
+                            Select Year, Class, and Subject to view results
+                        </td>
+                    </tr>
                 </tbody>
             </table>
         </div>
 
         <div id="pagination" class="pagination"></div>
 
-    </div>
+    </section>
 
 
-    <!-- =========================================================
-        DELETE CONFIRMATION MODAL
-    ========================================================== -->
+
+    <!-- --------------------------------------------------------
+         DELETE CONFIRMATION MODAL
+    --------------------------------------------------------- -->
     <div id="deleteModal" class="modal-backdrop hidden">
-        <div class="modal-card small">
-
+        <div class="modal-card">
             <h3>Delete Selected Results?</h3>
             <p>This action cannot be undone.</p>
 
             <div class="modal-footer">
-                <button class="btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button onclick="closeDeleteModal()" class="btn-secondary">Cancel</button>
                 <button id="confirmDeleteBtn" class="btn-danger">Delete</button>
             </div>
-
         </div>
     </div>
 
-    <!-- =========================================================
-        CARD 2 — ANALYTICS OVERVIEW
-    ========================================================== -->
-    <div class="card analytics-card">
-        <div class="analytics-grid">
+</div>  <!-- ❗ END OF results-wrapper — THIS WAS MISSING IN YOUR VERSION -->
 
-            <div class="analytic-box">
-                <h3>Total Results</h3>
-                <p id="statTotalResults">0</p>
-            </div>
 
-            <div class="analytic-box">
-                <h3>Pass Rate</h3>
-                <p id="statPassRate">0%</p>
-            </div>
 
-            <div class="analytic-box">
-                <h3>Average Score</h3>
-                <p id="statAvgScore">0%</p>
-            </div>
+<!-- ======================================================================
+     SUMMARY OVERLAY + SUMMARY MODAL — MUST BE OUTSIDE THE WRAPPER
+     THIS FIXES THE EXTRA PAGE ISSUE
+====================================================================== -->
+<div id="summaryOverlay" class="summary-overlay"></div>
 
-            <div class="analytic-box">
-                <h3>Subjects Loaded</h3>
-                <p id="statSubjects">0</p>
-            </div>
+<div id="adminPrintSummary" class="print-summary">
 
-        </div>
+    <span class="summary-close-btn" onclick="closeSummary()">&times;</span>
+
+    <div class="summary-header">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}"
+             alt="EMIS Logo" class="summary-logo">
+        <h2 class="summary-header-title">Exam Result Summary</h2>
     </div>
 
+    <div class="summary-section">
+        <p><strong>Student Name:</strong> <span id="ap_studentName"></span></p>
+        <p><strong>Admission No:</strong> <span id="ap_studentID"></span></p>
+        <p><strong>Class:</strong> <span id="ap_studentClass"></span></p>
+        <p><strong>Category:</strong> <span id="ap_studentCategory"></span></p>
+    </div>
 
-<!-- =========================================================
-     HIDDEN SUMMARY BLOCK — ADMIN PRINT SUMMARY
-========================================================= -->
-<div id="adminPrintSummary" class="print-summary" style="display:none;">
-    <h2>Exam Result Summary</h2>
+    <hr class="summary-divider">
 
-    <p><strong>Student Name:</strong> <span id="ap_studentName"></span></p>
-    <p><strong>Admission No:</strong> <span id="ap_studentID"></span></p>
-    <p><strong>Class:</strong> <span id="ap_studentClass"></span></p>
-    <p><strong>Category:</strong> <span id="ap_studentCategory"></span></p>
+    <div class="summary-section">
+        <p><strong>Subject:</strong> <span id="ap_subject"></span></p>
+        <p><strong>Score:</strong> <span id="ap_rawScore"></span></p>
+        <p><strong>Correct:</strong> <span id="ap_correct"></span></p>
+        <p><strong>Total Questions:</strong> <span id="ap_total"></span></p>
+        <p><strong>Accuracy:</strong> <span id="ap_accuracy"></span></p>
+        <p><strong>Time Taken:</strong> <span id="ap_time"></span></p>
+        <p><strong>Exam Status:</strong> <span id="ap_status"></span></p>
+    </div>
 
-    <hr>
+    <hr class="summary-divider">
 
-    <p><strong>Subject:</strong> <span id="ap_subject"></span></p>
-    <p><strong>Score:</strong> <span id="ap_rawScore"></span></p>
-    <p><strong>Correct:</strong> <span id="ap_correct"></span></p>
-    <p><strong>Total Questions:</strong> <span id="ap_total"></span></p>
-    <p><strong>Accuracy:</strong> <span id="ap_accuracy"></span></p>
-    <p><strong>Time Taken:</strong> <span id="ap_time"></span></p>
-    <p><strong>Exam Status:</strong> <span id="ap_status"></span></p>
-
-    <hr>
-
-    <p><strong>Completion Date:</strong> <span id="ap_date"></span></p>
-
-    <br>
-    <p style="font-size: 0.8rem; color:#444;">Generated by EMIS Admin Console</p>
-</div>
-
+    <div class="summary-section">
+        <p><strong>Completion Date:</strong> <span id="ap_date"></span></p>
+        <p class="print-footer-note">Generated by EMIS Admin Console</p>
+    </div>
 
 </div>
+
+
+
 {% endblock %}
 
 {% block scripts %}
