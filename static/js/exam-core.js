@@ -166,14 +166,19 @@ function normalizeSubjectName(subject){
 }
 
 // ------------------------------------------------------
-// RESOLVE JSON PATH (INCLUDES /static)
+// RESOLVE JSON PATH — NOW INCLUDES YEAR FOLDER
 // ------------------------------------------------------
 function resolveExamJSON(subject, classCategory){
-  const subjectKey = normalizeSubjectName(subject); // english
-  const cls       = classCategory.toUpperCase();   // SS1
-  const clsLower  = classCategory.toLowerCase();   // ss1
+  const subjectKey = normalizeSubjectName(subject);  // english → english
+  const cls        = classCategory.toUpperCase();    // SS1
+  const clsLower   = classCategory.toLowerCase();    // ss1
 
-  return `/static/subjects/subjects-json/${cls}/${subjectKey}_${clsLower}.json`;
+  // Read YEAR passed from exam.html <meta>
+  const yearMeta = document.querySelector('meta[name="exam-year"]');
+  const year = yearMeta ? yearMeta.content : new Date().getFullYear();
+
+  // NEW correct path:
+  return `/static/subjects/${year}/subjects-json/${cls}/${subjectKey}_${clsLower}.json`;
 }
 
 // ------------------------------------------------------

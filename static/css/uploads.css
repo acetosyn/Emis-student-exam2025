@@ -1,23 +1,37 @@
 /* ============================================================
-   EMIS UPLOADS PAGE — NEW UI (2025)
-   Cleaned, optimized, de-duplicated, structured
+   EPICONSULT EMIS — UPLOADS PAGE (2025/2026)
+   Soft Premium Light-Blue Theme
+   Clean, modern, subtle gradients, calm tones
    ============================================================ */
+
 :root {
-  --primary: #0f2b46;
-  --primary-dark: #081a2b;
+  --primary: #2a4d77;             /* soft blue, not navy */
+  --primary-dark: #1f3b5c;
+  --primary-light: #e8f1fb;       /* very light blue background */
+
   --accent: #e11d48;
-  --accent-light: #f43f5e;
-  --bg-light: #f8fafc;
+  --accent-light: #f47288;
+
+  --card-bg: #ffffff;
+  --card-bg-soft: rgba(255, 255, 255, 0.65);
+  --border-soft: rgba(0,0,0,0.06);
+
   --text-dark: #0f172a;
-  --radius: 12px;
+  --text-soft: #475569;
+
+  --radius: 14px;
+
   --shadow-sm: 0 2px 8px rgba(0,0,0,0.05);
-  --shadow-md: 0 4px 15px rgba(0,0,0,0.08);
-  --shadow-lg: 0 6px 25px rgba(0,0,0,0.12);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+  --shadow-lg: 0 6px 28px rgba(0,0,0,0.12);
+
+  --gradient-soft: linear-gradient(135deg, #eef6ff, #f6faff);
 }
 
 /* ============================================================
-   GLOBAL UTILITIES
+   GLOBAL RESET + UTILITIES
    ============================================================ */
+
 .fade-in {
   animation: fadeIn .45s ease;
 }
@@ -29,102 +43,87 @@
 
 .pretty-scroll {
   scrollbar-width: thin;
-  scrollbar-color: var(--primary) #e5e7eb;
+  scrollbar-color: var(--primary) #d9e4f5;
 }
-
-.pretty-scroll::-webkit-scrollbar {
-  width: 6px;
-}
+.pretty-scroll::-webkit-scrollbar { width: 6px; }
 .pretty-scroll::-webkit-scrollbar-thumb {
   background: var(--primary);
   border-radius: 10px;
 }
 .pretty-scroll::-webkit-scrollbar-track {
-  background: #e5e7eb;
+  background: #d9e4f5;
 }
 
 .card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: var(--radius);
   box-shadow: var(--shadow-md);
   padding: 1rem 1.2rem;
-  display: flex;
-  flex-direction: column;
+  backdrop-filter: blur(6px);
 }
 
 /* ============================================================
-   WRAPPER + HEADER
+   PAGE WRAPPER + HEADER
    ============================================================ */
+
 .uploads-wrapper {
   padding: 1.6rem;
-  background: var(--bg-light);
+  background: var(--primary-light);
   border-radius: var(--radius);
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.05);
+  min-height: 100%;
 }
 
 .uploads-header {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.6rem;
 }
 
 .uploads-header-main {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 1.4rem;
+  gap: 1.3rem;
   flex-wrap: wrap;
 }
 
 .uploads-header-left h3 {
-  color: var(--primary);
-  font-size: 1.55rem;
+  color: var(--primary-dark);
+  font-size: 1.65rem;
   margin-bottom: .3rem;
+  font-weight: 800;
 }
 
 .sub-text {
-  font-size: .9rem;
-  color: #555;
-}
-
-.header-actions {
-  margin-top: .3rem;
-  text-align: right;
+  font-size: .92rem;
+  color: var(--text-soft);
 }
 
 /* ============================================================
-   ROLE BANNER
+   ROLE BANNER — Beautiful soft gradient
    ============================================================ */
+
 .role-banner {
   display: inline-flex;
   align-items: center;
   gap: .45rem;
-  padding: .55rem 1rem;
-  border-radius: 10px;
+  padding: .5rem 1rem;
+  border-radius: 12px;
   border-left: 4px solid var(--accent);
+  background: var(--gradient-soft);
   font-weight: 700;
-  background: linear-gradient(135deg, #ffffff, #f9fafb);
-  color: var(--primary-dark);
   box-shadow: var(--shadow-sm);
-  animation: glowPulse 3s infinite alternate;
-}
-
-@keyframes glowPulse {
-  from { box-shadow: 0 0 10px rgba(225,29,72,.25); }
-  to { box-shadow: 0 0 20px rgba(225,29,72,.4); }
+  color: var(--primary-dark);
 }
 
 .role-banner[data-role="teacher"] {
   border-left-color: #10b981;
-  background: linear-gradient(135deg, #ecfdf5, #f0fdfa);
-  animation: glowPulseTeacher 3s infinite alternate;
-}
-
-@keyframes glowPulseTeacher {
-  from { box-shadow: 0 0 10px rgba(16,185,129,.25); }
-  to { box-shadow: 0 0 20px rgba(16,185,129,.4); }
+  background: linear-gradient(135deg, #e8fff4, #f3fffb);
 }
 
 /* ============================================================
-   GRID LAYOUT
+   GRID LAYOUT (3 columns)
    ============================================================ */
+
 .uploads-grid {
   display: grid;
   grid-template-columns: 1.05fr 1.45fr 1.1fr;
@@ -133,30 +132,51 @@
 }
 
 /* ============================================================
-   LEFT: UPLOAD PANEL
+   LEFT PANEL — UPLOAD ZONE
    ============================================================ */
+
 .upload-panel.card {
-  padding: 1.2rem;
-  max-height: 470px;
+  max-height: 580px;
   overflow-y: auto;
+  background: var(--card-bg-soft);
+  border: 1px solid var(--border-soft);
+}
+
+.panel-header h4 {
+  margin-bottom: .25rem;
+  color: var(--primary-dark);
+  font-weight: 800;
+}
+
+.panel-subtitle {
+  color: var(--text-soft);
+  font-size: .82rem;
+  margin-bottom: .6rem;
 }
 
 .drop-box {
   padding: 1.2rem;
-  border: 2px dashed var(--accent);
+  border: 2px dashed var(--primary);
   border-radius: var(--radius);
+  background: linear-gradient(135deg, #f3f7ff, #ffffff);
   transition: .25s ease;
 }
 
-.drop-box .upload-icon {
-  font-size: 2.6rem;
+.drop-box:hover {
+  background: #f0f6ff;
+  border-color: var(--primary-dark);
+  box-shadow: var(--shadow-sm);
+}
+
+.upload-icon {
+  font-size: 2.8rem;
+  color: var(--primary);
   margin-bottom: .4rem;
 }
 
 .btn-row button {
   margin-right: .5rem;
-  padding: .55rem .9rem !important;
-  font-size: .85rem !important;
+  font-size: .85rem;
 }
 
 .upload-actions {
@@ -166,68 +186,119 @@
 }
 
 .upload-actions button {
-  padding: .65rem 1rem;
+  padding: .7rem 1rem;
+  border-radius: 8px;
   font-size: .85rem;
   font-weight: 600;
 }
 
+/* Progress */
+.progress {
+  margin-top: .9rem;
+  background: #d7e3f7;
+  height: 6px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--primary);
+  border-radius: 10px;
+  width: 0%;
+  transition: width .3s ease;
+}
+
+.progress-label {
+  font-size: .8rem;
+  color: var(--primary-dark);
+  display: block;
+  margin-top: .35rem;
+}
+
 /* ============================================================
-   MIDDLE: TABLE PANEL
+   MIDDLE PANEL — TABLE
    ============================================================ */
+
 .dashboard-panel.card {
-  padding: 1.1rem;
-  max-height: 470px;
+  max-height: 580px;
   overflow-y: auto;
+  background: var(--card-bg-soft);
+  border: 1px solid var(--border-soft);
 }
 
 .table-wrapper {
   overflow-y: auto;
-  max-height: 340px;
+  max-height: 380px;
+  background: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #eef2f6;
 }
 
-.uploads-table th,
-.uploads-table td {
-  padding: .5rem .55rem;
-  font-size: .82rem;
+.uploads-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
 .uploads-table th {
-  background: #eef2f6;
-  font-weight: 700;
+  background: #f1f6ff;
+  padding: .55rem .6rem;
+  text-align: left;
+  font-weight: 800;
+  color: var(--primary-dark);
+  font-size: .82rem;
+  border-bottom: 1px solid #e3ecfa;
+}
+
+.uploads-table td {
+  padding: .55rem .6rem;
+  font-size: .82rem;
+  border-bottom: 1px solid #eef2f6;
+}
+
+.uploads-table tr:hover td {
+  background: #f7fbff;
 }
 
 /* ============================================================
-   RIGHT: PUSH PANEL
+   RIGHT PANEL — PUSH PANEL
    ============================================================ */
+
 .push-panel.card {
-  padding: 1.15rem;
-  max-height: 470px;
+  max-height: 580px;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
+  background: var(--card-bg-soft);
+  border: 1px solid var(--border-soft);
 }
 
-.push-panel .panel-subtitle {
-  margin-bottom: .6rem;
+.push-year-control label {
+  font-size: .82rem;
+  color: var(--primary-dark);
+  font-weight: 600;
 }
 
-/* Summary card */
+.push-year-control select {
+  margin-top: .3rem;
+}
+
+/* Summary */
 .portal-summary {
-  background: #f8fafc;
-  border: 1px solid #e5e7eb;
+  margin-top: .7rem;
+  padding: .9rem;
+  background: #f4f8ff;
   border-radius: 10px;
-  padding: .8rem .95rem;
+  border: 1px solid #e0e8f6;
   display: flex;
-  gap: .9rem;
+  gap: .8rem;
   align-items: center;
-  box-shadow: var(--shadow-sm);
 }
 
 .portal-icon {
-  background: white;
-  padding: .6rem .8rem;
-  border-radius: 9px;
-  font-size: 1.65rem;
+  padding: .6rem .75rem;
+  background: #ffffff;
+  border-radius: 10px;
+  font-size: 1.7rem;
+  color: var(--primary-dark);
   box-shadow: var(--shadow-sm);
 }
 
@@ -235,195 +306,346 @@
   font-weight: 700;
   color: var(--primary-dark);
 }
+
 .summary-sub {
-  font-size: .8rem;
-  color: #475569;
+  font-size: .78rem;
+  color: #5b6a7f;
 }
 
-/* Push actions */
+/* Buttons */
 .push-actions {
+  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   gap: .6rem;
-  margin-top: .9rem;
 }
 
 .push-actions-row {
   display: flex;
-  gap: .6rem;
+  gap: .7rem;
 }
 
-#pushSelectedToPortal,
-#viewPortalJSON {
-  padding: .55rem .9rem;
-  font-size: .82rem;
-  border-radius: 8px;
-  font-weight: 600;
-}
-
+/* Clear Queue */
 #clearQueue {
-  padding: .25rem .55rem !important;
-  font-size: .7rem !important;
-  border-radius: 5px !important;
-  width: fit-content;
   opacity: .85;
+  font-size: .72rem !important;
+  width: fit-content;
 }
 
 /* ============================================================
-   LIVE PREVIEW
+   PREVIEW CARD
    ============================================================ */
+
 .preview-card {
   margin-top: 1rem;
   padding: 1rem;
-  background: #f8fafc;
+  background: #f7faff;
+  border: 1px solid #e1e9f7;
   border-radius: 10px;
-  border: 1px solid #e5e7eb;
   box-shadow: var(--shadow-sm);
 }
 
-.preview-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .preview-card-header h5 {
-  margin: 0;
-  font-size: .95rem;
-  font-weight: 700;
-  color: var(--primary-dark);
-}
-
-.preview-subtitle {
-  font-size: .75rem;
-  color: #64748b;
-}
-
-.preview-meta {
-  margin: .6rem 0;
-  display: flex;
-  gap: .4rem;
-  flex-wrap: wrap;
+  font-size: .96rem;
+  font-weight: 800;
+  margin-bottom: .2rem;
 }
 
 .preview-pill {
-  background: #e2e8f0;
-  padding: .2rem .55rem;
+  background: #e2ebf9;
+  padding: .25rem .55rem;
   border-radius: 6px;
   font-size: .72rem;
-  color: #334155;
 }
 
 .preview-body {
-  max-height: 170px;
-  border: 1px solid #e5e7eb;
-  background: white;
+  background: #ffffff;
+  border: 1px solid #e6eaf1;
   padding: .7rem;
   border-radius: 8px;
+  max-height: 170px;
   overflow-y: auto;
   font-size: .78rem;
-  line-height: 1.3rem;
 }
 
 /* ============================================================
    PORTAL LOG
    ============================================================ */
+
 .log-box {
   margin-top: 1rem;
-  background: #f1f5f9;
-  padding: .8rem;
+  background: #f2f7ff;
+  padding: .9rem;
   border-radius: 10px;
-  border: 1px solid #e2e8f0;
-  height: 160px;
+  border: 1px solid #dce7f9;
+  height: 165px;
   display: flex;
   flex-direction: column;
-}
-
-.log-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: .4rem;
 }
 
 .log-title {
-  font-weight: 700;
-  font-size: .9rem;
+  font-weight: 800;
   color: var(--primary-dark);
+  font-size: .9rem;
 }
 
 .log-body {
+  margin-top: .3rem;
   font-size: .78rem;
   overflow-y: auto;
-  padding-right: .3rem;
-  line-height: 1.25rem;
-}
-
-.log-placeholder {
-  font-size: .78rem;
-  opacity: .7;
 }
 
 /* ============================================================
-   SUBJECT CARDS (MODAL) + TINY BUTTONS
+   SUBJECT CARDS (MODAL)
    ============================================================ */
+
 .subjects-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
-  gap: .7rem;
+  gap: .8rem;
 }
 
 .subject-card {
-  background: #fff;
-  padding: .55rem;
-  border-radius: 8px;
+  background: #ffffff;
+  padding: .65rem;
+  border-radius: 10px;
+  border: 1px solid #e4e9f3;
   box-shadow: var(--shadow-sm);
-  border: 1px solid #e5e7eb;
   display: flex;
   flex-direction: column;
-  gap: .25rem;
-}
-
-.subject-card header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  gap: .3rem;
 }
 
 .subject-name {
-  font-weight: 700;
-  font-size: .8rem;
+  font-weight: 800;
+  font-size: .85rem;
   color: var(--primary-dark);
-}
-
-.subject-version-pill {
-  padding: .12rem .35rem;
-  font-size: .65rem;
-  border-radius: 5px;
-  background: #f1f5f9;
 }
 
 .subject-filename {
   font-size: .72rem;
-  color: #334155;
+  color: #5b6b84;
 }
 
-.subject-meta {
-  font-size: .7rem;
-  color: #6b7280;
-}
-
-/* Tiny action buttons on subject cards */
-.subject-actions {
-  margin-top: .35rem;
-  display: flex;
-  gap: .3rem;
-}
-
-.subject-actions .btn-primary,
-.subject-actions .btn-secondary {
-  padding: .22rem .38rem;
-  font-size: .68rem;
+.subject-version-pill {
+  padding: .15rem .4rem;
+  font-size: .65rem;
+  background: #eef4fd;
   border-radius: 5px;
+}
+
+.subject-actions {
+  margin-top: .4rem;
+  display: flex;
+  gap: .35rem;
+}
+
+.subject-actions button {
+  font-size: .68rem !important;
+  padding: .25rem .4rem !important;
+  border-radius: 6px !important;
+}
+
+/* ============================================================
+   MODALS — FULL (COMPACT CENTERED VERSION)
+   ============================================================ */
+
+.modal {
+  position: fixed;
+  inset: 0;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;   /* center vertically */
+  padding: 0 !important;
+  z-index: 3000;
+}
+
+.modal.hidden {
+  display: none !important;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(2px);
+}
+
+/* MAIN MODAL CARD (large modals like subjects modal) */
+.modal-card {
+  position: relative;
+  background: #ffffff;
+  border-radius: var(--radius);
+  width: 80%;
+  max-width: 900px;
+  max-height: 85vh;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  animation: fadeInScale .25s ease;
+}
+
+/* Animated appearance for smooth premium effect */
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.modal-header {
+  padding: .75rem 1rem;
+  border-bottom: 1px solid #e6e9f2;
+  background: #f7faff;
+  position: relative;
+}
+
+.modal-footer {
+  padding: .7rem 1rem;
+  background: #f7faff;
+  border-top: 1px solid #e6e9f2;
+  text-align: right;
+}
+
+.modal-body {
+  padding: 1rem;
+  overflow-y: auto;
+}
+/* ============================================================
+   SMALL MODALS — TRUE SQUARE PREMIUM VERSION
+   ============================================================ */
+
+.modal {
+  align-items: flex-start !important;   /* Move upward */
+  padding-top: 120px !important;        /* Position modal higher */
+}
+
+/* Square modal */
+.modal-card.small {
+  width: 300px !important;
+  height: 300px !important;
+
+  padding: 1rem !important;
+  border-radius: 16px !important;
+
+  background: #ffffff;
+  box-shadow: 0 10px 35px rgba(0,0,0,0.18);
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+
+  animation: fadeInScale .25s ease;
+}
+
+/* -----------------------------------------
+   HEADER (compact)
+----------------------------------------- */
+.modal-card.small .modal-header {
+  width: 100%;
+  padding-bottom: 0.6rem !important;
+  background: none !important;
+  border-bottom: 1px solid #e5e8f1;
+  text-align: center;
+}
+
+.modal-card.small .modal-header h3 {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+}
+
+/* -----------------------------------------
+   BODY (centered inside square)
+----------------------------------------- */
+.modal-card.small .modal-body {
+  padding: 0.6rem 0 !important;
+  text-align: center;
+
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.modal-card.small .warning-text {
+  font-size: 0.75rem;
+  color: #475569;
+  margin-bottom: 0.5rem;
+}
+
+/* -----------------------------------------
+   CLASS OPTIONS — compact & centered
+----------------------------------------- */
+.class-options {
+  display: flex;
+  justify-content: center;
+  gap: 0.45rem;
+  margin-top: 0.4rem;
+}
+
+.class-btn,
+.clear-btn {
+  width: 60px !important;
+  padding: 0.40rem 0 !important;
+
+  border-radius: 7px !important;
+  background: #eef4ff;
+  border: 1px solid #cddbf5;
+
+  font-size: 0.74rem !important;
+  font-weight: 700 !important;
+  color: var(--primary-dark);
+
+  cursor: pointer;
+  transition: .2s ease;
+}
+
+.class-btn:hover,
+.clear-btn:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Danger button */
+.clear-btn.danger {
+  background: #ffe5e5 !important;
+  border-color: #f8b4b4 !important;
+  color: #b91c1c !important;
+}
+
+.clear-btn.danger:hover {
+  background: #dc2626 !important;
+  color: white !important;
+}
+
+/* -----------------------------------------
+   FOOTER — compact buttons
+----------------------------------------- */
+.modal-card.small .modal-footer {
+  width: 100%;
+  padding: 0 !important;
+  margin-top: 0.4rem;
+
+  background: none !important;
+  border-top: none;
+
+  display: flex;
+  justify-content: center;
+  gap: 0.45rem;
+}
+
+.modal-card.small .modal-footer button {
+  padding: 0.38rem 0.7rem !important;
+  font-size: 0.76rem !important;
+  border-radius: 6px !important;
+}
+
+/* Disabled state */
+#btnConfirmPush.disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* ============================================================
@@ -435,291 +657,95 @@
   }
 }
 
+
 /* ============================================================
-   TEACHER OVERRIDES (CONFLICT FIX + MODAL LAYOUT)
-   These ensure the uploads modals & subject cards stay compact
-   even inside teachers.html
+   TEACHER OVERRIDES
    ============================================================ */
-#teacherDynamicContent .modal {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 1vh;
-  z-index: 3000;
-}
-
-#teacherDynamicContent .modal.hidden {
-  display: none;
-}
-
-#teacherDynamicContent .modal-backdrop {
-  position: absolute;
-  inset: 0;
-  background: rgba(0,0,0,.45);
-  backdrop-filter: blur(2px);
-}
 
 #teacherDynamicContent .modal-card {
-  position: relative;
-  background: #fff;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow-lg);
-  width: 78%;
-  max-width: 880px;
-  max-height: 83vh;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  transform: translateY(-22%);
+  width: 78% !important;
+  transform: translateY(-15%) !important;
 }
 
-#teacherDynamicContent .modal-header {
-  padding: .6rem 1rem;
-  background: #f9fafb;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-#teacherDynamicContent .modal-header-main h3 {
-  color: var(--primary);
-  font-size: 1rem;
-}
-
-#teacherDynamicContent .modal-subtitle {
-  font-size: .78rem;
-  color: #64748b;
-}
-
-#teacherDynamicContent .modal-body {
-  padding: .7rem;
-  overflow-y: auto;
-  flex-grow: 1;
-}
-
-#teacherDynamicContent .modal-footer {
-  padding: .55rem 1rem;
-  background: #f9fafb;
-  border-top: 1px solid #eee;
-  text-align: right;
-}
-
-#teacherDynamicContent .modal-close {
-  border: none;
-  background: transparent;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-/* SUBJECT GRID — TINY CARDS (inside teacher container) */
 #teacherDynamicContent .subjects-grid {
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
-  gap: .6rem !important;
 }
 
 #teacherDynamicContent .subject-card {
-  padding: .45rem !important;
-  border-radius: 7px !important;
-  gap: .20rem !important;
+  padding: .55rem !important;
+  border-radius: 8px !important;
 }
-
-#teacherDynamicContent .subject-name {
-  font-size: .75rem !important;
-}
-
-#teacherDynamicContent .subject-version-pill {
-  font-size: .58rem !important;
-  padding: .1rem .3rem !important;
-}
-
-#teacherDynamicContent .subject-filename {
-  font-size: .68rem !important;
-}
-
-#teacherDynamicContent .subject-meta {
-  font-size: .65rem !important;
-}
-
-/* MINI BUTTONS FOR SUBJECT ACTIONS (strong override) */
-#teacherDynamicContent .subject-actions button {
-  padding: .18rem .35rem !important;
-  font-size: .63rem !important;
-  border-radius: 4px !important;
-  min-width: auto !important;
-}
-
-/* Fix invisible "View Subjects" etc. from teachers.css */
-#teacherDynamicContent .btn-secondary.small,
-#teacherDynamicContent .btn-primary.small {
-  all: revert !important;
-  padding: .35rem .55rem !important;
-  border-radius: 6px !important;
-  font-size: .78rem !important;
-}
-
-/* JSON preview modal width */
-#teacherDynamicContent .modal-code .modal-card {
-  width: 70% !important;
-  max-width: 750px !important;
-  transform: translateY(-20%) !important;
-}
-
-
 
 /* ============================================================
-   MODAL REFINEMENTS — COMPACT PUSH MODAL (2025)
+   SELECT YEAR — Soft Premium Blue Styling
    ============================================================ */
 
-/* 1. Move modal card lower (not at the very top) */
-.modal {
-  align-items: flex-start !important;
-  padding-top: 120px !important;  /* push modal DOWN */
-}
-
-/* 2. SMALL SQUARE CARD */
-.modal-card.small {
-  width: 300px !important;      /* much smaller width */
-  border-radius: 14px !important;
-  padding: 0 !important;
-  transform: translateY(0) !important;
-}
-
-/* Header compact */
-.modal-header {
-  padding: 0.6rem 0.9rem !important;
-  font-size: 0.9rem !important;
-}
-
-/* Body compact */
-.modal-body {
-  padding: 0.8rem 1rem !important;
-  font-size: 0.8rem !important;
-}
-
-/* Footer compact */
-.modal-footer {
-  padding: 0.6rem 0.9rem !important;
-}
-
-/* 3. TINY CLASS BUTTONS */
-.class-options {
-  display: flex;
-  justify-content: center;
-  gap: 0.45rem !important;
-  margin: 0.7rem 0 !important;
-}
-
-.class-btn,
-.clear-btn {
-  flex: unset !important;           /* remove stretching */
-  width: 60px !important;           /* tiny equal buttons */
-  padding: 0.45rem 0 !important;    /* smaller height */
-  font-size: 0.75rem !important;
-  font-weight: 600 !important;
-  border-radius: 6px !important;
-}
-
-/* Selected class text */
-.chosen-class {
-  margin-top: 0.5rem !important;
-  font-size: 0.8rem !important;
-}
-
-/* 4. Tiny Confirm & Cancel buttons */
-.modal-footer .btn-primary,
-.modal-footer .btn-secondary {
-  padding: 0.45rem 0.75rem !important;
-  font-size: 0.78rem !important;
-  border-radius: 6px !important;
-}
-
-
-/* Restore & enhance hover color for tiny class buttons */
-.class-btn:hover {
-  background: var(--primary) !important;     /* your main brand blue */
-  color: #fff !important;
-  border-color: var(--primary-dark) !important;
-  transform: translateY(-2px);
+.year-selector {
+  appearance: none;
+  background: #f1f6ff;
+  border: 1px solid #d4e2f7;
+  padding: 0.55rem 0.9rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  color: var(--primary-dark);
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
   box-shadow: var(--shadow-sm);
+  position: relative;
+
+  background-image: url("data:image/svg+xml;utf8,<svg fill='%232a4d77' height='20' viewBox='0 0 24 24' width='20' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 2.2rem;
 }
 
+.year-selector:hover {
+  background: #e9f1ff;
+  border-color: var(--primary);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
 
-
+.year-selector:focus {
+  outline: none;
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 3px rgba(70,120,190,0.25);
+}
 
 /* ============================================================
-   CLEAR MODAL — TINY BUTTONS + HOVER COLORS (2025)
-   Matches the compact push modal styling
-============================================================ */
+   CLASS FILTER PILL BAR
+   ============================================================ */
 
-/* Same compact layout */
-#clearPortalModal .modal-card.small {
-  width: 300px !important;
-  border-radius: 14px;
-  padding: 0 !important;
-}
-
-/* Header */
-#clearPortalModal .modal-header {
-  padding: 0.6rem 0.9rem !important;
-  font-size: 0.9rem !important;
-}
-
-/* Body */
-#clearPortalModal .modal-body {
-  padding: 0.8rem 1rem !important;
-  font-size: 0.8rem !important;
-}
-
-/* Footer */
-#clearPortalModal .modal-footer {
-  padding: 0.6rem 0.9rem !important;
-}
-
-/* TINY CLEAR BUTTONS (SS1 / SS2 / SS3 / ALL) */
-#clearPortalModal .class-options {
+.class-filter {
   display: flex;
-  justify-content: center;
-  gap: 0.45rem !important;
-  margin: 0.7rem 0 !important;
-}
-
-#clearPortalModal .clear-btn {
-  width: 80px !important;          /* Slightly wider for “Clear SS1” text */
-  padding: 0.45rem 0 !important;
-  font-size: 0.75rem !important;
-  font-weight: 600 !important;
-  border-radius: 6px !important;
+  gap: 6px;
   background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  color: var(--primary);
-  transition: 0.25s ease;
+  padding: 6px;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+}
+
+.class-pill {
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: #e2e8f0;
+  border: none;
   cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+  transition: all 0.25s ease;
 }
 
-/* Normal hover (SS1 / SS2 / SS3) */
-#clearPortalModal .clear-btn:hover:not(.danger) {
-  background: var(--primary) !important;
-  color: #fff !important;
-  border-color: var(--primary-dark) !important;
+.class-pill:hover {
+  background: #cbd5e1;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
 }
 
-/* DANGER button (Clear ALL Classes) */
-#clearPortalModal .clear-btn.danger {
-  background: #fee2e2 !important;
-  border-color: #fecaca !important;
-  color: #b91c1c !important;
-}
-
-/* DANGER hover effect */
-#clearPortalModal .clear-btn.danger:hover {
-  background: #dc2626 !important;
-  border-color: #b91c1c !important;
-  color: #fff !important;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+.class-pill.active {
+  background: #2563eb !important;
+  color: white !important;
+  box-shadow: 0 3px 8px rgba(37, 99, 235, 0.35);
 }
