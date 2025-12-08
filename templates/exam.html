@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Student + Exam Metadata -->
   <meta name="student-class" content="{{ student.class_category }}">
-<meta name="exam-subject" content="{{ subject }}">
+  <meta name="exam-subject" content="{{ subject }}">
+  <meta name="exam-year" content="{{ year }}">
 
+  <!-- Basic Document Meta -->
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -14,7 +17,6 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <!-- Core Exam Styles -->
-  <meta name="exam-subject" content="{{ subject|default('exam') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/exam_gen.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/exam_spec.css') }}">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/hour-glass.css') }}">
@@ -22,6 +24,7 @@
   <!-- Optional: student header styling -->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/students.css') }}" />
 </head>
+
 
 <body class="students-body exam-body">
 
@@ -175,8 +178,6 @@
 
     </div>
   </div>
-
-
 
 
 

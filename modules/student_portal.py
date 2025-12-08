@@ -1,6 +1,8 @@
 # modules/student_portal.py
 
 from flask import Blueprint, render_template, redirect, url_for, session, request, jsonify
+from pathlib import Path
+from datetime import datetime
 from modules.student_results import save_result, get_latest_result
 from modules.excel_manager import read_results
 
@@ -22,6 +24,44 @@ DEFAULT_SUBJECTS = [
     "TECHNICAL DRAWING"
 ]
 
+# -----------------------------------------------------------
+# SUBJECT NORMALIZATION (NO CLASS — JUST BASE NAME)
+# -----------------------------------------------------------
+BASE_SUBJECT_MAP = {
+    "biology": "biology",
+    "chemistry": "chemistry",
+
+    "civic education": "civic",
+    "civic": "civic",
+
+    "computer science": "computer_science",
+    "computer studies": "computer_science",
+    "computer": "computer_science",
+
+    "economics": "economics",
+
+    "english language": "english",
+    "english": "english",
+
+    "financial accounting": "accounts",
+    "accounting": "accounts",
+    "accounts": "accounts",
+
+    "geography": "geography",
+    "government": "government",
+
+    "literature-in-english": "literature",
+    "literature in english": "literature",
+    "literature": "literature",
+
+    "mathematics": "mathematics",
+    "maths": "mathematics",
+
+    "physics": "physics",
+
+    "technical drawing": "technical",
+    "technical": "technical",
+}
 
 # =======================================================
 # Helper — Student login validation
@@ -51,7 +91,7 @@ def student_portal():
 
 
 # =======================================================
-# Exam Dashboard (Subject Selected)
+# Exam Dashboard (UPDATED WITH YEAR)
 # =======================================================
 @student_portal_bp.route('/exam_dashboard')
 def exam_dashboard():
@@ -59,43 +99,77 @@ def exam_dashboard():
     if not student:
         return redirect(url_for('user_bp.student_login'))
 
-    subject = request.args.get('subject', '').strip().upper()
-    if not subject:
+    subject_raw = request.args.get('subject', '').strip().upper()
+    if not subject_raw:
         return redirect(url_for('student_portal_bp.student_portal'))
 
-    class_category = student.get("class_category")
+    # ------------------------------------------
+    # NEW → Get YEAR from query string
+    # Example: /exam_dashboard?subject=biology&year=2025
+    # ------------------------------------------
+    year = request.args.get("year")
+    if not year:
+        year = str(datetime.now().year)  # fallback
+
+    class_category = student.get("class_category")  # SS1 / SS2 / SS3
+    class_suffix = class_category.lower()
+
     full_name = student.get("full_name")
     admission_no = student.get("admission_number")
 
-    # Load Excel results safely
-    existing_results = read_results(class_category, subject)
+    # ------------------------------------------------------
+    # 1. Normalize subject → base name
+    # ------------------------------------------------------
+    key = subject_raw.lower()
+    base_name = BASE_SUBJECT_MAP.get(key)
 
-    # Safe duplicate detection
+    if not base_name:
+        base_name = key.replace(" ", "_").replace("-", "_")
+
+    json_filename = f"{base_name}_{class_suffix}.json"
+
+    # ------------------------------------------------------
+    # 2. Check JSON exists (uses YEAR)
+    # ------------------------------------------------------
+    json_path = Path(f"static/subjects/{year}/subjects-json/{class_category}/{json_filename}")
+    exam_available = json_path.exists()
+
+    # ------------------------------------------------------
+    # 3. Check Excel submission history
+    # ------------------------------------------------------
+    existing_results = read_results(class_category, subject_raw)
+
     already_written = False
     for r in existing_results:
-        name = str(r.get("Student Name", "")).strip().upper()
-        adm = str(r.get("Admission No", "")).strip().upper()
-
-        if name == full_name.strip().upper() and adm == admission_no.strip().upper():
+        name = str(r.get("Student Name", "")).upper()
+        adm = str(r.get("Admission No", "")).upper()
+        if name == full_name.upper() and adm == admission_no.upper():
             already_written = True
             break
 
-    session['selected_subject'] = subject
+    # ------------------------------------------------------
+    # SAVE to session (required for start_exam redirect)
+    # ------------------------------------------------------
+    session['selected_subject'] = subject_raw
+    session['selected_year'] = year          # ✅ REQUIRED LINE
     session['exam_submitted'] = already_written
 
     return render_template(
         'exam_dashboard.html',
         student=student,
-        subject=subject,
+        subject=subject_raw,
+        year=year,
         already_written=already_written,
+        exam_available=exam_available,
         full_name=full_name,
         admission_number=admission_no,
         class_name=student.get("class"),
         class_category=class_category,
         system_id=student.get("id"),
         exam_started=session.get('exam_started', False),
-        exam_submitted=session.get('exam_submitted', False)
+        exam_submitted=session.get('exam_submitted', already_written)
     )
+
 
 
 # =======================================================
@@ -107,29 +181,25 @@ def submit_exam():
     if not student:
         return jsonify({"error": "Not logged in"}), 401
 
-    exam_data = request.get_json()
-    if not exam_data:
-        return jsonify({"error": "Invalid data"}), 400
+    data = request.get_json()
+    if not data:
+        return jsonify({"error": "Invalid"}), 400
 
-    subject = exam_data.get("subject", "").strip().upper()
+    subject = data.get("subject", "").upper()
     class_category = student.get("class_category")
     full_name = student.get("full_name")
     admission_no = student.get("admission_number")
 
-    # Check duplicate safely
-    existing_results = read_results(class_category, subject)
+    # Check duplicate
+    previous = read_results(class_category, subject)
+    for r in previous:
+        if (
+            str(r.get("Student Name", "")).upper() == full_name.upper() and
+            str(r.get("Admission No", "")).upper() == admission_no.upper()
+        ):
+            return jsonify({"error": "Exam already submitted"}), 403
 
-    for r in existing_results:
-        name = str(r.get("Student Name", "")).strip().upper()
-        adm = str(r.get("Admission No", "")).strip().upper()
-
-        if name == full_name.strip().upper() and adm == admission_no.strip().upper():
-            return jsonify({
-                "error": "You have already submitted this exam. Contact your teacher/admin."
-            }), 403
-
-    # Attach identity
-    exam_data.update({
+    data.update({
         "student_id": student.get("id"),
         "full_name": full_name,
         "admission_number": admission_no,
@@ -137,17 +207,14 @@ def submit_exam():
         "class_category": class_category,
     })
 
-    save_result(exam_data)
+    save_result(data)
 
     session['exam_submitted'] = True
     session['exam_started'] = False
 
-    return jsonify({"status": "ok", "message": "Exam saved"}), 200
+    return jsonify({"status": "ok"})
 
 
-# =======================================================
-# Start Exam
-# =======================================================
 @student_portal_bp.route('/start_exam', methods=['POST'])
 def start_exam():
     student = get_logged_in_student()
@@ -158,11 +225,21 @@ def start_exam():
         return redirect(url_for('student_portal_bp.result'))
 
     session['exam_started'] = True
-    return redirect(url_for('student_portal_bp.exam'))
+
+    # Get subject + year from session
+    subject = session.get("selected_subject")
+    year = session.get("selected_year", datetime.now().year)
+
+    return redirect(url_for(
+        'student_portal_bp.exam',
+        subject=subject,
+        year=year
+    ))
+
 
 
 # =======================================================
-# Exam Page
+# EXAM PAGE
 # =======================================================
 @student_portal_bp.route('/exam')
 def exam():
@@ -170,20 +247,23 @@ def exam():
     if not student:
         return redirect(url_for('user_bp.student_login'))
 
-    subject = session.get('selected_subject')
-    if not subject:
-        return redirect(url_for('student_portal_bp.student_portal'))
+    subject = request.args.get("subject", "").strip()
+    year = request.args.get("year", None)
+
+    if not year:
+        year = datetime.now().year  # fallback
 
     return render_template(
         'exam.html',
         student=student,
         subject=subject,
+        year=year,
         exam_started=session.get('exam_started', False)
     )
 
 
 # =======================================================
-# Result Page
+# RESULT PAGE
 # =======================================================
 @student_portal_bp.route('/result')
 def result():
@@ -191,10 +271,10 @@ def result():
     if not student:
         return redirect(url_for('user_bp.student_login'))
 
-    latest_result = get_latest_result(student.get("id"))
+    latest = get_latest_result(student.get("id"))
 
-    if not latest_result:
-        latest_result = {
+    if not latest:
+        latest = {
             "score": 0,
             "correct": 0,
             "incorrect": 0,
@@ -206,24 +286,35 @@ def result():
             "time_taken": 0,
             "subject": session.get("selected_subject", "Unknown"),
             "submitted_at": None,
-            "status": "No exam record yet"
+            "status": "No record"
         }
 
-    return render_template("result.html", student=student, result=latest_result)
-
+    return render_template("result.html", student=student, result=latest)
 
 
 # =======================================================
-# BACK TO EXAM DASHBOARD (Safe backend redirect)
+# API — Fetch pushed subjects
 # =======================================================
-@student_portal_bp.route('/back_to_exam_dashboard')
-def back_to_exam_dashboard():
+@student_portal_bp.route("/api/student/subjects")
+def api_student_subjects():
     student = get_logged_in_student()
     if not student:
-        return redirect(url_for('user_bp.student_login'))
+        return jsonify({"subjects": []})
 
-    subject = session.get("selected_subject")
-    if not subject:
-        return redirect(url_for('student_portal_bp.student_portal'))
+    class_cat = student.get("class_category")
+    year = request.args.get("year", "")
 
-    return redirect(url_for('student_portal_bp.exam_dashboard', subject=subject))
+    if not year:
+        return jsonify({"subjects": []})
+
+    json_path = Path(f"static/portal/{year}/{class_cat}/pushed_subjects.json")
+
+    if not json_path.exists():
+        return jsonify({"subjects": []})
+
+    import json
+    try:
+        data = json.loads(json_path.read_text())
+        return jsonify({"subjects": data.get("subjects", [])})
+    except:
+        return jsonify({"subjects": []})
