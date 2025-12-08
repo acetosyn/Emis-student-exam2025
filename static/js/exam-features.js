@@ -130,12 +130,19 @@
   }
 
 
-  /* -------------------------------------------------------------------------
+ /* -------------------------------------------------------------------------
      4. Submit Confirmation Modal (Enhanced UX: Hover + Pointer)
   ------------------------------------------------------------------------- */
 function openSubmitConfirm() {
-  const total     = window.examData.questions.length;
-  const answered  = Object.keys(window.userAnswers).length;
+
+  // ✔ Use REAL question indices (ignores instructions)
+  const realIndices = window.realQuestionIndices || [];
+  const total = realIndices.length;
+
+  // ✔ Count answered correctly
+  const answered = realIndices.filter(i => window.userAnswers[i]).length;
+
+  // ✔ Correct unanswered count
   const unanswered = total - answered;
 
   const wrap = document.createElement("div");
@@ -190,7 +197,7 @@ function openSubmitConfirm() {
 
   document.body.appendChild(wrap);
 
-  // Hover Effects
+  // HOVER EFFECTS (unchanged)
   const cxlBtn = wrap.querySelector("#cxl");
   const okBtn  = wrap.querySelector("#ok");
 
@@ -212,7 +219,7 @@ function openSubmitConfirm() {
     okBtn.style.transform = "scale(1)";
   };
 
-  // Click handlers
+  // CLICK HANDLERS
   cxlBtn.onclick = () => wrap.remove();
   okBtn.onclick  = () => { wrap.remove(); window.submitExam(false); };
 }

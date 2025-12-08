@@ -1,30 +1,39 @@
 // ======================================================
-// exam-core.js — MERGED FINAL CBT ENGINE (2025 v11)
+// exam-core.js — MERGED FINAL CBT ENGINE (2025 v12)
 // - Pure CBT engine (no anti-cheat; handled by exam-realtime.js)
 // - Restores clocks/hourglass/topbar
-// - Modern subject title with question count
+// - Modern subject title with REAL question count
 // - Timer warnings (20, 10, 5 mins) + blinking < 60s
 // - No internal shuffling (shuffle.js handles that)
+// - English-style SECTION instructions shown as cards
+//   (not numbered, not in nav, not counted)
 // ======================================================
 
-console.log("[exam-core] MERGED CBT ENGINE LOADED");
+console.log("[exam-core] MERGED CBT ENGINE v12 LOADED");
 
 // ------------------------------------------------------
 // GLOBAL STATE
 // ------------------------------------------------------
-window.examData            = null;
-window.currentQuestionIndex = 0;
-window.userAnswers         = {};
-window.lockedQuestions     = new Set();
-window.flaggedQuestions    = new Set();
-window.examTimer           = null;
-window.timeRemaining       = 0;
-window.initialTimeAllowed  = 0;    // for warning thresholds
-window.examStarted         = false;
-window.examStartTime       = null;
-window.__examFinished      = false;
-window.__timeExpired       = false;
-window.__reviewBlocked     = false;
+window.examData             = null;   // full JSON
+window.currentQuestionIndex = 0;      // index in examData.questions (real question)
+window.userAnswers          = {};     // keyed by QUESTION INDEX (0-based)
+window.lockedQuestions      = new Set(); // indexes
+window.flaggedQuestions     = new Set();
+window.examTimer            = null;
+window.timeRemaining        = 0;
+window.initialTimeAllowed   = 0;      // for warning thresholds
+window.examStarted          = false;
+window.examStartTime        = null;
+window.__examFinished       = false;
+window.__timeExpired        = false;
+window.__reviewBlocked      = false;
+
+// Only REAL questions (no instructions) — array of indices
+window.realQuestionIndices  = [];
+
+// For each question index i → section instruction meta
+// { title, body, raw }
+window.sectionInstructions  = {};
 
 const SS_KEY       = "emis_exam_progress";
 const LS_RELOADS   = "emis_exam_reload_count";
@@ -63,9 +72,29 @@ function examFlash(message, type = "info") {
       flashEl.classList.remove("show");
     }, 5000);
   } else {
-    // Fallback to alert if no flash container exists
     alert(message);
   }
+}
+
+// Parse instruction text into {title, body, raw}
+// e.g. "SECTION 3:\nChoose the interpretation..." ->
+//   title: "SECTION 3"
+//   body:  "Choose the interpretation..."
+function parseInstructionText(text) {
+  if (!text) return null;
+
+  const lines = text.split(/\r?\n+/);
+  let title = (lines[0] || "").trim();
+  // strip trailing colon
+  title = title.replace(/\s*[:：]\s*$/, "");
+
+  const body = lines.slice(1).join(" ").trim();
+
+  return {
+    title,
+    body,
+    raw: text
+  };
 }
 
 // For future use if needed
@@ -150,8 +179,8 @@ function resolveExamJSON(subject, classCategory){
 // ------------------------------------------------------
 // LOAD EXAM DATA (QUIET MODE FOR startExam)
 // ------------------------------------------------------
-window.loadExamData = async function(quiet = false){
-  try{
+window.loadExamData = async function (quiet = false) {
+  try {
     const subjectMeta = $('meta[name="exam-subject"]');
     const classMeta   = $('meta[name="student-class"]');
 
@@ -170,7 +199,7 @@ window.loadExamData = async function(quiet = false){
 
     let rawData = await res.json();
 
-    // Standardize questions (KEEP DIAGRAM)
+    // KEEP FULL STRUCTURE
     rawData.questions = (rawData.questions || []).map((q, idx) => {
       let rawCorrect =
         q.correctOption ||
@@ -180,233 +209,152 @@ window.loadExamData = async function(quiet = false){
 
       let ci = -1;
       if (rawCorrect) {
-        const letter = rawCorrect.toString().trim().toUpperCase(); // A/B/C/D
-        ci = letter.charCodeAt(0) - 65; // A = 0
+        ci = rawCorrect.toString().trim().toUpperCase().charCodeAt(0) - 65;
       }
 
       return {
-        id:           q.id ?? idx,
-        question:     q.question,
-        options:      q.options,
-        diagram:      q.diagram || null,   // <-- FIX ADDED
-        correctIndex: ci
+        id:            q.id ?? idx,
+        question:      q.question,
+        options:       q.options || [],
+        diagram:       q.diagram || null,
+        passage:       q.passage || null,
+        isInstruction: !!q.isInstruction,
+        correctIndex:  ci
       };
     });
 
-    // No internal shuffle — external shuffle.js handles it
+    // Shuffle externally-controlled
     window.examData = shuffleQuestions(rawData);
 
-    // Timer setup
-    window.timeRemaining      = (rawData.time_allowed_minutes || 60) * 60;
-    window.initialTimeAllowed = window.timeRemaining;
+    // ------------------------------------------------------
+    // 1️⃣ Compute REAL QUESTIONS (no instructions)
+    //     FIXED: handles Literature options safely
+    // ------------------------------------------------------
+    window.realQuestionIndices = [];
+    window.examData.questions.forEach((q, i) => {
 
-    // Reset warnings
-    __warn20Shown = __warn10Shown = __warn5Shown = false;
+      // Detect if options actually contain visible text
+      const hasOptions =
+        Array.isArray(q.options) &&
+        q.options.some(opt => opt && opt.toString().trim() !== "");
 
-    // Timer display
-    const td = $("#timerDisplay");
-    if (td) td.textContent = formatTime(window.timeRemaining);
+      if (!q.isInstruction && hasOptions) {
+        window.realQuestionIndices.push(i);
+      }
+    });
 
-    // Subject title
+    // ------------------------------------------------------
+    // 2️⃣ Compute SECTION INSTRUCTIONS per real question
+    // ------------------------------------------------------
+    window.sectionInstructions = {};
+    let currentSectionMeta = null;
+
+    window.examData.questions.forEach((q, i) => {
+      if (q.isInstruction) {
+        currentSectionMeta = parseInstructionText(q.question);
+        return;
+      }
+      if (!q.isInstruction && currentSectionMeta) {
+        window.sectionInstructions[i] = currentSectionMeta;
+      }
+    });
+
+    const totalReal = window.realQuestionIndices.length;
+
+    // Update subject title
     const st = $("#examSubjectTitle");
     if (st) {
-      const totalQ = window.examData.questions.length;
       st.innerHTML = `
         <span class="exam-subject-pill">${subject.toUpperCase()}</span>
-        <span class="exam-question-count">• ${totalQ} QUESTION${totalQ === 1 ? "" : "S"}</span>
+        <span class="exam-question-count">• ${totalReal} QUESTION${totalReal === 1 ? "" : "S"}</span>
       `;
       st.classList.remove("hidden");
     }
 
-    // Total questions
     const totalQEl = $("#totalQuestions");
-    if (totalQEl) totalQEl.textContent = window.examData.questions.length;
+    if (totalQEl) totalQEl.textContent = totalReal;
 
-    // Load first question
-    loadQuestion(0);
+    // Timer setup
+    window.timeRemaining      = (rawData.time_allowed_minutes || 60) * 60;
+    window.initialTimeAllowed = window.timeRemaining;
+    __warn20Shown = __warn10Shown = __warn5Shown = false;
+
+    const td = $("#timerDisplay");
+    if (td) td.textContent = formatTime(window.timeRemaining);
+
+    // Load FIRST real question
+    if (window.realQuestionIndices.length > 0) {
+      loadQuestion(window.realQuestionIndices[0]);
+    }
+
     updateProgress();
     updateQuestionNavigation();
 
   } catch (err) {
     console.error("❌ loadExamData error:", err);
-    if (!quiet) {
-      alert("Unable to load exam. Check if the subject file exists for your class.");
-    }
+    if (!quiet) alert("Unable to load exam. Contact admin.");
     throw err;
   }
 };
 
 // ------------------------------------------------------
-// LOAD SINGLE QUESTION  (fixed labeling + diagram)
+// PROGRESS — counts ONLY real questions
 // ------------------------------------------------------
-window.loadQuestion = function (i) {
-  if (!window.examData) return;
-  if (i < 0 || i >= window.examData.questions.length) return;
+window.updateProgress = function () {
+  const total = window.realQuestionIndices.length;
 
-  window.currentQuestionIndex = i;
-  const q = window.examData.questions[i];
-  const qid = q.id ?? i;
+  // userAnswers is keyed by QUESTION INDEX (0-based)
+  const answered = window.realQuestionIndices.filter(i => !!window.userAnswers[i]).length;
 
-  $("#currentQuestionNumber").textContent = i + 1;
+  const pct = total ? (answered / total) * 100 : 0;
 
-  const prev = window.userAnswers[qid]?.index;
-  const locked = window.lockedQuestions.has(qid);
-
-  // Remove any existing A., B., C., D. from JSON so UI can relabel
-  function stripLabel(opt) {
-    return opt.replace(/^[A-Da-d][\.\)\-:\s]+/, "").trim();
-  }
-
-  const html = (q.options || []).map((opt, idx) => {
-    const cleanOpt = stripLabel(opt);  // remove "A.", "B." etc.
-    const letter = String.fromCharCode(65 + idx); // A, B, C, D
-
-    const selected = prev === idx ? "selected" : "";
-    const dis = locked ? "disabled" : "";
-
-    return `
-      <button class="option-btn ${selected}" data-option-index="${idx}" ${dis}>
-        <span class="option-letter">${letter}</span>
-        ${cleanOpt}
-      </button>
-    `;
-  }).join("");
-
-  // Diagram support
-  let diagramHTML = "";
-  if (q.diagram) {
-    diagramHTML = `
-      <div class="question-diagram mb-4">
-        <img src="${q.diagram}" class="diagram-img" style="max-width:100%;border-radius:6px;">
-      </div>
-    `;
-  }
-
-  $("#questionContent").innerHTML = `
-    <div class="qa-slide fade-in-up">
-      ${diagramHTML}
-      <h3 class="text-xl font-medium mb-4">${q.question}</h3>
-      <div class="space-y-3">
-        ${html}
-      </div>
-    </div>
-  `;
-
-  $$(".option-btn").forEach(btn => {
-    btn.onclick = () => selectOption(Number(btn.dataset.optionIndex));
-  });
-
-  updateNavigationButtons();
-  updateQuestionNavigation();
-};
-
-
-// ------------------------------------------------------
-// SELECT OPTION
-// ------------------------------------------------------
-window.selectOption = function(idx){
-  const q   = window.examData.questions[window.currentQuestionIndex];
-  const qid = q.id ?? window.currentQuestionIndex;
-
-  if (window.lockedQuestions.has(qid)) return;
-
-  const correct   = q.correctIndex;
-  const isCorrect = (idx === correct);
-
-  window.userAnswers[qid] = { index: idx, correct: isCorrect };
-  window.lockedQuestions.add(qid);
-
-  $$(".option-btn").forEach(btn => {
-    btn.disabled = true;
-    btn.classList.toggle(
-      "selected",
-      Number(btn.dataset.optionIndex) === idx
-    );
-  });
-
-  updateProgress();
-  updateQuestionNavigation();
-
-  setTimeout(() => {
-    if (window.currentQuestionIndex < window.examData.questions.length - 1) {
-      nextQuestion();
-    } else {
-      // Last question → trigger submit via button
-      const nextBtn = $("#nextBtn");
-      if (nextBtn) nextBtn.click();
-      else submitExam(false);
-    }
-  }, 650);
+  $("#answeredCount").textContent  = answered;
+  $("#remainingCount").textContent = total - answered;
+  $("#progressBar").style.width    = `${pct}%`;
+  $("#progressText").textContent   = `${Math.round(pct)}% Complete`;
 };
 
 // ------------------------------------------------------
-// NAVIGATION
+// NAVIGATION BUTTONS — last real question submits
 // ------------------------------------------------------
-window.previousQuestion = function(){
-  if (window.currentQuestionIndex > 0) {
-    loadQuestion(window.currentQuestionIndex - 1);
-  }
-};
-
-window.nextQuestion = function(){
-  if (window.currentQuestionIndex < window.examData.questions.length - 1) {
-    loadQuestion(window.currentQuestionIndex + 1);
-  } else {
-    submitExam(false);
-  }
-};
-
-// ------------------------------------------------------
-// PROGRESS
-// ------------------------------------------------------
-window.updateProgress = function(){
-  const total    = window.examData?.questions?.length || 0;
-  const answered = Object.keys(window.userAnswers).length;
-  const pct      = total ? (answered / total) * 100 : 0;
-
-  const ansEl  = $("#answeredCount");
-  const remEl  = $("#remainingCount");
-  const barEl  = $("#progressBar");
-  const textEl = $("#progressText");
-
-  if (ansEl)  ansEl.textContent  = answered;
-  if (remEl)  remEl.textContent  = total - answered;
-  if (barEl)  barEl.style.width  = `${pct}%`;
-  if (textEl) textEl.textContent = `${Math.round(pct)}% Complete`;
-};
-
-window.updateNavigationButtons = function(){
+window.updateNavigationButtons = function () {
   const prev = $("#prevBtn");
   const next = $("#nextBtn");
 
+  if (!window.realQuestionIndices || window.realQuestionIndices.length === 0) return;
+
+  const firstRealIndex = window.realQuestionIndices[0];
+  const lastRealIndex  = window.realQuestionIndices[window.realQuestionIndices.length - 1];
+
   if (prev) {
-    prev.disabled = (window.currentQuestionIndex === 0);
+    prev.disabled = (window.currentQuestionIndex === firstRealIndex);
   }
 
   if (next) {
-    const last = (window.currentQuestionIndex === window.examData.questions.length - 1);
+    const last = (window.currentQuestionIndex === lastRealIndex);
     next.textContent = last ? "Submit" : "Next →";
   }
 };
 
-window.updateQuestionNavigation = function(){
+// ------------------------------------------------------
+// QUESTION NAVIGATION — show ONLY real questions
+// ------------------------------------------------------
+window.updateQuestionNavigation = function () {
   const grid = $("#questionGrid");
   if (!grid || !window.examData) return;
 
   let html = "";
-  for (let i = 0; i < window.examData.questions.length; i++) {
-    const q   = window.examData.questions[i];
-    const qid = q.id ?? i;
 
-    const active   = (i === window.currentQuestionIndex) ? "active"    : "";
-    const answered = window.userAnswers[qid]            ? "answered"  : "";
+  window.realQuestionIndices.forEach((trueIndex, pos) => {
+    const active   = (trueIndex === window.currentQuestionIndex) ? "active"   : "";
+    const answered = window.userAnswers[trueIndex]               ? "answered" : "";
 
     html += `
-      <button class="question-nav-btn ${active} ${answered}" data-q-index="${i}">
-        ${i + 1}
+      <button class="question-nav-btn ${active} ${answered}" data-q-index="${trueIndex}">
+        ${pos + 1}
       </button>
     `;
-  }
+  });
 
   grid.innerHTML = html;
 
@@ -416,111 +364,13 @@ window.updateQuestionNavigation = function(){
 };
 
 // ------------------------------------------------------
-// TIMER — with warnings & blinking < 60s
+// END EXAM — counts ONLY real questions
 // ------------------------------------------------------
-window.startTimer = function(){
-  if (window.examTimer) clearInterval(window.examTimer);
-
-  const timerDisplay = $("#timerDisplay");
-  const timerWrapper = $("#examTimer");
-
-  window.examTimer = setInterval(() => {
-    window.timeRemaining--;
-
-    // clamp
-    if (window.timeRemaining < 0) window.timeRemaining = 0;
-
-    // Update display
-    if (timerDisplay) {
-      timerDisplay.textContent = formatTime(window.timeRemaining);
-
-      // Blinking when less than 60 seconds
-      if (window.timeRemaining <= 60) {
-        timerDisplay.classList.add("timer-critical"); // CSS should handle blink
-      } else {
-        timerDisplay.classList.remove("timer-critical");
-      }
-    }
-
-    // Threshold warnings: 20, 10, 5 minutes left
-    const t = window.timeRemaining;
-    const init = window.initialTimeAllowed || t;
-
-    if (!__warn20Shown && init >= 20 * 60 && t <= 20 * 60 && t > 19 * 60) {
-      examFlash("⏰ You have 20 minutes left.", "warning");
-      __warn20Shown = true;
-    }
-    if (!__warn10Shown && init >= 10 * 60 && t <= 10 * 60 && t > 9 * 60) {
-      examFlash("⏰ You have 10 minutes left.", "warning");
-      __warn10Shown = true;
-    }
-    if (!__warn5Shown && init >= 5 * 60 && t <= 5 * 60 && t > 4 * 60) {
-      examFlash("⚠️ Only 5 minutes left. Review and submit!", "danger");
-      __warn5Shown = true;
-    }
-
-    // Time up
-    if (t <= 0) {
-      clearInterval(window.examTimer);
-      window.__timeExpired = true;
-      submitExam(true);
-    }
-  }, 1000);
-};
-
-// ------------------------------------------------------
-// START EXAM  — Stable layout + clocks/hourglass visible
-// ------------------------------------------------------
-window.startExam = async function(){
-  if (window.examStarted) return;
-  window.examStarted = true;
-
-  try {
-    // 1️⃣ Avoid layout jumps: mark body as exam-started early
-    document.body.classList.add("exam-started");
-
-    // 2️⃣ Hide instructions modal instantly
-    const modal = $("#instructionsModal");
-    if (modal) {
-      modal.classList.add("hidden");
-      modal.style.display = "none";
-    }
-
-    // 3️⃣ Show main exam interface
-    const iface = $("#examInterface");
-    if (iface) iface.classList.remove("hidden");
-
-    // 4️⃣ Load exam data (quiet mode to avoid double alerts)
-    await loadExamData(true);
-
-    // 5️⃣ Start timer
-    window.examStartTime = Date.now();
-    startTimer();
-
-    // 6️⃣ Show timer + fullscreen + student info block
-    const timerBlock = $("#examTimer");
-    if (timerBlock) timerBlock.classList.remove("hidden");
-
-    const fullscreenBtn = $("#fullscreenBtn");
-    if (fullscreenBtn) fullscreenBtn.classList.remove("hidden");
-
-    const studentBlock = $(".exam-topbar-student");
-    if (studentBlock) studentBlock.classList.remove("hidden");
-
-  } catch (err) {
-    console.error("❌ startExam error:", err);
-    alert("Unable to start exam. Contact admin.");
-  }
-};
-
-// ------------------------------------------------------
-// END EXAM
-// ------------------------------------------------------
-window.endExam = function(){
+window.endExam = function () {
   if (!window.examData) return;
 
-  const total    = window.examData.questions.length;
-  const answered = Object.keys(window.userAnswers).length;
+  const total    = window.realQuestionIndices.length;
+  const answered = window.realQuestionIndices.filter(i => !!window.userAnswers[i]).length;
 
   const msgEl = $("#endExamMessage");
   if (msgEl) {
@@ -541,68 +391,367 @@ window.closeEndExam = () => {
 };
 
 // ------------------------------------------------------
-// SUBMIT EXAM  — Perfectly aligned with backend fields
+// SUBMIT EXAM — uses ONLY real questions
 // ------------------------------------------------------
-window.submitExam = async function(timeUp = false) {
-    if (window.__examFinished) return;
-    window.__examFinished = true;
+window.submitExam = async function (timeUp = false) {
+  if (window.__examFinished) return;
+  window.__examFinished = true;
 
-    if (window.examTimer) clearInterval(window.examTimer);
+  if (window.examTimer) clearInterval(window.examTimer);
 
-    const total = window.examData?.questions?.length || 0;
-    let correct = 0;
+  const realIndices = window.realQuestionIndices;
+  const total       = realIndices.length;
 
-    if (Array.isArray(window.examData?.questions)) {
-        window.examData.questions.forEach((q, i) => {
-            const qid = q.id ?? i;
-            const ua = window.userAnswers[qid];
-            if (ua && ua.index === q.correctIndex) correct++;
-        });
+  let correct = 0;
+
+  realIndices.forEach((trueIndex) => {
+    const q  = window.examData.questions[trueIndex];
+    const ua = window.userAnswers[trueIndex];
+
+    if (ua && ua.index === q.correctIndex) {
+      correct++;
     }
+  });
 
-    const incorrect = total - correct;
-    const answered  = Object.keys(window.userAnswers).length;
-    const skipped   = total - answered;
+  const answered  = realIndices.filter(i => !!window.userAnswers[i]).length;
+  const incorrect = total - correct;
+  const skipped   = total - answered;
 
-    // NORMALIZE SUBJECT FOR BACKEND
-    const rawSubject = $('meta[name="exam-subject"]').content.trim().toUpperCase();
+  const payload = {
+    subject: $('meta[name="exam-subject"]').content.trim().toUpperCase(),
+    score:   total ? Math.round((correct / total) * 100) : 0,
+    correct,
+    incorrect,
+    total,
+    answered,
+    skipped,
+    flagged:     window.flaggedQuestions.size,
+    tabSwitches: window.__TAB_STRIKES || 0,
+    time_taken:  window.examStartTime
+      ? Math.round((Date.now() - window.examStartTime) / 1000)
+      : 0,
+    submittedAt: new Date().toISOString(),
+    status:      timeUp ? "timeout" : "completed"
+  };
 
-    const payload = {
-        subject: rawSubject,
+  await fetch("/submit_exam", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
 
-        score: total ? Math.round((correct / total) * 100) : 0,
-        correct: correct,
-        incorrect: incorrect,
-        total: total,
-        answered: answered,
-        skipped: skipped,
-
-        flagged: window.flaggedQuestions.size,
-        tabSwitches: window.__TAB_STRIKES || 0,
-
-        time_taken: window.examStartTime
-            ? Math.round((Date.now() - window.examStartTime) / 1000)
-            : 0,
-
-        // FIXED FIELD NAME
-        submittedAt: new Date().toISOString(),
-
-        status: timeUp ? "timeout" : "completed"
-    };
-
-    try {
-        await fetch("/submit_exam", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
-    } catch (e) {
-        console.error("submitExam error:", e);
-    }
-
-    location.replace("/result");
+  location.replace("/result");
 };
 
+// ------------------------------------------------------
+// LOAD SINGLE QUESTION  (REAL QUESTION NUMBERING + SECTION CARD)
+// ------------------------------------------------------
+window.loadQuestion = function (i) {
+  if (!window.examData) return;
+  if (i < 0 || i >= window.examData.questions.length) return;
+
+  const q = window.examData.questions[i];
+
+  // Prevent loading pure instruction blocks
+  if (q.isInstruction) {
+    const nextReal = window.realQuestionIndices.find(r => r > i);
+    if (nextReal !== undefined) {
+      return loadQuestion(nextReal);
+    }
+    return;
+  }
+
+  window.currentQuestionIndex = i;
+
+  // ------------------------------------------------------
+  // REAL QUESTION NUMBER (1-based)
+  // ------------------------------------------------------
+  const pos = window.realQuestionIndices.indexOf(i);
+  if (pos !== -1) {
+    $("#currentQuestionNumber").textContent = pos + 1;
+  }
+
+  const prev   = window.userAnswers[i]?.index;
+  const locked = window.lockedQuestions.has(i);
+
+  // 🔹 Remove "A." / "B." prefixes from JSON
+  function stripLabel(text) {
+    return text.replace(/^[A-Da-d][\.\)\-:\s]+/, "").trim();
+  }
+
+  function applyHighlight(text) {
+    if (!text) return text;
+    return text.replace(/\*(.+?)\*/g, `<span class="focus-word">$1</span>`);
+  }
+
+  function convertBlanks(text) {
+    if (!text) return text;
+    return text.replace(/_{3,}\s*(\d+)/g, (_, num) => `<span class="gap">${num}</span>`);
+  }
+
+  // ------------------------------------------------------
+  // PASSAGE BLOCK (FOR English + NON-instruction Literature)
+  // ------------------------------------------------------
+  const passageBlock = $("#passageBlock");
+
+  if (passageBlock) {
+    if (q.passage) {
+      passageBlock.style.display = "block";
+      passageBlock.innerHTML = `
+        <div class="passage-block">
+          <div class="passage-text">
+            ${convertBlanks(applyHighlight(q.passage))}
+          </div>
+        </div>
+      `;
+    } else {
+      passageBlock.style.display = "none";
+      passageBlock.innerHTML = "";
+    }
+  }
+
+  // ------------------------------------------------------
+  // SECTION INSTRUCTION CARD — WITH LITERATURE FIX
+  // ------------------------------------------------------
+  let sectionHTML = "";
+  const sec = window.sectionInstructions[i];
+
+  // detect if this exam is literature
+  const subjectMeta = document.querySelector('meta[name="exam-subject"]');
+  const isLiterature = subjectMeta && subjectMeta.content.toLowerCase().includes("literature");
+
+  if (sec) {
+    const titleHTML = sec.title
+      ? `<div class="section-instr-title">${applyHighlight(sec.title)}</div>`
+      : "";
+
+    const bodyHTML = sec.body
+      ? `<div class="section-instr-body">${convertBlanks(applyHighlight(sec.body))}</div>`
+      : "";
+
+    // ⭐ LITERATURE ONLY: Inject passage INTO instruction card
+    let passageHTML = "";
+    if (isLiterature && q.passage) {
+      passageHTML = `
+        <div class="literature-passage-block" style="margin-top:10px; white-space:pre-line;">
+          ${convertBlanks(applyHighlight(q.passage))}
+        </div>
+      `;
+    }
+
+    sectionHTML = `
+      <div class="section-instruction-card">
+        ${titleHTML}
+        ${bodyHTML}
+        ${passageHTML}
+      </div>
+    `;
+  }
+
+  // ------------------------------------------------------
+  // DIAGRAM RENDERING
+  // ------------------------------------------------------
+  let diagramHTML = "";
+  if (q.diagram) {
+    diagramHTML = `
+      <div class="question-diagram mb-4">
+        <img src="${q.diagram}" class="diagram-img" style="max-width:100%; border-radius:6px;">
+      </div>
+    `;
+  }
+
+  // ------------------------------------------------------
+  // OPTIONS RENDERING
+  // ------------------------------------------------------
+  const html = (q.options || []).map((opt, idx) => {
+    const cleanOpt = stripLabel(opt);
+    const letter   = String.fromCharCode(65 + idx);
+
+    const selected = prev === idx ? "selected" : "";
+    const dis      = locked ? "disabled" : "";
+
+    return `
+      <button class="option-btn ${selected}" data-option-index="${idx}" ${dis}>
+        <span class="option-letter">${letter}</span>
+        ${applyHighlight(cleanOpt)}
+      </button>
+    `;
+  }).join("");
+
+  // ------------------------------------------------------
+  // RENDER QUESTION CARD
+  // ------------------------------------------------------
+  $("#questionContent").innerHTML = `
+    <div class="qa-slide fade-in-up">
+      ${diagramHTML}
+      ${sectionHTML}
+      <h3 class="text-xl font-medium mb-4">${applyHighlight(q.question)}</h3>
+
+      <div class="space-y-3">
+        ${html}
+      </div>
+    </div>
+  `;
+
+  // Bind selection
+  $$(".option-btn").forEach(btn => {
+    btn.onclick = () => selectOption(Number(btn.dataset.optionIndex));
+  });
+
+  updateNavigationButtons();
+  updateQuestionNavigation();
+};
+
+
+// ------------------------------------------------------
+// SELECT OPTION — keyed by QUESTION INDEX
+// ------------------------------------------------------
+window.selectOption = function(idx){
+  const qIndex = window.currentQuestionIndex;
+  const q      = window.examData.questions[qIndex];
+
+  if (window.lockedQuestions.has(qIndex)) return;
+
+  const correct   = q.correctIndex;
+  const isCorrect = (idx === correct);
+
+  window.userAnswers[qIndex] = { index: idx, correct: isCorrect };
+  window.lockedQuestions.add(qIndex);
+
+  $$(".option-btn").forEach(btn => {
+    btn.disabled = true;
+    btn.classList.toggle(
+      "selected",
+      Number(btn.dataset.optionIndex) === idx
+    );
+  });
+
+  updateProgress();
+  updateQuestionNavigation();
+
+  // Auto-next after a short delay
+  setTimeout(() => {
+    const pos = window.realQuestionIndices.indexOf(window.currentQuestionIndex);
+    if (pos >= 0 && pos < window.realQuestionIndices.length - 1) {
+      const nextIndex = window.realQuestionIndices[pos + 1];
+      loadQuestion(nextIndex);
+    } else {
+      const nextBtn = $("#nextBtn");
+      if (nextBtn) nextBtn.click();
+      else submitExam(false);
+    }
+  }, 650);
+};
+
+// ------------------------------------------------------
+// NAVIGATION — move ONLY through real questions
+// ------------------------------------------------------
+window.previousQuestion = function(){
+  if (!window.realQuestionIndices || window.realQuestionIndices.length === 0) return;
+
+  const pos = window.realQuestionIndices.indexOf(window.currentQuestionIndex);
+  if (pos > 0) {
+    const prevIndex = window.realQuestionIndices[pos - 1];
+    loadQuestion(prevIndex);
+  }
+};
+
+window.nextQuestion = function(){
+  if (!window.realQuestionIndices || window.realQuestionIndices.length === 0) return;
+
+  const pos = window.realQuestionIndices.indexOf(window.currentQuestionIndex);
+  if (pos < window.realQuestionIndices.length - 1) {
+    const nextIndex = window.realQuestionIndices[pos + 1];
+    loadQuestion(nextIndex);
+  } else {
+    submitExam(false);
+  }
+};
+
+// ------------------------------------------------------
+// TIMER — with warnings & blinking < 60s
+// ------------------------------------------------------
+window.startTimer = function(){
+  if (window.examTimer) clearInterval(window.examTimer);
+
+  const timerDisplay = $("#timerDisplay");
+
+  window.examTimer = setInterval(() => {
+    window.timeRemaining--;
+
+    if (window.timeRemaining < 0) window.timeRemaining = 0;
+
+    if (timerDisplay) {
+      timerDisplay.textContent = formatTime(window.timeRemaining);
+
+      if (window.timeRemaining <= 60) {
+        timerDisplay.classList.add("timer-critical");
+      } else {
+        timerDisplay.classList.remove("timer-critical");
+      }
+    }
+
+    const t    = window.timeRemaining;
+    const init = window.initialTimeAllowed || t;
+
+    if (!__warn20Shown && init >= 20 * 60 && t <= 20 * 60 && t > 19 * 60) {
+      examFlash("⏰ You have 20 minutes left.", "warning");
+      __warn20Shown = true;
+    }
+    if (!__warn10Shown && init >= 10 * 60 && t <= 10 * 60 && t > 9 * 60) {
+      examFlash("⏰ You have 10 minutes left.", "warning");
+      __warn10Shown = true;
+    }
+    if (!__warn5Shown && init >= 5 * 60 && t <= 5 * 60 && t > 4 * 60) {
+      examFlash("⚠️ Only 5 minutes left. Review and submit!", "danger");
+      __warn5Shown = true;
+    }
+
+    if (t <= 0) {
+      clearInterval(window.examTimer);
+      window.__timeExpired = true;
+      submitExam(true);
+    }
+  }, 1000);
+};
+
+// ------------------------------------------------------
+// START EXAM  — Stable layout + clocks/hourglass visible
+// ------------------------------------------------------
+window.startExam = async function(){
+  if (window.examStarted) return;
+  window.examStarted = true;
+
+  try {
+    document.body.classList.add("exam-started");
+
+    const modal = $("#instructionsModal");
+    if (modal) {
+      modal.classList.add("hidden");
+      modal.style.display = "none";
+    }
+
+    const iface = $("#examInterface");
+    if (iface) iface.classList.remove("hidden");
+
+    await loadExamData(true);
+
+    window.examStartTime = Date.now();
+    startTimer();
+
+    const timerBlock   = $("#examTimer");
+    const fullscreenBtn = $("#fullscreenBtn");
+    const studentBlock  = $(".exam-topbar-student");
+
+    if (timerBlock)   timerBlock.classList.remove("hidden");
+    if (fullscreenBtn) fullscreenBtn.classList.remove("hidden");
+    if (studentBlock)  studentBlock.classList.remove("hidden");
+
+  } catch (err) {
+    console.error("❌ startExam error:", err);
+    alert("Unable to start exam. Contact admin.");
+  }
+};
 
 // ------------------------------------------------------
 // DOM READY

@@ -106,11 +106,22 @@
 
 
 
+<button class="module-item orange"
+    onclick="window.location.href='{{ url_for('admin_bp.admin_results') }}'">
+    <i class="fa-solid fa-chart-line"></i>
+    <span>Results</span>
+</button>
 
 
-      
-      <button class="module-item orange"><i class="fa-solid fa-chart-column"></i><span>Results</span></button>
-      <button class="module-item pink"><i class="fa-solid fa-id-card"></i><span>Credentials</span></button>
+<button class="module-item pink"
+    onclick="window.location.href='{{ url_for('admin_bp.admin_ids') }}'">
+    <i class="fa-solid fa-id-card"></i>
+    <span>IDs</span>
+</button>
+
+
+
+
       <button class="module-item gray"><i class="fa-solid fa-book"></i><span>Past Questions</span></button>
       <button class="module-item teal"><i class="fa-solid fa-briefcase"></i><span>Third-Party</span></button>
       <button class="module-item red"><i class="fa-solid fa-list-check"></i><span>Activities</span></button>

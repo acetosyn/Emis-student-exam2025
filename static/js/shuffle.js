@@ -1,10 +1,11 @@
 // ================================================================
-// shuffle.js — FINAL BULLETPROOF VERSION (2025)
+// shuffle.js — FINAL BULLETPROOF VERSION (2025 + Literature FIX)
 // ---------------------------------------------------------------
 //  ✓ Preserves correctIndex after shuffling
 //  ✓ Handles "A. text", "A ) text", "A- text", etc.
 //  ✓ Robust fallback when option text is modified by LLM
 //  ✓ Protects against malformed option arrays
+//  ✓ NEW: Disables shuffle for Literature-in-English (safe fix)
 // ================================================================
 
 (function(){
@@ -40,31 +41,47 @@
   window.shuffleQuestions = function(examData) {
     if (!examData || !Array.isArray(examData.questions)) return examData;
 
+    // ==========================================================
+    //  🚫 NEW FIX: Prevent shuffle for Literature-in-English
+    // ==========================================================
+    const subj = (examData.subject || "").toLowerCase();
+    if (subj.includes("literature")) {
+      console.warn("📌 Literature detected — shuffle disabled.");
+      return examData; // return untouched
+    }
+
+    // ==========================================================
+    //  NORMAL SHUFFLE (ALL OTHER SUBJECTS)
+    // ==========================================================
     examData.questions = examData.questions.map(q => {
+
+      // skip instructions or malformed questions
       if (!q.options || q.options.length !== 4) return q;
 
-      // --- 1. Get correct option using letter index ---
-      const oldCorrectIndex = q.correctIndex ?? q.correct_index ?? -1;
+      // --- 1. extract old correct option ---
+      const oldCorrectIndex =
+        q.correctIndex ?? q.correct_index ?? -1;
+
       const originalOption = q.options[oldCorrectIndex] || null;
 
-      // Normalize original for reliable matching
-      const normalizedOriginal = normalizeOptionText(originalOption);
+      const normalizedOriginal =
+        normalizeOptionText(originalOption);
 
-      // --- 2. Shuffle options ---
+      // --- 2. shuffle options ---
       const shuffled = shuffleArray(q.options);
 
-      // --- 3. Locate new correct index (smart matching) ---
+      // --- 3. find new correct index by smart matching ---
       let newCorrectIndex = shuffled.findIndex(opt =>
         normalizeOptionText(opt) === normalizedOriginal
       );
 
-      // --- Fallback: If matching fails, default to first option ---
+      // fallback protection
       if (newCorrectIndex === -1) {
-        console.warn("⚠️ shuffle.js: Correct option fallback triggered for Q:", q);
+        console.warn("⚠ shuffle.js fallback: Q =", q);
         newCorrectIndex = 0;
       }
 
-      // --- 4. Return updated question object ---
+      // return updated question
       return {
         ...q,
         options: shuffled,

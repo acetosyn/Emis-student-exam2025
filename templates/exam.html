@@ -236,51 +236,59 @@
 
 
 
+<!-- MAIN EXAM INTERFACE -->
+<main class="exam-main">
 
-    <!-- MAIN QUESTION AREA -->
-    <main class="exam-main">
+  <div class="question-header">
+    <div>
+      <h2 class="q-h2">
+        Question <span id="currentQuestionNumber">1</span>
+        <small>/ <span id="totalQuestions">0</span></small>
+      </h2>
+    </div>
 
-      <div class="question-header">
-        <div>
-          <h2 class="q-h2">
-            Question <span id="currentQuestionNumber">1</span>
-            <small>/ <span id="totalQuestions">0</span></small>
-          </h2>
-          <p class="muted">Choose the correct answer</p>
-        </div>
-
-        <button id="flagBtn" class="flag-btn" onclick="toggleFlag()">
-          <i class="fa-solid fa-flag"></i>
-          <span id="flagText">Flag</span>
-        </button>
-      </div>
-
-      <section class="question-stage">
-        <div id="questionSlider" class="question-slider">
-
-          <article class="question-card">
-            <div class="question-body">
-              <div id="questionContent" class="question-text"></div>
-              <ul id="answerList" class="answers-list"></ul>
-            </div>
-
-            <div class="question-foot">
-              <button id="prevBtn" class="btn-ghost" disabled onclick="previousQuestion()">
-                ← Previous
-              </button>
-              <button id="nextBtn" class="btn-primary" onclick="nextQuestion()">
-                Next →
-              </button>
-            </div>
-          </article>
-
-        </div>
-      </section>
-
-    </main>
-
+    <button id="flagBtn" class="flag-btn" onclick="toggleFlag()">
+      <i class="fa-solid fa-flag"></i>
+      <span id="flagText">Flag</span>
+    </button>
   </div>
 
+  <section class="question-stage">
+    <div id="questionSlider" class="question-slider">
+
+      <article class="question-card">
+        <div class="question-body">
+
+          <!-- ✅ SECTION INSTRUCTION CARD (JS fills this) -->
+          <div id="sectionInstructionBox" class="section-instruction-card hidden"></div>
+
+          <!-- ✅ PASSAGE BLOCK (JS fills this for Literature/English) -->
+          <div id="passageBlock" class="passage-block" style="display:none;"></div>
+
+          <!-- QUESTION CONTENT (JS injects question text, diagram, options wrapper) -->
+          <div id="questionContent" class="question-text"></div>
+
+          <!-- ANSWER OPTIONS (legacy list, not used by new engine but harmless) -->
+          <ul id="answerList" class="answers-list"></ul>
+
+        </div>
+
+        <div class="question-foot">
+          <button id="prevBtn" class="btn-ghost" disabled onclick="previousQuestion()">
+            ← Previous
+          </button>
+          <button id="nextBtn" class="btn-primary" onclick="nextQuestion()">
+            Next →
+          </button>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+</main>
+
+</div>
 
   <!-- ======================================================
       SUMMARY MODAL
