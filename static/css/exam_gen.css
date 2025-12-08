@@ -740,3 +740,51 @@
   background: white;
   box-shadow: 0 0 6px rgba(0,0,0,0.1);
 }
+
+
+
+
+.focus-word {
+  font-style: italic;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  font-weight: 600;
+  color: #0f172a; /* dark blue for readability */
+}
+
+
+
+.passage-block {
+  background: #f1f5f9; /* soft grey-blue */
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  border-left: 4px solid #2563eb; /* blue-600 highlight */
+  border-radius: 8px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #1e293b; /* deep slate */
+  white-space: pre-line; /* preserves newlines */
+}
+
+
+
+.passage-text {
+    white-space: pre-line;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 1.2rem;
+}
+
+.passage-text .gap {
+    display: inline-block;
+    border-bottom: 2px solid #1e3a8a;
+    min-width: 120px;   /* length of the blank */
+    height: 1.2em;
+    margin: 0 6px;
+    text-align: center;
+    font-weight: 700;
+    color: #1e3a8a;
+}

@@ -8,5 +8,7 @@
         "chemistry_ss2.json",
         "computer_science_ss2.json"
     ],
-    "SS3": []
+    "SS3": [
+        "literature_ss3.json"
+    ]
 }
