@@ -1,8 +1,9 @@
 /* ======================================================================
-   EMIS PUSH — push.js (v11 FINAL 2025 — MATCHED TO FINAL push.py)
+   EMIS PUSH — push.js (v13 FINAL 2025 — MATCHED TO FINAL push.py)
    FIXES:
      ✓ Do NOT send year separately (backend extracts from "year:filename")
      ✓ Payload = { files, class_category }
+     ✓ Added Active Year UI update + premium animation
 ====================================================================== */
 
 (() => {
@@ -23,6 +24,26 @@
 
       const pushClassBtns  = modalPush.querySelectorAll(".class-btn");
       const clearClassBtns = modalClear?.querySelectorAll(".clear-btn");
+
+      /* ==========================================================
+         ⭐ UPDATE ACTIVE YEAR LABEL + PREMIUM ANIMATION
+      ========================================================== */
+      pushYearSel.onchange = () => {
+        const activeYearLabel = document.getElementById("activeYearLabel");
+
+        if (activeYearLabel) {
+          const val = pushYearSel.value;
+          activeYearLabel.textContent =
+            val && val !== "Select Year"
+              ? `Active Year: ${val}`
+              : "Active Year: —";
+
+          /* 🔥 Premium pulse animation */
+          activeYearLabel.classList.remove("year-pulse");
+          void activeYearLabel.offsetWidth; // restart animation
+          activeYearLabel.classList.add("year-pulse");
+        }
+      };
 
       /* LOG HELPER */
       const log = (msg) => {
@@ -91,7 +112,7 @@
 
       /* CONFIRM PUSH — FINAL FIX */
       confirmPush.onclick = async () => {
-        const files = [...EmisUploads.selectedFiles];  // ALREADY contains "year:filename"
+        const files = [...EmisUploads.selectedFiles];  // "year:filename"
         const cls   = this.selectedClass;
 
         closePushModal();
@@ -100,8 +121,8 @@
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            files,              // YEAR embedded inside strings — correct
-            class_category: cls // only class is needed
+            files,              // YEAR inside string
+            class_category: cls
           }),
         });
 
@@ -141,10 +162,7 @@
           const res = await fetch("/api/clear", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              year,
-              class_category: cls,
-            }),
+            body: JSON.stringify({ year, class_category: cls }),
           });
 
           const out = await res.json();
@@ -171,7 +189,6 @@
           modalPush.classList.remove("hidden");
           flashMessage("Select a class to push ALL subjects.", "info");
 
-          // NOW correctly embeds year into each filename
           EmisUploads.selectedFiles.clear();
           EmisUploads.convertedItems.forEach((it) => {
             EmisUploads.selectedFiles.add(`${year}:${it.filename}`);

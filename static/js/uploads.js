@@ -45,13 +45,23 @@ function flashMessage(text, type = "success") {
       const searchBox = root.querySelector("#searchUploads");
       const refreshBtn = root.querySelector("#refreshUploads");
 
-      /* ---------------------------------------------
-         YEAR SELECTOR → Load year JSONs
-      ---------------------------------------------- */
-      yearSelector.onchange = () => {
-        this.activeYear = yearSelector.value;
-        loadYearFiles(this.activeYear);
-      };
+ /* ---------------------------------------------
+   YEAR SELECTOR → Load year JSONs
+---------------------------------------------- */
+yearSelector.onchange = () => {
+  this.activeYear = yearSelector.value;
+
+  // ⭐ UPDATE ACTIVE YEAR LABEL (NEW)
+  const activeYearLabel = document.getElementById("activeYearLabel");
+  if (activeYearLabel) {
+    activeYearLabel.textContent = 
+      this.activeYear && this.activeYear !== "Select Year"
+        ? `Active Year: ${this.activeYear}`
+        : "Active Year: —";
+  }
+
+  loadYearFiles(this.activeYear);
+};
 
       /* ---------------------------------------------
          CLASS PILL SELECTOR → Filter table

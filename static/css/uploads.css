@@ -736,3 +736,27 @@
 
   margin: 0 !important;
 }
+
+
+/* ===========================================================
+   ACTIVE YEAR CARD — CLEAN ADMIN UI
+   =========================================================== */
+
+.active-year-card {
+  display: inline-flex;
+  align-items: center;
+  background: #f1f5ff;                  /* soft blue background */
+  border: 1px solid #d0dbff;            /* subtle border */
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  margin-left: 12px;
+  user-select: none;
+}
+
+.active-year-card #activeYearLabel {
+  font-weight: 800;
+  color: #1d2f73;                       /* deep academic blue */
+  letter-spacing: 0.3px;
+}

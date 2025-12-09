@@ -3,6 +3,7 @@
 import sqlite3
 from pathlib import Path
 from datetime import datetime
+from modules.excel_manager import append_result_to_excel
 
 DB_PATH = Path("database.db")
 
@@ -51,7 +52,6 @@ def init_db():
 # ============================================================
 #   SAVE RESULT  — FINAL FIXED VERSION (SQLite + Excel)
 # ============================================================
-from modules.excel_manager import append_result_to_excel
 
 SUBJECT_MAP = {
     "FINANCIAL ACCOUNTING": "ACCOUNTING",
@@ -72,12 +72,17 @@ def normalize_subject(name: str) -> str:
     return SUBJECT_MAP.get(name, name)
 
 
+# ================================================
+# 1️⃣ SAVE RESULT FUNCTION — YEAR-AWARE (FINAL)
+# ================================================
+
 def save_result(data: dict):
     """
     Saves a student's exam result into:
     - SQLite database
-    - Excel folder structure (CLASS/SS1/Subject/results.xlsx)
+    - Excel YEAR / CLASS / SUBJECT folder
     """
+
     init_db()
 
     conn = sqlite3.connect(DB_PATH)
@@ -85,15 +90,19 @@ def save_result(data: dict):
 
     # --- FIX 1: Accept both submittedAt and submitted_at ---
     submitted_at = (
-        data.get("submittedAt") or
-        data.get("submitted_at") or
-        datetime.now().isoformat()
+        data.get("submittedAt")
+        or data.get("submitted_at")
+        or datetime.now().isoformat()
     )
 
     # --- FIX 2: Normalize subject before saving ---
     subject = normalize_subject(data.get("subject"))
 
-    # Defensive extraction
+    # --- FIX 3 (NEW): YEAR MUST COME FROM PAYLOAD ---
+    # Student exam already passes this from session
+    year = str(data.get("year") or datetime.now().year)
+
+    # Extract safe numeric values
     total = int(data.get("total") or 0)
     correct = int(data.get("correct") or 0)
     answered = int(data.get("answered") or 0)
@@ -131,8 +140,8 @@ def save_result(data: dict):
 
         data.get("flagged", 0),
         data.get("tabSwitches", 0),
-
         data.get("time_taken") or data.get("timeTaken", 0),
+
         submitted_at,
         data.get("status", "completed")
     ))
@@ -141,25 +150,26 @@ def save_result(data: dict):
     conn.close()
 
     # ================================
-    # 2️⃣ SAVE TO EXCEL
+    # 2️⃣ SAVE TO EXCEL (YEAR-AWARE)
     # ================================
     excel_payload = {
-        "full_name": data.get("full_name"),
+        "full_name":        data.get("full_name"),
         "admission_number": data.get("admission_number"),
-        "class_name": data.get("class_name"),
-        "class_category": data.get("class_category"),
-        "subject": subject,
-
-        "score": data.get("score") or 0,
-        "correct": correct,
-        "total": total,
-
-        "submitted_at": submitted_at
+        "class_name":       data.get("class_name"),
+        "class_category":   data.get("class_category"),
+        "subject":          subject,
+        "score":            data.get("score") or 0,
+        "correct":          correct,
+        "total":            total,
+        "submitted_at":     submitted_at,
+        "year":             year   # 🔥 KEY FIX — now Excel is saved into correct year
     }
 
+    # append_result_to_excel now receives YEAR also
     append_result_to_excel(excel_payload)
 
     return True
+
 
 
 

@@ -251,7 +251,7 @@ function closeDeleteModal() {
 window.closeDeleteModal = closeDeleteModal;
 
 /* ============================================================================
-   CONFIRM DELETE — UPDATED FOR YEAR
+   CONFIRM DELETE — UPDATED FOR YEAR + COUNT MESSAGE
 ============================================================================ */
 confirmDeleteBtn.addEventListener("click", async () => {
     const checks = document.querySelectorAll(".row-check:checked");
@@ -280,7 +280,16 @@ confirmDeleteBtn.addEventListener("click", async () => {
         const out = await res.json();
 
         if (out.status === "ok") {
-            showToast("Deleted ✔", "success");
+
+            // ⭐ New: Dynamic delete message
+            const deletedCount = checks.length;
+            const msg =
+                deletedCount === 1
+                    ? "1 result deleted ✔"
+                    : `${deletedCount} results deleted ✔`;
+
+            showToast(msg, "success");
+
             closeDeleteModal();
             loadResults();
         } else {
@@ -292,6 +301,7 @@ confirmDeleteBtn.addEventListener("click", async () => {
         showToast("Server error during deletion.", "error");
     }
 });
+
 
 /* ============================================================================
    EXPORT CSV — UNCHANGED

@@ -143,61 +143,73 @@ def repair_missing_headers(ws):
 # -----------------------------------
 def append_result_to_excel(result: dict):
 
-    class_cat = result.get("class_category", "UNKNOWN").upper()
-    subject = result.get("subject", "UNKNOWN")
-    year = str(result.get("year", datetime.now().year))  # REQUIRED
+    # Always use CLASS CATEGORY (SS1 / SS2 / SS3)
+    class_cat = (
+        result.get("class_category") or
+        result.get("class_name") or
+        "UNKNOWN"
+    )
+    class_cat = str(class_cat).upper().strip()
 
+    # Normalize subject
+    subject = str(result.get("subject", "UNKNOWN")).strip()
+
+    # YEAR must be passed from student_results.save_result
+    year = str(result.get("year", datetime.now().year))
+
+    # Get the exact Excel path
     excel_path = get_excel_path(class_cat, subject, year)
 
-    # Create workbook if file missing
+    # Create workbook if missing
     if not excel_path.exists():
         wb = Workbook()
         ws = wb.active
-        # Header row aligned with EXPECTED_HEADERS
         ws.append([
             "Student Name",
-            "Admission No",   # ⭐ unified with EXPECTED_HEADERS / admin JS
+            "Admission No",
             "Class",
             "Subject",
             "Score (%)",
             "Correct",
             "Total",
             "Status",
-            "Time Taken",     # ⭐ NEW COLUMN
+            "Time Taken",
             "Submitted At",
         ])
         wb.save(excel_path)
 
+    # Load existing workbook
     wb = load_workbook(excel_path)
     ws = wb.active
 
-    # Extract values
-    score_percent = result.get("score", 0)
+    # Correct PASS/FAIL
+    score_percent = int(result.get("score", 0))
     status = "PASS" if score_percent >= 50 else "FAIL"
 
-    # ⭐ GUARANTEED TIME TAKEN FROM DB
+    # Time taken
     time_taken = (
         result.get("time_taken") or
         result.get("timeTaken") or
         0
     )
 
-    # Append row including time taken
+    # Append row
     ws.append([
         result.get("full_name"),
         result.get("admission_number"),
-        result.get("class_name"),
-        subject,
+        class_cat,          # Ensure consistent class written
+        subject.upper(),
         f"{score_percent}%",
         result.get("correct", 0),
         result.get("total", 0),
         status,
-        time_taken,  # ⭐ NEW VALUE STORED PROPERLY (seconds)
+        time_taken,
         datetime.now().strftime("%Y-%m-%d %H:%M"),
     ])
 
     wb.save(excel_path)
     return True
+
 
 
 # -----------------------------------
