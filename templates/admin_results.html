@@ -27,60 +27,72 @@
 
 
 
-    <!-- --------------------------------------------------------
+   <!-- --------------------------------------------------------
          FILTER BAR — Modern + Clean
-    --------------------------------------------------------- -->
-    <section class="filter-panel glass-card">
+--------------------------------------------------------- -->
+<section class="filter-panel glass-card">
 
-        <div class="filter-grid">
+    <!-- CLEAR FILTER BUTTON -->
+    <div class="clear-filters-wrapper">
+        <button id="clearFiltersBtn" class="btn-clear-filters">
+            <i class="fa-solid fa-eraser"></i>
+            Clear Filters
+        </button>
+    </div>
 
-            <div class="filter-group">
-                <label for="yearSelector">Year</label>
-                <select id="yearSelector" class="filter-input">
-                    <option value="" disabled selected>Select Year</option>
-                    {% for y in range(2025, 2012, -1) %}
-                        <option value="{{ y }}">{{ y }}</option>
-                    {% endfor %}
-                </select>
-            </div>
+    <div class="filter-grid">
 
-            <div class="filter-group">
-                <label>Class Category</label>
-                <select id="classSelector" class="filter-input">
-                    <option value="">-- Select Class --</option>
-                    <option value="SS1">SS1</option>
-                    <option value="SS2">SS2</option>
-                    <option value="SS3">SS3</option>
-                </select>
-            </div>
-
-            <div class="filter-group">
-                <label>Subject</label>
-                <select id="subjectSelector" class="filter-input">
-                    <option value="">-- Select Subject --</option>
-                    {% for sub in [
-                        "BIOLOGY","CHEMISTRY","CIVIC EDUCATION",
-                        "COMPUTER STUDIES","ECONOMICS","ENGLISH LANGUAGE",
-                        "GEOGRAPHY","GOVERNMENT","MATHEMATICS","PHYSICS",
-                        "TECHNICAL DRAWING","ACCOUNTING","LITERATURE"
-                    ] %}
-                        <option value="{{ sub }}">{{ sub }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-
-            <div class="filter-group full">
-                <label>Search</label>
-                <div class="search-box">
-                    <i class="fa-solid fa-search"></i>
-                    <input id="globalSearch" type="text"
-                        placeholder="Search results by name, admission, subject, score…"
-                        autocomplete="off">
-                </div>
-            </div>
-
+        <!-- YEAR SELECTOR -->
+        <div class="filter-group">
+            <label for="yearSelector">Year</label>
+            <select id="yearSelector" class="filter-input">
+                <option value="" disabled selected>Select Year</option>
+                {% for y in range(2025, 2012, -1) %}
+                    <option value="{{ y }}">{{ y }}</option>
+                {% endfor %}
+            </select>
         </div>
-    </section>
+
+        <!-- CLASS SELECTOR -->
+        <div class="filter-group">
+            <label>Class Category</label>
+            <select id="classSelector" class="filter-input">
+                <option value="">-- Select Class --</option>
+                <option value="SS1">SS1</option>
+                <option value="SS2">SS2</option>
+                <option value="SS3">SS3</option>
+            </select>
+        </div>
+
+        <!-- SUBJECT SELECTOR -->
+        <div class="filter-group">
+            <label>Subject</label>
+            <select id="subjectSelector" class="filter-input">
+                <option value="">-- Select Subject --</option>
+                {% for sub in [
+                    "BIOLOGY","CHEMISTRY","CIVIC EDUCATION",
+                    "COMPUTER STUDIES","ECONOMICS","ENGLISH LANGUAGE",
+                    "GEOGRAPHY","GOVERNMENT","MATHEMATICS","PHYSICS",
+                    "TECHNICAL DRAWING","ACCOUNTING","LITERATURE"
+                ] %}
+                    <option value="{{ sub }}">{{ sub }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <!-- SEARCH -->
+        <div class="filter-group full">
+            <label>Search</label>
+            <div class="search-box">
+                <i class="fa-solid fa-search"></i>
+                <input id="globalSearch" type="text"
+                    placeholder="Search results by name, admission, subject, score…"
+                    autocomplete="off">
+            </div>
+        </div>
+
+    </div>
+</section>
 
 
 
@@ -208,13 +220,12 @@
         </div>
     </div>
 
-</div>  <!-- ❗ END OF results-wrapper — THIS WAS MISSING IN YOUR VERSION -->
+</div>  <!-- END OF results-wrapper -->
 
 
 
 <!-- ======================================================================
-     SUMMARY OVERLAY + SUMMARY MODAL — MUST BE OUTSIDE THE WRAPPER
-     THIS FIXES THE EXTRA PAGE ISSUE
+     SUMMARY OVERLAY + SUMMARY MODAL
 ====================================================================== -->
 <div id="summaryOverlay" class="summary-overlay"></div>
 
@@ -255,7 +266,6 @@
     </div>
 
 </div>
-
 
 
 {% endblock %}
