@@ -5,6 +5,7 @@ from pathlib import Path
 from datetime import datetime
 from modules.student_results import save_result, get_latest_result
 from modules.excel_manager import read_results
+from push import get_latest_year 
 
 student_portal_bp = Blueprint('student_portal_bp', __name__)
 
@@ -91,10 +92,12 @@ def student_portal():
 
 
 # =======================================================
-# Exam Dashboard (UPDATED WITH YEAR)
+# Exam Dashboard (UPDATED WITH TRUE LATEST YEAR LOGIC)
 # =======================================================
 @student_portal_bp.route('/exam_dashboard')
 def exam_dashboard():
+      # ⭐ import inside to avoid circular imports
+
     student = get_logged_in_student()
     if not student:
         return redirect(url_for('user_bp.student_login'))
@@ -103,23 +106,35 @@ def exam_dashboard():
     if not subject_raw:
         return redirect(url_for('student_portal_bp.student_portal'))
 
-    # ------------------------------------------
-    # NEW → Get YEAR from query string
-    # ------------------------------------------
+    # ------------------------------------------------------
+    # 1️⃣ GET YEAR: Priority = querystring → latest_year.txt → current year
+    # ------------------------------------------------------
     year = request.args.get("year")
+
     if not year:
-        year = str(datetime.now().year)  # fallback
+        # Load from portal/latest_year.txt
+        latest = get_latest_year()
+        if latest:
+            year = latest
+        else:
+            year = str(datetime.now().year)  # LAST fallback (rare)
 
+    # Ensure string
+    year = str(year)
+
+    # ------------------------------------------------------
+    # Student + subject meta
+    # ------------------------------------------------------
     class_category = student.get("class_category")  # SS1 / SS2 / SS3
-    class_suffix = class_category.lower()
+    class_suffix   = class_category.lower()
 
-    full_name = student.get("full_name")
+    full_name    = student.get("full_name")
     admission_no = student.get("admission_number")
 
     # ------------------------------------------------------
-    # Normalize subject → base name
+    # Normalize subject → base folder name
     # ------------------------------------------------------
-    key = subject_raw.lower()
+    key       = subject_raw.lower()
     base_name = BASE_SUBJECT_MAP.get(key)
 
     if not base_name:
@@ -128,36 +143,40 @@ def exam_dashboard():
     json_filename = f"{base_name}_{class_suffix}.json"
 
     # ------------------------------------------------------
-    # Check JSON exists (uses YEAR)
+    # Check JSON exists for THIS YEAR (correct dynamic year!)
     # ------------------------------------------------------
     json_path = Path(f"static/subjects/{year}/subjects-json/{class_category}/{json_filename}")
     exam_available = json_path.exists()
 
     # ------------------------------------------------------
-    # Check Excel submission history (YEAR-AWARE)
+    # Check submission history (YEAR AWARE)
     # ------------------------------------------------------
     existing_results = read_results(class_category, subject_raw, year)
 
     already_written = False
     for r in existing_results:
         name = str(r.get("Student Name", "")).upper()
-        adm = str(r.get("Admission No", "")).upper()
+        adm  = str(r.get("Admission No", "")).upper()
+
         if name == full_name.upper() and adm == admission_no.upper():
             already_written = True
             break
 
     # ------------------------------------------------------
-    # SAVE to session
+    # SAVE to session for later exam loading
     # ------------------------------------------------------
     session['selected_subject'] = subject_raw
-    session['selected_year'] = year
-    session['exam_submitted'] = already_written
+    session['selected_year']    = year          # ⭐ important
+    session['exam_submitted']   = already_written
 
+    # ------------------------------------------------------
+    # Render dashboard
+    # ------------------------------------------------------
     return render_template(
         'exam_dashboard.html',
         student=student,
         subject=subject_raw,
-        year=year,
+        year=year,                            # ⭐ correct dynamic year
         already_written=already_written,
         exam_available=exam_available,
         full_name=full_name,
@@ -168,6 +187,7 @@ def exam_dashboard():
         exam_started=session.get('exam_started', False),
         exam_submitted=session.get('exam_submitted', already_written)
     )
+
 
 
 # =======================================================
@@ -229,25 +249,35 @@ def start_exam():
     if not student:
         return redirect(url_for('user_bp.student_login'))
 
+    # If already submitted, do not allow restart
     if session.get('exam_submitted'):
         return redirect(url_for('student_portal_bp.result'))
 
+    # Mark exam as started
     session['exam_started'] = True
 
-    # Get subject + year from session
+    # -----------------------------------------------------
+    # Get subject + year from session (set by exam_dashboard)
+    # -----------------------------------------------------
     subject = session.get("selected_subject")
-    year = session.get("selected_year", str(datetime.now().year))
 
+    # MOST IMPORTANT: year must be EXACT from session
+    year = session.get("selected_year")
+    if not year:
+        # LAST fallback (rare)
+        year = str(datetime.now().year)
+
+    # Redirect to /exam with correct year + subject
     return redirect(url_for(
         'student_portal_bp.exam',
         subject=subject,
-        year=year  # 🌟 REQUIRED — ensures correct year questions load
+        year=year
     ))
 
 
 
 # =======================================================
-# EXAM PAGE
+# EXAM PAGE — YEAR-AWARE & STRICT
 # =======================================================
 @student_portal_bp.route('/exam')
 def exam():
@@ -255,19 +285,30 @@ def exam():
     if not student:
         return redirect(url_for('user_bp.student_login'))
 
+    # Subject
     subject = request.args.get("subject", "").strip()
-    year = request.args.get("year", None)
+
+    # YEAR passed from start_exam redirect
+    year = request.args.get("year")
 
     if not year:
-        year = datetime.now().year  # fallback
+        # HARD fallback — but normally will NEVER run
+        year = session.get("selected_year")
+
+    if not year:
+        year = str(datetime.now().year)
+
+    # Always store year in session for exam-core.js to read
+    session['selected_year'] = str(year)
 
     return render_template(
         'exam.html',
         student=student,
         subject=subject,
-        year=year,
+        year=year,   # ⭐ Sent to <meta name="exam-year">
         exam_started=session.get('exam_started', False)
     )
+
 
 
 # =======================================================
