@@ -222,7 +222,7 @@
     },
     {
       "id": 19,
-      "question": "A contract is generally of ____ duration",
+      "question": "A contract is generally of______________________ duration",
       "diagram": null,
       "options": [
         "A. small",
@@ -234,7 +234,7 @@
     },
     {
       "id": 20,
-      "question": "Retention money serves as a ____ with the contractee",
+      "question": "Retention money serves as a______________________ with the contractee",
       "diagram": null,
       "options": [
         "A. balance",
@@ -246,7 +246,7 @@
     },
     {
       "id": 21,
-      "question": "When cash ratio is ____ retention money is 13%",
+      "question": "When cash ratio is______________________ retention money is 13%",
       "diagram": null,
       "options": [
         "A. 50%",
@@ -258,7 +258,7 @@
     },
     {
       "id": 22,
-      "question": "Sub-contract cost is always treated as ____ to the contract",
+      "question": "Sub-contract cost is always treated as______________________ to the contract",
       "diagram": null,
       "options": [
         "A. indirect charge",
@@ -487,7 +487,7 @@
     {
       "id": 41,
       "question": "The expenses applicable to a particular contract is debited to",
-      "diagram": "/static/uploads/diagrams/2023/diagram_41.PNG",
+      "diagram": null,
       "options": [
         "A. personal account of customer",
         "B. stores account",
@@ -499,7 +499,7 @@
     {
       "id": 42,
       "question": "What is the selling expenses for A?",
-      "diagram": null,
+      "diagram": "/static/uploads/diagrams/2023/accounts/diagram_42.PNG",
       "options": [
         "A. N305",
         "B. N306",
@@ -511,7 +511,7 @@
     {
       "id": 43,
       "question": "What is the selling expenses for B?",
-      "diagram": null,
+      "diagram": "/static/uploads/diagrams/2023/accounts/diagram_42.PNG",
       "options": [
         "A. N360",
         "B. N350",
@@ -523,7 +523,7 @@
     {
       "id": 44,
       "question": "What is the net sales of departments A and B?",
-      "diagram": null,
+      "diagram": "/static/uploads/diagrams/2023/accounts/diagram_42.PNG",
       "options": [
         "A. N10,340",
         "B. N10,300",
