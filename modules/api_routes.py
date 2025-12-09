@@ -1,8 +1,10 @@
 # ============================================================
-#   NEW API ROUTES — EMIS EXCEL RESULT ENGINE (2025) — FIXED
-#   ✔ Case-insensitive subject handling
-#   ✔ Fixed folder mismatch blocking results
-#   ✔ Admin result loading restored
+#   YEAR-AWARE EMIS RESULT ENGINE (FINAL 2025)
+#   Admin can now:
+#     ✓ Select YEAR
+#     ✓ Select CLASS (SS1/SS2/SS3)
+#     ✓ Select SUBJECT
+#     ✓ Load/Delete results per YEAR
 # ============================================================
 
 from flask import Blueprint, jsonify, request, session
@@ -12,7 +14,7 @@ from modules.excel_manager import read_results, get_excel_path
 api_bp = Blueprint("api_bp", __name__)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-CLASS_DIR = BASE_DIR / "CLASS"
+RESULTS_DIR = BASE_DIR / "RESULTS"
 
 
 # ============================================================
@@ -20,138 +22,108 @@ CLASS_DIR = BASE_DIR / "CLASS"
 # ============================================================
 def can_view_results():
     user = session.get("user_type")
-    if user is None:
-        # Some browsers block cookies, so fallback
+    if not user:
         return False
     return user.lower() in ["admin", "teacher"]
 
 
+# ============================================================
+#   1️⃣ Get Available YEARS (based on RESULTS folder)
+# ============================================================
+@api_bp.route("/api/results/years")
+def get_years():
+    if not can_view_results():
+        return jsonify({"error": "Unauthorized"}), 403
+
+    if not RESULTS_DIR.exists():
+        return jsonify({"years": []})
+
+    years = sorted([f.name for f in RESULTS_DIR.iterdir() if f.is_dir()])
+    return jsonify({"years": years})
+
 
 # ============================================================
-#   1️⃣ Get Class Categories (SS1, SS2, SS3)
+#   2️⃣ Get CLASSES for a given YEAR
+#       Example: RESULTS/2023/CLASS/SS1
 # ============================================================
 @api_bp.route("/api/results/classes")
-def get_class_categories():
+def get_classes_for_year():
     if not can_view_results():
         return jsonify({"error": "Unauthorized"}), 403
 
-    if not CLASS_DIR.exists():
+    year = request.args.get("year", "").strip()
+    if not year:
         return jsonify({"classes": []})
 
-    classes = [folder.name for folder in CLASS_DIR.iterdir() if folder.is_dir()]
-    return jsonify({"classes": sorted(classes)})
+    class_root = RESULTS_DIR / year / "CLASS"
+    if not class_root.exists():
+        return jsonify({"classes": []})
+
+    classes = sorted([f.name for f in class_root.iterdir() if f.is_dir()])
+    return jsonify({"classes": classes})
 
 
 # ============================================================
-#   2️⃣ Get Subjects Inside Selected Class Folder
+#   3️⃣ Get SUBJECTS for YEAR + CLASS
+#       Example: RESULTS/2023/CLASS/SS1/Biology
 # ============================================================
 @api_bp.route("/api/results/subjects")
-def get_subjects_for_class():
+def get_subjects_for_class_and_year():
     if not can_view_results():
         return jsonify({"error": "Unauthorized"}), 403
 
-    class_category = request.args.get("class", "").strip().upper()
-    class_folder = CLASS_DIR / class_category
+    year = request.args.get("year", "").strip()
+    class_cat = request.args.get("class", "").strip().upper()
 
+    if not year or not class_cat:
+        return jsonify({"subjects": []})
+
+    class_folder = RESULTS_DIR / year / "CLASS" / class_cat
     if not class_folder.exists():
         return jsonify({"subjects": []})
 
-    # Normalize subjects to uppercase for dropdown
-    subjects = [folder.name.upper() for folder in class_folder.iterdir() if folder.is_dir()]
-    subjects.sort()
-
+    subjects = sorted([f.name for f in class_folder.iterdir() if f.is_dir()])
     return jsonify({"subjects": subjects})
 
 
 # ============================================================
-#   INTERNAL: Resolve correct folder for subject
-#   (Case-insensitive matching)
-# ============================================================
-def resolve_subject_folder(class_category, subject_raw):
-    """
-    Smart resolver:
-    - Case-insensitive
-    - Space vs underscore insensitive
-    - Hyphen insensitive
-    - Handles 13 EMIS subjects safely
-    """
-
-    if not class_category or not subject_raw:
-        return None
-
-    class_folder = CLASS_DIR / class_category
-    if not class_folder.exists():
-        return None
-
-    # Normalize input
-    target = (
-        subject_raw.lower()
-        .replace(" ", "_")
-        .replace("-", "_")
-        .strip()
-    )
-
-    # Compare against each folder name in CLASS/<class>
-    for folder in class_folder.iterdir():
-        if not folder.is_dir():
-            continue
-
-        folder_key = (
-            folder.name.lower()
-            .replace(" ", "_")
-            .replace("-", "_")
-            .strip()
-        )
-
-        if folder_key == target:
-            return folder.name  # Return proper-case name
-
-    return None
-
-
-
-# ============================================================
-#   3️⃣ LOAD EXCEL RESULTS (Class + Subject)
+#   4️⃣ LOAD RESULTS (YEAR + CLASS + SUBJECT)
 # ============================================================
 @api_bp.route("/api/results/load")
 def load_excel_results():
     if not can_view_results():
         return jsonify({"error": "Unauthorized"}), 403
 
-    class_category = request.args.get("class", "").strip().upper()
-    subject_raw = request.args.get("subject", "").strip()
+    year = request.args.get("year", "").strip()
+    class_cat = request.args.get("class", "").strip().upper()
+    subject = request.args.get("subject", "").strip()
 
-    if not class_category or not subject_raw:
-        return jsonify({"error": "Missing class or subject"}), 400
-
-    # Match folder exactly irrespective of case
-    subject = resolve_subject_folder(class_category, subject_raw)
-    if not subject:
-        return jsonify({"results": [], "error": "Subject folder not found"}), 200
+    if not year or not class_cat or not subject:
+        return jsonify({"error": "Missing parameters"}), 400
 
     try:
-        results = read_results(class_category, subject)
-        return jsonify({"results": results})
+        records = read_results(class_cat, subject, year)
+        return jsonify({"results": records}), 200
     except Exception as e:
         return jsonify({"error": str(e), "results": []})
 
 
 # ============================================================
-#   4️⃣ FILE CHECK — Does results.xlsx exist?
+#   5️⃣ FILE CHECK — Does results.xlsx exist for YEAR?
 # ============================================================
 @api_bp.route("/api/results/exists")
 def excel_exists():
     if not can_view_results():
         return jsonify({"error": "Unauthorized"}), 403
 
+    year = request.args.get("year", "").strip()
     class_cat = request.args.get("class", "").strip().upper()
-    subject_raw = request.args.get("subject", "").strip()
+    subject = request.args.get("subject", "").strip()
 
-    subject = resolve_subject_folder(class_cat, subject_raw)
-    if not subject:
+    if not year or not class_cat or not subject:
         return jsonify({"exists": False})
 
-    excel_path = get_excel_path(class_cat, subject)
+    excel_path = get_excel_path(class_cat, subject, year)
 
     return jsonify({
         "exists": excel_path.exists(),
@@ -160,28 +132,24 @@ def excel_exists():
 
 
 # ============================================================
-#   5️⃣ MAIN ADMIN RESULTS LOADER (NEW)
+#   6️⃣ MAIN ADMIN RESULT LOADER (YEAR + CLASS + SUBJECT)
 # ============================================================
 @api_bp.route("/api/results")
 def api_get_results():
+    year = request.args.get("year", "").strip()
     class_cat = request.args.get("class", "").strip().upper()
-    subject_raw = request.args.get("subject", "").strip()
+    subject = request.args.get("subject", "").strip()
 
-    if not class_cat or not subject_raw:
+    if not year or not class_cat or not subject:
         return jsonify({"error": "Missing parameters", "results": []}), 400
 
-    # Resolve folder
-    subject = resolve_subject_folder(class_cat, subject_raw)
-    if not subject:
-        return jsonify({"results": []}), 200
-
     try:
-        records = read_results(class_cat, subject)
+        records = read_results(class_cat, subject, year)
 
         if not records:
             return jsonify({"results": []}), 200
 
-        # Clean up None values
+        # Clean up None values (UI-friendly)
         clean_records = []
         for row in records:
             clean_row = {k: (v if v is not None else "") for k, v in row.items()}
@@ -195,7 +163,7 @@ def api_get_results():
 
 
 # ============================================================
-#   6️⃣ DELETE SELECTED RESULTS (Case-insensitive match)
+#   7️⃣ DELETE RESULTS (YEAR + CLASS + SUBJECT)
 # ============================================================
 @api_bp.route("/api/results/delete", methods=["POST"])
 def delete_excel_results():
@@ -204,29 +172,24 @@ def delete_excel_results():
 
     data = request.get_json()
 
+    year = str(data.get("year"))
     class_cat = data.get("class_category", "").strip().upper()
-    subject_raw = data.get("subject", "").strip()
-
+    subject = data.get("subject", "").strip()
     delete_list = data.get("delete_items", [])
 
-    if not class_cat or not subject_raw:
+    if not year or not class_cat or not subject:
         return jsonify({"error": "Missing parameters"}), 400
 
     if not delete_list:
         return jsonify({"error": "No items to delete"}), 400
 
-    # Resolve correct subject folder name
-    subject = resolve_subject_folder(class_cat, subject_raw)
-    if not subject:
-        return jsonify({"error": "Subject not found"}), 404
-
-    excel_path = get_excel_path(class_cat, subject)
+    excel_path = get_excel_path(class_cat, subject, year)
 
     if not excel_path.exists():
         return jsonify({"error": "Result file does not exist"}), 404
 
     # Load results
-    results = read_results(class_cat, subject)
+    results = read_results(class_cat, subject, year)
 
     # Normalize delete targets
     delete_targets = set(
@@ -234,7 +197,7 @@ def delete_excel_results():
         for item in delete_list
     )
 
-    # Filter
+    # Filter results
     updated = []
     for r in results:
         key = (

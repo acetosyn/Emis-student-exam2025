@@ -447,16 +447,18 @@
 }
 
 /* ============================================================
-   MODALS — FULL (COMPACT CENTERED VERSION)
-   ============================================================ */
+   PREMIUM SQUARE MODALS — RESTORED FROM OLD UPLOADS.CSS
+   Compact • Beautiful • Strong Shadow • Perfect Buttons
+============================================================ */
 
+/* Backdrop + container */
 .modal {
   position: fixed;
   inset: 0;
   display: flex !important;
   justify-content: center !important;
-  align-items: center !important;   /* center vertically */
-  padding: 0 !important;
+  align-items: flex-start !important;
+  padding-top: 110px !important;   /* Push modal slightly downward */
   z-index: 3000;
 }
 
@@ -464,102 +466,68 @@
   display: none !important;
 }
 
+/* Dimmed blurred background */
 .modal-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.45);
-  backdrop-filter: blur(2px);
+  background: rgba(0,0,0,0.52);     /* stronger dark fade */
+  backdrop-filter: blur(4px);       /* premium blur */
 }
 
-/* MAIN MODAL CARD (large modals like subjects modal) */
-.modal-card {
-  position: relative;
-  background: #ffffff;
-  border-radius: var(--radius);
-  width: 80%;
-  max-width: 900px;
-  max-height: 85vh;
-  overflow: hidden;
-  box-shadow: var(--shadow-lg);
-  display: flex;
-  flex-direction: column;
-  animation: fadeInScale .25s ease;
-}
-
-/* Animated appearance for smooth premium effect */
-@keyframes fadeInScale {
-  from { opacity: 0; transform: scale(0.92); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-.modal-header {
-  padding: .75rem 1rem;
-  border-bottom: 1px solid #e6e9f2;
-  background: #f7faff;
-  position: relative;
-}
-
-.modal-footer {
-  padding: .7rem 1rem;
-  background: #f7faff;
-  border-top: 1px solid #e6e9f2;
-  text-align: right;
-}
-
-.modal-body {
-  padding: 1rem;
-  overflow-y: auto;
-}
 /* ============================================================
-   SMALL MODALS — TRUE SQUARE PREMIUM VERSION
-   ============================================================ */
-
-.modal {
-  align-items: flex-start !important;   /* Move upward */
-  padding-top: 120px !important;        /* Position modal higher */
-}
-
-/* Square modal */
+   SQUARE MODAL CARD — TRUE PREMIUM VERSION
+============================================================ */
 .modal-card.small {
-  width: 300px !important;
-  height: 300px !important;
-
-  padding: 1rem !important;
-  border-radius: 16px !important;
+  width: 310px !important;
+  min-height: 310px !important;
 
   background: #ffffff;
-  box-shadow: 0 10px 35px rgba(0,0,0,0.18);
+  border-radius: 18px !important;     /* thick premium rounding */
+  padding: 0 !important;
 
+  box-shadow: 0 18px 45px rgba(0,0,0,0.22);  /* premium shadow */
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
 
-  animation: fadeInScale .25s ease;
+  animation: fadeInModal .25s ease-out;
 }
 
-/* -----------------------------------------
-   HEADER (compact)
------------------------------------------ */
+/* Smooth animation */
+@keyframes fadeInModal {
+  from { opacity: 0; transform: translateY(-16px) scale(.95); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ============================================================
+   HEADER — bold & compact
+============================================================ */
 .modal-card.small .modal-header {
-  width: 100%;
-  padding-bottom: 0.6rem !important;
-  background: none !important;
-  border-bottom: 1px solid #e5e8f1;
+  padding: .75rem .9rem !important;
+  background: #f1f5fb !important;
+  border-bottom: 1px solid #e4e8f1;
   text-align: center;
 }
 
 .modal-card.small .modal-header h3 {
-  font-size: 1rem;
+  margin: 0;
+  font-size: 1rem !important;
   font-weight: 800;
   color: var(--primary-dark);
 }
 
-/* -----------------------------------------
-   BODY (centered inside square)
------------------------------------------ */
+.modal-close {
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #475569;
+}
+
+/* ============================================================
+   BODY — centered modern layout
+============================================================ */
 .modal-card.small .modal-body {
-  padding: 0.6rem 0 !important;
+  padding: .9rem .8rem !important;
   text-align: center;
 
   flex-grow: 1;
@@ -569,49 +537,51 @@
 }
 
 .modal-card.small .warning-text {
-  font-size: 0.75rem;
+  font-size: .78rem;
   color: #475569;
-  margin-bottom: 0.5rem;
+  margin-bottom: .6rem;
 }
 
-/* -----------------------------------------
-   CLASS OPTIONS — compact & centered
------------------------------------------ */
+/* ============================================================
+   CLASS OPTIONS — compact premium buttons
+============================================================ */
 .class-options {
   display: flex;
   justify-content: center;
-  gap: 0.45rem;
-  margin-top: 0.4rem;
+  gap: .55rem;
+  margin-top: .4rem;
 }
 
 .class-btn,
 .clear-btn {
-  width: 60px !important;
-  padding: 0.40rem 0 !important;
+  width: 70px !important;
+  padding: .5rem 0 !important;
 
-  border-radius: 7px !important;
   background: #eef4ff;
   border: 1px solid #cddbf5;
+  border-radius: 8px !important;
 
-  font-size: 0.74rem !important;
+  font-size: .8rem !important;
   font-weight: 700 !important;
-  color: var(--primary-dark);
-
   cursor: pointer;
-  transition: .2s ease;
+
+  color: var(--primary-dark);
+  transition: .25s ease;
 }
 
+/* Hover effects */
 .class-btn:hover,
 .clear-btn:hover {
-  background: var(--primary);
-  color: white;
+  background: var(--primary) !important;
+  color: #fff !important;
   transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 /* Danger button */
 .clear-btn.danger {
-  background: #ffe5e5 !important;
-  border-color: #f8b4b4 !important;
+  background: #ffe2e2 !important;
+  border-color: #f5bcbc !important;
   color: #b91c1c !important;
 }
 
@@ -620,32 +590,32 @@
   color: white !important;
 }
 
-/* -----------------------------------------
-   FOOTER — compact buttons
------------------------------------------ */
+/* ============================================================
+   FOOTER — premium centered buttons
+============================================================ */
 .modal-card.small .modal-footer {
-  width: 100%;
-  padding: 0 !important;
-  margin-top: 0.4rem;
-
-  background: none !important;
-  border-top: none;
+  padding: .75rem .9rem !important;
+  background: #f7faff !important;
+  border-top: 1px solid #e6eaf3;
 
   display: flex;
   justify-content: center;
-  gap: 0.45rem;
+  gap: .55rem;
+  width: 100%;
 }
 
 .modal-card.small .modal-footer button {
-  padding: 0.38rem 0.7rem !important;
-  font-size: 0.76rem !important;
-  border-radius: 6px !important;
+  padding: .48rem .85rem !important;
+  font-size: .82rem !important;
+  font-weight: 700 !important;
+  border-radius: 8px !important;
 }
 
 /* Disabled state */
+.btn-primary.disabled,
 #btnConfirmPush.disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
+  opacity: .4;
+  cursor: not-allowed !important;
 }
 
 /* ============================================================
@@ -748,4 +718,21 @@
   background: #2563eb !important;
   color: white !important;
   box-shadow: 0 3px 8px rgba(37, 99, 235, 0.35);
+}
+
+
+
+/* ============================================================
+   FIX — MAKE SMALL MODALS ACTUALLY SMALL (OVERRIDE BASE STYLES)
+   ============================================================ */
+
+.modal-card.small {
+  width: 310px !important;      /* enforce square width */
+  max-width: 310px !important;
+  min-height: 310px !important;
+
+  height: auto !important;       /* do not stretch full height */
+  max-height: 400px !important;
+
+  margin: 0 !important;
 }
