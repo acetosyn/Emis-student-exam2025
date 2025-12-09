@@ -105,7 +105,6 @@ def exam_dashboard():
 
     # ------------------------------------------
     # NEW → Get YEAR from query string
-    # Example: /exam_dashboard?subject=biology&year=2025
     # ------------------------------------------
     year = request.args.get("year")
     if not year:
@@ -118,7 +117,7 @@ def exam_dashboard():
     admission_no = student.get("admission_number")
 
     # ------------------------------------------------------
-    # 1. Normalize subject → base name
+    # Normalize subject → base name
     # ------------------------------------------------------
     key = subject_raw.lower()
     base_name = BASE_SUBJECT_MAP.get(key)
@@ -129,15 +128,15 @@ def exam_dashboard():
     json_filename = f"{base_name}_{class_suffix}.json"
 
     # ------------------------------------------------------
-    # 2. Check JSON exists (uses YEAR)
+    # Check JSON exists (uses YEAR)
     # ------------------------------------------------------
     json_path = Path(f"static/subjects/{year}/subjects-json/{class_category}/{json_filename}")
     exam_available = json_path.exists()
 
     # ------------------------------------------------------
-    # 3. Check Excel submission history
+    # Check Excel submission history (YEAR-AWARE)
     # ------------------------------------------------------
-    existing_results = read_results(class_category, subject_raw)
+    existing_results = read_results(class_category, subject_raw, year)
 
     already_written = False
     for r in existing_results:
@@ -148,10 +147,10 @@ def exam_dashboard():
             break
 
     # ------------------------------------------------------
-    # SAVE to session (required for start_exam redirect)
+    # SAVE to session
     # ------------------------------------------------------
     session['selected_subject'] = subject_raw
-    session['selected_year'] = year          # ✅ REQUIRED LINE
+    session['selected_year'] = year
     session['exam_submitted'] = already_written
 
     return render_template(
@@ -171,9 +170,8 @@ def exam_dashboard():
     )
 
 
-
 # =======================================================
-# SUBMIT EXAM
+# SUBMIT EXAM (YEAR-AWARE)
 # =======================================================
 @student_portal_bp.route('/submit_exam', methods=['POST'])
 def submit_exam():
@@ -190,8 +188,13 @@ def submit_exam():
     full_name = student.get("full_name")
     admission_no = student.get("admission_number")
 
-    # Check duplicate
-    previous = read_results(class_category, subject)
+    # Get YEAR from session
+    year = session.get("selected_year", str(datetime.now().year))
+
+    # ---------------------------------------------------
+    # YEAR-AWARE duplicate check
+    # ---------------------------------------------------
+    previous = read_results(class_category, subject, year)
     for r in previous:
         if (
             str(r.get("Student Name", "")).upper() == full_name.upper() and
@@ -199,12 +202,16 @@ def submit_exam():
         ):
             return jsonify({"error": "Exam already submitted"}), 403
 
+    # ---------------------------------------------------
+    # Add required result fields
+    # ---------------------------------------------------
     data.update({
         "student_id": student.get("id"),
         "full_name": full_name,
         "admission_number": admission_no,
         "class_name": student.get("class"),
         "class_category": class_category,
+        "year": year,                    # ✅ REQUIRED
     })
 
     save_result(data)
@@ -213,6 +220,7 @@ def submit_exam():
     session['exam_started'] = False
 
     return jsonify({"status": "ok"})
+
 
 
 @student_portal_bp.route('/start_exam', methods=['POST'])
@@ -228,12 +236,12 @@ def start_exam():
 
     # Get subject + year from session
     subject = session.get("selected_subject")
-    year = session.get("selected_year", datetime.now().year)
+    year = session.get("selected_year", str(datetime.now().year))
 
     return redirect(url_for(
         'student_portal_bp.exam',
         subject=subject,
-        year=year
+        year=year  # 🌟 REQUIRED — ensures correct year questions load
     ))
 
 
@@ -318,3 +326,9 @@ def api_student_subjects():
         return jsonify({"subjects": data.get("subjects", [])})
     except:
         return jsonify({"subjects": []})
+
+
+
+@student_portal_bp.route("/back_to_exam_dashboard")
+def back_to_exam_dashboard():
+    return redirect(url_for("student_portal_bp.exam_dashboard"))
