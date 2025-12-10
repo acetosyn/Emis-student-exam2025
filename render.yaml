@@ -9,3 +9,60 @@ services:
     envVars:
       - key: pythonVersion
         value: "3.11"
+
+      # ============================
+      # ADMIN / AUTH
+      # ============================
+      - key: ADMIN_USERNAME
+        value: "${ADMIN_USERNAME}"
+
+      - key: ADMIN_PASSWORD
+        value: "${ADMIN_PASSWORD}"
+
+      - key: SECRET_KEY
+        value: "${SECRET_KEY}"
+
+      # ============================
+      # EMAIL CONFIG
+      # ============================
+      - key: MAIL_SERVER
+        value: "${MAIL_SERVER}"
+
+      - key: MAIL_PORT
+        value: "${MAIL_PORT}"
+
+      - key: MAIL_USE_TLS
+        value: "${MAIL_USE_TLS}"
+
+      - key: MAIL_USE_SSL
+        value: "${MAIL_USE_SSL}"
+
+      - key: MAIL_USERNAME
+        value: "${MAIL_USERNAME}"
+
+      - key: MAIL_PASSWORD
+        value: "${MAIL_PASSWORD}"
+
+      - key: EMAIL_FROM
+        value: "${EMAIL_FROM}"
+
+      - key: NOTIFY_EMAIL
+        value: "${NOTIFY_EMAIL}"
+
+      # ============================
+      # GROQ API KEYS
+      # ============================
+      - key: GROQ_API_KEY
+        value: "${GROQ_API_KEY}"
+
+      - key: GROQ_API_KEY2
+        value: "${GROQ_API_KEY2}"
+
+      # ============================
+      # SUPABASE CONFIG
+      # ============================
+      - key: SUPABASE_URL
+        value: "${SUPABASE_URL}"
+
+      - key: SUPABASE_ANON_KEY
+        value: "${SUPABASE_ANON_KEY}"
