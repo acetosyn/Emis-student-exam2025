@@ -183,10 +183,12 @@ def push_subjects():
 
 
 # ======================================================================
-# CLEAR PORTAL (YEAR + CLASS)
+# CLEAR PORTAL (YEAR + CLASS) — FIXED VERSION
 # ======================================================================
 @push_bp.route("/clear", methods=["POST"])
 def clear_portal():
+    import shutil
+
     payload = request.json
     year = str(payload.get("year"))
     target_class = payload.get("class_category")
@@ -194,23 +196,47 @@ def clear_portal():
     if target_class not in ["SS1", "SS2", "SS3", "ALL"]:
         return jsonify({"success": False, "error": "Invalid class"}), 400
 
-    # CLEAR ALL YEARS & ALL CLASSES
+    # ============================================================
+    # 1️⃣ CLEAR EVERYTHING (ALL YEARS + ALL CLASSES)
+    # ============================================================
     if year == "ALL" and target_class == "ALL":
-        for f in PORTAL_ROOT.rglob("*"):
-            if f.is_file():
-                f.unlink()
+        if PORTAL_ROOT.exists():
+            shutil.rmtree(PORTAL_ROOT)  # remove entire portal directory
+        PORTAL_ROOT.mkdir(parents=True, exist_ok=True)
+
         clear_latest_year()
         return jsonify({"success": True, "cleared": "ALL"})
 
-    # CLEAR SPECIFIC YEAR + CLASS
-    folder = PORTAL_ROOT / year / target_class
-    if folder.exists():
-        for f in folder.glob("*"):
-            f.unlink()
 
+    # ============================================================
+    # 2️⃣ CLEAR SPECIFIC YEAR + ALL CLASSES
+    # ============================================================
+    if target_class == "ALL":
+        year_folder = PORTAL_ROOT / year
+        if year_folder.exists():
+            shutil.rmtree(year_folder)  # delete entire year folder
+        recalculate_latest_year()
+
+        return jsonify({
+            "success": True,
+            "cleared": f"{year}-ALL"
+        })
+
+
+    # ============================================================
+    # 3️⃣ CLEAR SPECIFIC YEAR + SPECIFIC CLASS
+    # ============================================================
+    class_folder = PORTAL_ROOT / year / target_class
+    if class_folder.exists():
+        shutil.rmtree(class_folder)  # remove class folder completely
+
+    # After deletion, recreate class folder empty (optional)
+    class_folder.mkdir(parents=True, exist_ok=True)
+
+    # Save an empty pushed list
     save_pushed_list(year, target_class, [])
 
-    # ✨ NEW: Recalculate latest year
+    # Recalculate latest year properly
     recalculate_latest_year()
 
     return jsonify({
