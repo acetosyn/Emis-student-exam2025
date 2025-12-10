@@ -1,9 +1,11 @@
 services:
-  - type: web
+  web:
+    type: web
     name: emis-exam-portal
-    env: python
+    runtime: python
+    plan: starter
     region: frankfurt
-    pythonVersion: 3.11
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
-    autoDeploy: true
+    envVars:
+      pythonVersion: 3.11
