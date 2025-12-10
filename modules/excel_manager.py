@@ -105,16 +105,19 @@ EXPECTED_HEADERS = [
     "Submitted At",
 ]
 
-
 def repair_missing_headers(ws):
     """
-    Safely handle empty sheets or missing headers.
-    Returns the cleaned header row or empty list.
+    Ensures the worksheet ALWAYS has the correct header row.
+    Repairs:
+        - blank first row
+        - data in first row (no headers)
+        - wrong number of columns
+        - corrupted headers
     """
 
     rows = list(ws.iter_rows(values_only=True))
 
-    # EMPTY SHEET → add headers
+    # Case 1 — completely empty sheet
     if not rows:
         for col, val in enumerate(EXPECTED_HEADERS, start=1):
             ws.cell(row=1, column=col).value = val
@@ -122,19 +125,31 @@ def repair_missing_headers(ws):
 
     first_row = list(rows[0])
 
-    # Completely empty header → repair
-    if all(cell is None for cell in first_row):
+    # Case 2 — row is blank or partially blank → replace with headers
+    if any(
+        cell is None or str(cell).strip() == ""
+        for cell in first_row
+    ):
         for col, val in enumerate(EXPECTED_HEADERS, start=1):
             ws.cell(row=1, column=col).value = val
         return EXPECTED_HEADERS
 
-    # Broken numeric header → repair
-    if all(isinstance(cell, int) for cell in first_row):
+    # Case 3 — row contains DATA instead of headers:
+    # e.g. first cell is a student's name
+    if first_row[0] not in ("Student Name", "Name", "Full Name"):
+        # SHIFT DOWN existing data by 1 row
+        ws.insert_rows(1)
         for col, val in enumerate(EXPECTED_HEADERS, start=1):
             ws.cell(row=1, column=col).value = val
         return EXPECTED_HEADERS
 
-    # Otherwise OK — return the sheet's header row as-is
+    # Case 4 — wrong number of header columns → rewrite
+    if len(first_row) != len(EXPECTED_HEADERS):
+        for col, val in enumerate(EXPECTED_HEADERS, start=1):
+            ws.cell(row=1, column=col).value = val
+        return EXPECTED_HEADERS
+
+    # Otherwise it’s valid
     return first_row
 
 
