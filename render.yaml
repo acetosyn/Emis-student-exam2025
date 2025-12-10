@@ -1,6 +1,5 @@
 services:
-  web:
-    type: web
+  - type: web
     name: emis-exam-portal
     runtime: python
     plan: starter
@@ -8,4 +7,5 @@ services:
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
-      pythonVersion: 3.11
+      - key: pythonVersion
+        value: "3.11"
