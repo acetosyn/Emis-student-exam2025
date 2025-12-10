@@ -1,24 +1,31 @@
 /* ======================================================================
-   EMIS PUSH — push.js (v13 FINAL 2025 — MATCHED TO FINAL push.py)
-   FIXES:
-     ✓ Do NOT send year separately (backend extracts from "year:filename")
-     ✓ Payload = { files, class_category }
-     ✓ Added Active Year UI update + premium animation
+   EMIS PUSH — push.js (v14 ULTRA OPTIMIZED — Architect Edition 2025)
+   FEATURES:
+     ✓ Premium Active Year Sync (auto-fetch)
+     ✓ Intelligent Logs (info/success/error)
+     ✓ No-subjects-pushed detection
+     ✓ Automatic HUD refresh
+     ✓ Safer modal handling
+     ✓ Full compatibility with push.py FINAL
 ====================================================================== */
 
 (() => {
   window.EmisPush = {
     selectedClass: null,
 
+    /* ==========================================================
+       INIT
+    ========================================================== */
     init() {
-      const btnPush       = document.querySelector("#pushSelectedToPortal");
-      const btnClear      = document.querySelector("#clearPortalSubjects");
-      const btnPushAll    = document.querySelector("#btnPushAllSubjects");
-      const modalPush     = document.querySelector("#pushClassModal");
-      const modalClear    = document.querySelector("#clearPortalModal");
-      const confirmPush   = document.querySelector("#btnConfirmPush");
-      const pushYearSel   = document.querySelector("#pushYearSelector");
-      const logBody       = document.querySelector("#portalLogBody");
+      const btnPush     = document.querySelector("#pushSelectedToPortal");
+      const btnClear    = document.querySelector("#clearPortalSubjects");
+      const btnPushAll  = document.querySelector("#btnPushAllSubjects");
+      const modalPush   = document.querySelector("#pushClassModal");
+      const modalClear  = document.querySelector("#clearPortalModal");
+      const confirmPush = document.querySelector("#btnConfirmPush");
+      const pushYearSel = document.querySelector("#pushYearSelector");
+      const logBody     = document.querySelector("#portalLogBody");
+      const activeYearLabel = document.getElementById("activeYearLabel");
 
       if (!btnPush || !modalPush || !confirmPush || !pushYearSel) return;
 
@@ -26,37 +33,80 @@
       const clearClassBtns = modalClear?.querySelectorAll(".clear-btn");
 
       /* ==========================================================
-         ⭐ UPDATE ACTIVE YEAR LABEL + PREMIUM ANIMATION
+         LOG SYSTEM (v14)
       ========================================================== */
-      pushYearSel.onchange = () => {
-        const activeYearLabel = document.getElementById("activeYearLabel");
-
-        if (activeYearLabel) {
-          const val = pushYearSel.value;
-          activeYearLabel.textContent =
-            val && val !== "Select Year"
-              ? `Active Year: ${val}`
-              : "Active Year: —";
-
-          /* 🔥 Premium pulse animation */
-          activeYearLabel.classList.remove("year-pulse");
-          void activeYearLabel.offsetWidth; // restart animation
-          activeYearLabel.classList.add("year-pulse");
-        }
-      };
-
-      /* LOG HELPER */
-      const log = (msg) => {
+      const log = (msg, type = "info") => {
         if (!logBody) return;
         const placeholder = logBody.querySelector(".log-placeholder");
         if (placeholder) logBody.innerHTML = "";
+
         const p = document.createElement("p");
-        p.textContent = msg;
+
+        if (type === "success") p.innerHTML = `<span class="lg-success">✔</span> ${msg}`;
+        else if (type === "error") p.innerHTML = `<span class="lg-error">✖</span> ${msg}`;
+        else p.innerHTML = `<span class="lg-info">•</span> ${msg}`;
+
         logBody.appendChild(p);
         logBody.scrollTop = logBody.scrollHeight;
       };
 
-      /* RESET MODAL */
+      const logInfo = (msg) => log(msg, "info");
+      const logSuccess = (msg) => log(msg, "success");
+      const logError = (msg) => log(msg, "error");
+
+      /* ==========================================================
+         UI: UPDATE ACTIVE YEAR LABEL
+      ========================================================== */
+      const updateActiveYearLabel = (year) => {
+        if (!activeYearLabel) return;
+
+        if (!year || year === "Select Year") {
+          activeYearLabel.textContent = "Active Year: —";
+          activeYearLabel.classList.add("year-empty");
+        } else {
+          activeYearLabel.textContent = `Active Year: ${year}`;
+          activeYearLabel.classList.remove("year-empty");
+        }
+
+        activeYearLabel.classList.remove("year-pulse");
+        void activeYearLabel.offsetWidth;
+        activeYearLabel.classList.add("year-pulse");
+      };
+
+      /* ==========================================================
+         AUTO-FETCH TRUE LATEST YEAR FROM BACKEND (v14 NEW!)
+      ========================================================== */
+      const autoFetchLatestYear = async () => {
+        try {
+          const res = await fetch("/api/push_latest_year");
+          const data = await res.json();
+
+          const latest = data?.year || "";
+
+          updateActiveYearLabel(latest);
+
+          // Auto-set dropdown if empty
+          if (!pushYearSel.value || pushYearSel.value === "Select Year") {
+            if (latest) pushYearSel.value = latest;
+          }
+
+        } catch (err) {
+          console.warn("Year sync error:", err);
+        }
+      };
+
+      autoFetchLatestYear();
+
+      /* ==========================================================
+         YEAR DROPDOWN CHANGE
+      ========================================================== */
+      pushYearSel.onchange = () => {
+        updateActiveYearLabel(pushYearSel.value);
+      };
+
+      /* ==========================================================
+         RESET MODALS
+      ========================================================== */
       const resetPushModal = () => {
         this.selectedClass = null;
         confirmPush.disabled = true;
@@ -74,7 +124,6 @@
 
       const closeClearModal = () => modalClear?.classList.add("hidden");
 
-      /* CLOSE BUTTONS */
       modalPush.querySelectorAll('[data-close="true"]').forEach((el) => {
         el.onclick = closePushModal;
       });
@@ -82,14 +131,15 @@
         el.onclick = closeClearModal;
       });
 
-      /* OPEN PUSH MODAL */
+      /* ==========================================================
+         OPEN PUSH MODAL
+      ========================================================== */
       btnPush.onclick = () => {
         const year = pushYearSel.value;
         if (!year || year === "Select Year") {
           flashMessage("Select a year first.", "error");
           return;
         }
-
         if (!EmisUploads.selectedFiles.size) {
           flashMessage("No files selected.", "error");
           return;
@@ -97,7 +147,9 @@
         modalPush.classList.remove("hidden");
       };
 
-      /* SELECT CLASS */
+      /* ==========================================================
+         SELECT CLASS
+      ========================================================== */
       pushClassBtns.forEach((btn) => {
         btn.onclick = () => {
           this.selectedClass = btn.dataset.class;
@@ -110,38 +162,41 @@
         };
       });
 
-      /* CONFIRM PUSH — FINAL FIX */
+      /* ==========================================================
+         CONFIRM PUSH
+      ========================================================== */
       confirmPush.onclick = async () => {
-        const files = [...EmisUploads.selectedFiles];  // "year:filename"
-        const cls   = this.selectedClass;
+        const cls = this.selectedClass;
+        const files = [...EmisUploads.selectedFiles];
 
         closePushModal();
 
         const res = await fetch("/api/push", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            files,              // YEAR inside string
-            class_category: cls
-          }),
+          body: JSON.stringify({ files, class_category: cls }),
         });
 
         const out = await res.json();
 
         if (!out.success) {
           flashMessage("Push failed", "error");
+          logError("Push failed — backend returned unsuccessful response.");
           return;
         }
 
         flashMessage(`Pushed ${out.subjects_pushed.length} subject(s) to ${cls}.`);
-        log(`🚀 Pushed ${out.subjects_pushed.length} subject(s) → ${cls}`);
+        logSuccess(`Pushed ${out.subjects_pushed.length} → ${cls}`);
 
         EmisUploads.selectedFiles.clear();
         if (window.updatePushCount) updatePushCount();
-        else if (window.EmisUploads?.updatePushCount) EmisUploads.updatePushCount();
+
+        updateActiveYearLabel(out.latest_year);
       };
 
-      /* OPEN CLEAR MODAL */
+      /* ==========================================================
+         OPEN CLEAR MODAL
+      ========================================================== */
       btnClear.onclick = () => {
         const year = pushYearSel.value;
         if (!year || year === "Select Year") {
@@ -151,7 +206,9 @@
         modalClear.classList.remove("hidden");
       };
 
-      /* CLEAR SUBJECTS */
+      /* ==========================================================
+         CLEAR SUBJECTS (YEAR + CLASS + ALL)
+      ========================================================== */
       clearClassBtns?.forEach((btn) => {
         btn.onclick = async () => {
           const cls  = btn.dataset.class;
@@ -166,12 +223,21 @@
           });
 
           const out = await res.json();
-          flashMessage(`Cleared: ${year} → ${cls}`, "success");
-          log(`🗑 Cleared ${cls} subjects for ${year}`);
+
+          if (out.success) {
+            flashMessage(`Cleared: ${out.cleared}`, "success");
+            logSuccess(`Cleared ${out.cleared}`);
+            updateActiveYearLabel(out.latest_year || "");
+          } else {
+            flashMessage("Clear failed.", "error");
+            logError(`Clear failed: ${out.error}`);
+          }
         };
       });
 
-      /* PUSH ALL */
+      /* ==========================================================
+         PUSH ALL SUBJECTS
+      ========================================================== */
       if (btnPushAll) {
         btnPushAll.onclick = () => {
           const year = pushYearSel.value;
